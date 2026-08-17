@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Web IPTV Player - API BugouMods</title>
+    <!-- Tailwind CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body class="bg-gray-900 text-white h-screen flex flex-col overflow-hidden">
+
+    <!-- Cabeçalho -->
+    <header class="bg-gray-800 border-b border-gray-700 p-4 flex justify-between items-center shadow-md">
+        <h1 class="text-xl font-bold flex items-center">
+            <i class="fas fa-tv text-red-500 mr-2"></i> Web IPTV Player
+        </h1>
+        <span class="text-sm text-gray-400">Status: <span id="status-text" class="text-yellow-400 font-semibold">Carregando canais...</span></span>
+    </header>
+
+    <!-- Corpo Principal -->
+    <div class="flex flex-1 overflow-hidden">
+        
+        <!-- Área do Player -->
+        <div class="flex-1 bg-black flex items-center justify-center relative">
+            <iframe id="video-player" src="" class="w-full h-full border-0" allowfullscreen></iframe>
+            <div id="placeholder" class="absolute text-gray-500 flex flex-col items-center">
+                <i class="fas fa-film text-6xl mb-3"></i>
+                <p>Selecione um canal na lista ao lado para começar</p>
+            </div>
+        </div>
+
+        <!-- Lista de Canais -->
+        <div class="w-96 bg-gray-800 border-l border-gray-700 flex flex-col">
+            <div class="p-4 border-b border-gray-700">
+                <h2 class="font-semibold text-lg text-gray-200">Lista de Canais</h2>
+                <p class="text-xs text-gray-400" id="channel-count">Carregando...</p>
+            </div>
+            
+            <div id="channel-list" class="overflow-y-auto flex-1 p-2 space-y-2">
+                <!-- Os canais vindos da API serão injetados aqui -->
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Script de Integração com a API -->
+    <script>
+        // O link da sua API que retorna o JSON de canais
+        const apiUrl = "https://embed.bugoumods.com/?api=1&t=live&c=15193&uid=6a825cdf96e92";
+
+        const channelListContainer = document.getElementById('channel-list');
+        const videoPlayer = document.getElementById('video-player');
+        const placeholder = document.getElementById('placeholder');
+        const statusText = document.getElementById('status-text');
+        const channelCount = document.getElementById('channel-count');
+
+        async function fetchChannels() {
+            try {
+                // Como APIs de terceiros podem ter bloqueio de CORS no navegador direto, 
+                // usamos um proxy público ou fetch direto caso o servidor permita.
+                const response = await fetch(apiUrl);
+                const data = await response.json();
+
+                if (Array.isArray(data) && data.length > 0) {
+                    renderChannels(data);
+                    channelCount.innerText = `${data.length} canais encontrados`;
+                    statusText.innerText = "Pronto";
+                    statusText.className = "text-green-400 font-semibold";
+                } else {
+                    channelCount.innerText = "Nenhum canal encontrado";
+                    statusText.innerText = "Erro nos dados";
+                    statusText.className = "text-red-400 font-semibold";
+                }
+            } catch (error) {
+                console.error("Erro ao carregar a API:", error);
+                // Fallback caso o navegador bloqueie por CORS direto
+                channelListContainer.innerHTML = `
+                    <div class="p-4 text-center text-red-400 text-sm">
+                        <i class="fas fa-exclamation-triangle mb-2 text-2xl"></i><br>
+                        Erro de CORS detectado pelo navegador.<br>
+                        Para testar localmente, utilize uma extensão de CORS no navegador ou abra via servidor local.
+                    </div>`;
+                statusText.innerText = "Erro de Conexão/CORS";
+                statusText.className = "text-red-400 font-semibold";
+            }
+        }
+
+        function renderChannels(channels) {
+            channelListContainer.innerHTML = '';
+            channels.forEach((channel) => {
+                const button = document.createElement('button');
+                button.className = "w-full text-left p-2.5 rounded-lg bg-gray-700 hover:bg-red-600 transition flex items-center space-x-3 group";
+                
+                // Monta a estrutura com a logo (capa) do canal se houver
+                const logoHtml = channel.capa ? `<img src="${channel.capa}" class="w-8 h-8 object-contain rounded bg-gray-900 p-0.5" onerror="this.style.display='none'">` : '<i class="fas fa-tv text-gray-400 w-8 text-center"></i>';
+                
+                button.innerHTML = `
+                    ${logoHtml}
+                    <div class="flex-1 truncate">
+                        <span class="font-medium text-sm block truncate text-gray-200 group-hover:text-white">${channel.nome || 'Canal sem nome'}</span>
+                        <span class="text-xs text-gray-400 group-hover:text-gray-200">${channel.categoria || 'Geral'}</span>
+                    </div>
+                    <i class="fas fa-play text-xs text-gray-400 group-hover:text-white"></i>
+                `;
+                
+                button.onclick = () => playChannel(channel, button);
+                channelListContainer.appendChild(button);
+            });
+        }
+
+        function playChannel(channel, element) {
+            // Remove o destaque dos outros botões
+            document.querySelectorAll('#channel-list button').forEach(btn => {
+                btn.classList.remove('bg-red-600');
+                btn.classList.add('bg-gray-700');
+            });
+            
+            // Destaca o canal selecionado
+            element.classList.remove('bg-gray-700');
+            element.classList.add('bg-red-600');
+
+            // Carrega o link real do player correspondente ao canal clicado
+            placeholder.style.display = 'none';
+            videoPlayer.src = channel.link;
+            statusText.innerText = `Reproduzindo: ${channel.nome}`;
+            statusText.className = "text-green-400 font-semibold";
+        }
+
+        // Executa a busca ao carregar a página
+        fetchChannels();
+    </script>
+</body>
+</html>
