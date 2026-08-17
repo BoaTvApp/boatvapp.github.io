@@ -1,0 +1,10 @@
+
+
+1 - Framing 'https://v3.rdse.site/' violates the following Content Security Policy directive: "frame-ancestors *". The request has been blocked. Note that '*' matches only URLs with network schemes ('http', 'https', 'ws', 'wss'), or URLs whose scheme matches `self`'s scheme. The scheme 'https:' must be added explicitly.
+
+index.html#watch/ae:1 
+
+
+
+2 - Unsafe attempt to load URL file:///C:/Users/Polegar/Desktop/IPTV/SEPARADO/index.html#watch/ae from frame with URL file:///C:/Users/Polegar/Desktop/IPTV/SEPARADO/index.html#watch/ae. 'file:' URLs are treated as unique security origins.
+

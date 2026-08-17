@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>POLEGAR TV- Streaming Portal & Guia TV</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#eef2ff',
+                            500: '#6366f1',
+                            600: '#4f46e5',
+                            700: '#4338ca',
+                            900: '#1e1b4b',
+                            accent: '#f43f5e'
+                        },
+                        dark: {
+                            bg: '#090d16',
+                            card: '#121827',
+                            border: '#1f293d',
+                            hover: '#1a2336'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Plus Jakarta Sans', 'Inter', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="min-h-screen flex flex-col bg-dark-bg text-gray-100 antialiased selection:bg-brand-500 selection:text-white">
+
+    <header class="sticky top-0 z-40 glass-header border-b border-dark-border transition-all">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16 gap-4">
+                
+                <!-- Logo -->
+                <div class="flex items-center space-x-3 cursor-pointer" onclick="switchTab('channels')">
+                    <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-brand-600 to-brand-accent flex items-center justify-center shadow-lg shadow-brand-500/20">
+                        <i class="fa-solid font-bold fa-crown text-white text-lg"></i>
+                    </div>
+                    <div>
+                        <span class="font-extrabold text-xl tracking-tight gradient-text">POLEGAR TV</span>
+                        <span class="hidden sm:inline-block text-xs text-brand-500 font-semibold ml-2 px-2 py-0.5 rounded-full bg-brand-500/10 border border-brand-500/20">PRO</span>
+                    </div>
+                </div>
+
+                <!-- Desktop Search Bar -->
+                <div class="hidden md:flex flex-1 max-w-md mx-6">
+                    <div class="relative w-full">
+                        <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 text-sm"></i>
+                        <input id="searchInput" type="text" placeholder="Buscar canais, jogos ou times (ex: Premiere, Palmeiras)..." 
+                               class="w-full bg-dark-card border border-dark-border rounded-xl pl-10 pr-4 py-2 text-sm text-gray-200 placeholder-gray-500 focus:outline-none focus:border-brand-500 focus:ring-1 focus:ring-brand-500 transition-all">
+                        <button id="clearSearchBtn" class="hidden absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-300">
+                            <i class="fa-solid fa-xmark"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Nav Menu Buttons -->
+                <nav class="hidden lg:flex items-center space-x-1">
+                    <button onclick="switchTab('channels')" id="nav-channels" class="nav-btn active flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium transition-all text-brand-500 bg-brand-500/10">
+                        <i class="fa-solid fa-tv"></i> Canais
+                    </button>
+                    <button onclick="switchTab('events')" id="nav-events" class="nav-btn flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium text-gray-400 hover:text-gray-200 hover:bg-dark-hover transition-all">
+                        <i class="fa-solid fa-calendar-days"></i> Agenda Ao Vivo
+                        <span id="liveEventsBadge" class="bg-brand-accent text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full hidden">0</span>
+                    </button>
+                    <button onclick="switchTab('favorites')" id="nav-favorites" class="nav-btn flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium text-gray-400 hover:text-gray-200 hover:bg-dark-hover transition-all">
+                        <i class="fa-solid fa-heart"></i> Favoritos
+                    </button>
+                    <button onclick="switchTab('apidocs')" id="nav-apidocs" class="nav-btn flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium text-gray-400 hover:text-gray-200 hover:bg-dark-hover transition-all">
+                        <i class="fa-solid fa-code"></i> API Docs
+                    </button>
+                </nav>
+
+                <!-- Mobile Header Menu Button -->
+                <div class="flex items-center gap-2 lg:hidden">
+                    <button onclick="toggleMobileSearch()" class="p-2 rounded-xl text-gray-400 hover:text-white hover:bg-dark-card border border-transparent hover:border-dark-border">
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                    </button>
+                    <button onclick="toggleMobileMenu()" class="p-2 rounded-xl text-gray-400 hover:text-white hover:bg-dark-card border border-transparent hover:border-dark-border">
+                        <i class="fa-solid fa-bars text-lg"></i>
+                    </button>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- Mobile Search Dropdown -->
+        <div id="mobileSearchContainer" class="hidden border-t border-dark-border p-3 bg-dark-bg md:hidden">
+            <div class="relative w-full">
+                <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 text-sm"></i>
+                <input id="mobileSearchInput" type="text" placeholder="Buscar canais ou jogos..." 
+                       class="w-full bg-dark-card border border-dark-border rounded-xl pl-10 pr-4 py-2 text-sm text-gray-200 placeholder-gray-500 focus:outline-none focus:border-brand-500">
+            </div>
+        </div>
+
+        <!-- Mobile Menu Drawer -->
+        <div id="mobileMenu" class="hidden border-t border-dark-border bg-dark-card px-4 py-3 space-y-2 lg:hidden">
+            <button onclick="switchTab('channels'); toggleMobileMenu();" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-gray-200 hover:bg-dark-hover">
+                <i class="fa-solid fa-tv text-brand-500"></i> Canais Ao Vivo
+            </button>
+            <button onclick="switchTab('events'); toggleMobileMenu();" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-gray-200 hover:bg-dark-hover">
+                <i class="fa-solid fa-calendar-days text-brand-accent"></i> Agenda de Eventos
+            </button>
+            <button onclick="switchTab('favorites'); toggleMobileMenu();" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-gray-200 hover:bg-dark-hover">
+                <i class="fa-solid fa-heart text-red-500"></i> Canais Favoritos
+            </button>
+            <button onclick="switchTab('apidocs'); toggleMobileMenu();" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-gray-200 hover:bg-dark-hover">
+                <i class="fa-solid fa-code text-indigo-400"></i> Documentação da API
+            </button>
+        </div>
+    </header>
+
+    <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-8">
+
+        <!-- Status Banner Notice -->
+        <div id="apiStatusBanner" class="hidden items-center justify-between p-3.5 rounded-2xl bg-amber-500/10 border border-amber-500/20 text-amber-300 text-xs sm:text-sm">
+            <div class="flex items-center gap-2.5">
+                <i class="fa-solid fa-triangle-exclamation text-amber-400 text-base"></i>
+                <span id="apiStatusText">Usando dados em modo de contingência/demonstração devido à restrição de conexão direta da API.</span>
+            </div>
+            <button onclick="document.getElementById('apiStatusBanner').classList.add('hidden')" class="hover:text-white px-2">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+        </div>
+
+        <!-- Dynamic Featured Banner / Hero section -->
+        <section id="heroBanner" class="relative rounded-3xl overflow-hidden glass-card border border-dark-border bg-gradient-to-r from-brand-900/80 via-dark-card to-dark-bg p-6 sm:p-8">
+            <div class="absolute -right-10 -bottom-10 w-80 h-80 bg-brand-600/10 rounded-full blur-3xl pointer-events-none"></div>
+            <div class="absolute right-1/3 top-0 w-60 h-60 bg-brand-accent/10 rounded-full blur-3xl pointer-events-none"></div>
+
+            <div class="relative z-10 max-w-2xl space-y-4">
+                <div class="flex items-center justify-between flex-wrap gap-2">
+                    <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand-500/20 border border-brand-500/30 text-brand-300 text-xs font-semibold uppercase tracking-wider">
+                        <span class="w-2 h-2 rounded-full bg-brand-accent pulse-live"></span>
+                        Transmissão em Destaque <span id="featuredCounter" class="text-[10px] text-gray-400 font-mono ml-1"></span>
+                    </div>
+                    <!-- Botões para Voltar e Próxima Transmissão em Destaque -->
+                    <div class="flex items-center gap-2">
+                        <button onclick="prevFeaturedBanner()" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-dark-card hover:bg-dark-hover border border-dark-border text-gray-300 hover:text-white text-xs font-semibold transition-all shadow-sm">
+                            <i class="fa-solid fa-arrow-left text-[10px]"></i>
+                            <span>Voltar</span>
+                        </button>
+                        <button onclick="nextFeaturedBanner()" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-dark-card hover:bg-dark-hover border border-dark-border text-gray-300 hover:text-white text-xs font-semibold transition-all shadow-sm">
+                            <span>Próxima</span>
+                            <i class="fa-solid fa-arrow-right text-[10px]"></i>
+                        </button>
+                    </div>
+                </div>
+                <h1 id="featuredTitle" class="text-2xl sm:text-4xl font-extrabold text-white tracking-tight leading-tight">
+                    Carregando destaque...
+                </h1>
+                <p id="featuredDesc" class="text-gray-400 text-xs sm:text-sm line-clamp-2">
+                    Aguarde enquanto carregamos a transmissão em destaque da programação ao vivo.
+                </p>
+                <div class="flex flex-wrap items-center gap-3 pt-2">
+                    <button id="featuredPlayBtn" onclick="playFeatured()" class="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-gradient-to-r from-brand-600 to-brand-500 hover:from-brand-500 hover:to-brand-600 text-white font-bold text-sm shadow-lg shadow-brand-600/30 transition-all transform active:scale-95">
+                        <i class="fa-solid fa-play"></i> Assistir Agora
+                    </button>
+                    <button onclick="switchTab('events')" class="inline-flex items-center gap-2 px-5 py-3 rounded-xl bg-dark-card hover:bg-dark-hover border border-dark-border text-gray-300 font-semibold text-sm transition-all">
+                        <i class="fa-solid fa-list-ul"></i> Ver Toda Agenda
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- VIEW 1: CANAIS (CHANNELS) -->
+        <section id="view-channels" class="space-y-6">
+            <!-- Filter & Category Header -->
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                <div class="flex items-center gap-3">
+                    <h2 class="text-xl sm:text-2xl font-bold text-white flex items-center gap-2">
+                        <i class="fa-solid fa-tv text-brand-500"></i> Canais Ao Vivo
+                    </h2>
+                    <span id="channelCount" class="px-2.5 py-0.5 rounded-full bg-brand-500/10 text-brand-400 border border-brand-500/20 text-xs font-bold">0</span>
+                </div>
+            </div>
+
+            <!-- Categories Horizontal Scroll -->
+            <div id="channelCategoriesList" class="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-none">
+                <!-- Dynamically rendered pills -->
+            </div>
+
+            <!-- Channels Grid -->
+            <div id="channelsGrid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
+                <!-- Dynamically rendered channels -->
+            </div>
+
+            <!-- Empty State for Channels -->
+            <div id="noChannelsState" class="hidden flex flex-col items-center justify-center py-16 text-center glass-card rounded-3xl border border-dark-border">
+                <div class="w-16 h-16 rounded-2xl bg-dark-bg flex items-center justify-center text-gray-500 mb-4 text-2xl">
+                    <i class="fa-solid fa-tv-slash"></i>
+                </div>
+                <h3 class="text-lg font-bold text-white">Nenhum canal encontrado</h3>
+                <p class="text-xs text-gray-400 max-w-sm mt-1 mb-4">Não encontramos nenhum canal com o termo pesquisado ou categoria selecionada.</p>
+                <button onclick="resetFilters()" class="px-4 py-2 rounded-xl bg-brand-600 hover:bg-brand-500 text-white text-xs font-semibold transition-all">
+                    Limpar Filtros
+                </button>
+            </div>
+        </section>
+
+        <!-- VIEW 2: AGENDA AO VIVO (EVENTS) -->
+        <section id="view-events" class="hidden space-y-6">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                <div>
+                    <h2 class="text-xl sm:text-2xl font-bold text-white flex items-center gap-2">
+                        <i class="fa-solid fa-calendar-days text-brand-accent"></i> Agenda Ao Vivo & Jogos
+                    </h2>
+                    <p class="text-xs text-gray-400 mt-1">Confira as transmissões esportivas e eventos agendados para hoje.</p>
+                </div>
+                <div class="flex items-center gap-2 bg-dark-card p-1 rounded-xl border border-dark-border text-xs">
+                    <button onclick="filterEvents('sport', 'All')" class="px-3 py-1.5 rounded-lg font-semibold text-white bg-brand-600">Todos</button>
+                    <button onclick="filterEvents('sport', 'Futebol')" class="px-3 py-1.5 rounded-lg font-semibold text-gray-400 hover:text-white">Futebol</button>
+                    <button onclick="filterEvents('sport', 'Basquete')" class="px-3 py-1.5 rounded-lg font-semibold text-gray-400 hover:text-white">Basquete</button>
+                    <button onclick="filterEvents('sport', 'Lutas')" class="px-3 py-1.5 rounded-lg font-semibold text-gray-400 hover:text-white">Lutas</button>
+                </div>
+            </div>
+
+            <div id="eventsGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                <!-- Dynamically rendered events -->
+            </div>
+        </section>
+
+        <!-- VIEW 3: FAVORITOS (FAVORITES) -->
+        <section id="view-favorites" class="hidden space-y-6">
+            <div>
+                <h2 class="text-xl sm:text-2xl font-bold text-white flex items-center gap-2">
+                    <i class="fa-solid fa-heart text-red-500"></i> Meus Canais Favoritos
+                </h2>
+                <p class="text-xs text-gray-400 mt-1">Seus canais salvos para acesso rápido.</p>
+            </div>
+
+            <div id="favoritesGrid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
+                <!-- Dynamically rendered favorites -->
+            </div>
+
+            <div id="noFavoritesState" class="hidden flex flex-col items-center justify-center py-16 text-center glass-card rounded-3xl border border-dark-border">
+                <div class="w-16 h-16 rounded-2xl bg-dark-bg flex items-center justify-center text-red-500/50 mb-4 text-2xl">
+                    <i class="fa-regular fa-heart"></i>
+                </div>
+                <h3 class="text-lg font-bold text-white">Nenhum canal favorito</h3>
+                <p class="text-xs text-gray-400 max-w-sm mt-1 mb-4">Clique no ícone de coração nos cards dos canais para adicioná-los à sua lista.</p>
+                <button onclick="switchTab('channels')" class="px-4 py-2 rounded-xl bg-brand-600 hover:bg-brand-500 text-white text-xs font-semibold transition-all">
+                    Explorar Canais
+                </button>
+            </div>
+        </section>
+
+        <!-- VIEW 4: API DOCS -->
+        <section id="view-apidocs" class="hidden space-y-6">
+            <div class="glass-card rounded-3xl p-6 sm:p-8 border border-dark-border space-y-4">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-xl bg-brand-500/20 text-brand-400 flex items-center justify-center font-bold text-xl">
+                        <i class="fa-solid fa-code"></i>
+                    </div>
+                    <div>
+                        <h2 class="text-xl sm:text-2xl font-extrabold text-white">Documentação da API - Rei dos Embeds</h2>
+                        <p class="text-xs text-gray-400">Rotas públicas para consulta de canais, eventos, categorias e guia XMLTV.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div id="apiEndpointsGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                <!-- Dynamically populated endpoints -->
+            </div>
+
+            <!-- API Console Box -->
+            <div class="glass-card rounded-2xl p-5 border border-dark-border space-y-3">
+                <div class="flex items-center justify-between border-b border-dark-border/80 pb-3">
+                    <div class="flex items-center gap-2">
+                        <i class="fa-solid fa-terminal text-brand-500 text-sm"></i>
+                        <h3 class="text-sm font-bold text-white">Console de Teste da API</h3>
+                    </div>
+                    <span id="apiConsoleStatus" class="text-xs px-2.5 py-1 rounded-md bg-dark-bg text-gray-400 font-mono">Status: Pronto</span>
+                </div>
+                <pre id="apiConsoleOutput" class="bg-dark-bg rounded-xl p-4 font-mono text-xs text-emerald-400 overflow-x-auto min-h-[140px] max-h-[300px] border border-dark-border leading-relaxed">// Clique em "Testar Endpoint" em qualquer card para ver o retorno aqui...</pre>
+            </div>
+        </section>
+
+    </main>
+
+    <div id="playerModal" class="fixed inset-0 z-50 hidden flex flex-col bg-dark-bg w-screen h-screen overflow-hidden transition-all duration-300">
+        
+        <!-- Full Page Navigation Header -->
+        <div class="flex items-center justify-between px-4 sm:px-6 py-3 border-b border-dark-border bg-dark-card/95 backdrop-blur-md z-10 gap-3">
+            <div class="flex items-center gap-3">
+                <button onclick="closePlayerModal()" class="flex items-center gap-2 px-3.5 py-2 rounded-xl bg-dark-bg hover:bg-dark-hover border border-dark-border text-gray-200 text-xs font-bold hover:text-white transition-all shadow-sm">
+                    <i class="fa-solid fa-arrow-left text-brand-500"></i>
+                    <span>Voltar para Canais</span>
+                </button>
+                <div class="h-5 w-px bg-dark-border hidden sm:block"></div>
+                <div class="flex items-center gap-2.5">
+                    <div id="playerChannelLogo" class="w-8 h-8 rounded-xl bg-dark-bg border border-dark-border p-1 flex items-center justify-center">
+                        <i class="fa-solid fa-tv text-brand-500 text-sm"></i>
+                    </div>
+                    <div>
+                        <h3 id="playerTitle" class="text-sm sm:text-base font-extrabold text-white leading-tight">Nome do Canal</h3>
+                        <p id="playerSubtitle" class="text-[11px] text-gray-400">Transmissão Ao Vivo</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Loaded URL Badge & External Open Link -->
+            <div class="flex items-center gap-2">
+                <div class="hidden md:flex items-center gap-2 bg-dark-bg px-3 py-1.5 rounded-xl border border-dark-border font-mono text-xs text-brand-400">
+                    <i class="fa-solid fa-globe text-xs text-brand-500"></i>
+                    <span id="playerActiveUrlDisplay" class="truncate max-w-sm text-[11px]">https://mafiasports.pro/0112/tv001/megapix</span>
+                </div>
+
+                <a id="externalLinkBtn" href="#" target="_blank" class="px-3 py-1.5 rounded-xl bg-dark-bg hover:bg-dark-hover border border-dark-border text-gray-300 hover:text-white text-xs font-semibold flex items-center gap-1.5 transition-all">
+                    <i class="fa-solid fa-up-right-from-square text-xs"></i>
+                    <span class="hidden sm:inline">Abrir em Nova Aba</span>
+                </a>
+
+                <button onclick="closePlayerModal()" class="p-2 rounded-xl bg-dark-bg hover:bg-dark-hover border border-dark-border text-gray-400 hover:text-white transition-all text-sm" title="Fechar">
+                    <i class="fa-solid fa-xmark text-base"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Direct Target URL Iframe -->
+        <div class="relative flex-1 w-full h-full bg-black overflow-hidden">
+            <iframe id="playerIframe" class="w-full h-full border-0" allow="autoplay; encrypted-media; fullscreen" allowfullscreen></iframe>
+        </div>
+
+    </div>
+
+    <!-- Footer -->
+    <footer class="border-t border-dark-border/80 bg-dark-bg py-8 mt-12">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row items-center justify-between gap-4 text-xs text-gray-500">
+            <div class="flex items-center gap-2">
+                <div class="w-6 h-6 rounded-lg bg-brand-600 flex items-center justify-center text-white text-xs font-bold">P</div>
+                <span class="font-bold text-gray-300">POLEGAR TV</span> &copy; 2026 - Agregador de Transmissões Esportivas e TV.
+            </div>
+            <div class="flex items-center space-x-6">
+                <span class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-emerald-500"></span> API Online</span>
+                <a href="#apidocs" onclick="switchTab('apidocs')" class="hover:text-gray-300 transition-colors">API Docs</a>
+                <a href="javascript:void(0)" onclick="showToast('Sistema atualizado com suporte a streaming de alta performance e baixa latência.')" class="hover:text-gray-300 transition-colors">Termos & Sobre</a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="fixed bottom-5 right-5 z-50 hidden max-w-sm px-4 py-3 rounded-2xl bg-dark-card border border-brand-500/30 text-white shadow-2xl flex items-center gap-3 transition-all transform translate-y-2">
+        <i id="toastIcon" class="fa-solid fa-circle-check text-brand-500 text-lg"></i>
+        <span id="toastMsg" class="text-xs font-medium">Operação realizada com sucesso!</span>
+    </div>
+
+    <script src="js/script.js"></script>
+</body>
+</html>
