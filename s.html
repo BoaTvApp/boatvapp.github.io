@@ -1,0 +1,670 @@
+```html
+<!DOCTYPE html>
+<html class="dark" lang="pt-BR">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0, viewport-fit=cover" name="viewport"/>
+<title>POLEGAR TV - Home</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;800&amp;family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- HLS.js for .m3u8 streaming -->
+<script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+<!-- Mpegts.js for .ts streaming -->
+<script src="https://cdn.jsdelivr.net/npm/mpegts.js@1.7.3/dist/mpegts.min.js"></script>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "on-secondary-container": "#b0b2ff",
+                    "surface-bright": "#33394c",
+                    "outline-variant": "#424754",
+                    "secondary": "#c0c1ff",
+                    "surface-main": "#020617",
+                    "on-tertiary": "#003824",
+                    "surface-container": "#191f31",
+                    "status-error": "#f43f5e",
+                    "surface-container-high": "#23293c",
+                    "on-primary-container": "#00285d",
+                    "primary-fixed-dim": "#adc6ff",
+                    "secondary-fixed-dim": "#c0c1ff",
+                    "secondary-container": "#3131c0",
+                    "surface-tint": "#adc6ff",
+                    "surface-variant": "#2e3447",
+                    "status-warning": "#f59e0b",
+                    "on-tertiary-fixed-variant": "#005236",
+                    "on-surface-variant": "#c2c6d6",
+                    "surface-container-highest": "#2e3447",
+                    "error": "#ffb4ab",
+                    "surface-dim": "#0c1324",
+                    "on-primary-fixed": "#001a42",
+                    "tertiary": "#4edea3",
+                    "text-secondary": "#94a3b8",
+                    "error-container": "#93000a",
+                    "on-surface": "#dce1fb",
+                    "secondary-fixed": "#e1e0ff",
+                    "surface-panel": "#0f172a",
+                    "inverse-primary": "#005ac2",
+                    "primary-fixed": "#d8e2ff",
+                    "surface-container-low": "#151b2d",
+                    "text-primary": "#f1f5f9",
+                    "inverse-on-surface": "#2a3043",
+                    "text-muted": "#475569",
+                    "surface-glass": "rgba(15, 23, 42, 0.4)",
+                    "tertiary-container": "#00a572",
+                    "inverse-surface": "#dce1fb",
+                    "on-secondary": "#1000a9",
+                    "on-tertiary-fixed": "#002113",
+                    "on-primary-fixed-variant": "#004395",
+                    "primary-container": "#4d8eff",
+                    "on-secondary-fixed": "#07006c",
+                    "border-muted": "#1e293b",
+                    "on-background": "#dce1fb",
+                    "background": "#0c1324",
+                    "on-error-container": "#ffdad6",
+                    "outline": "#8c909f",
+                    "surface": "#0c1324",
+                    "on-tertiary-container": "#00311f",
+                    "on-primary": "#002e6a",
+                    "tertiary-fixed-dim": "#4edea3",
+                    "on-error": "#690005",
+                    "surface-container-lowest": "#070d1f",
+                    "primary": "#adc6ff",
+                    "on-secondary-fixed-variant": "#2f2ebe",
+                    "tertiary-fixed": "#6ffbbe"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "panel-padding": "12px",
+                    "gutter": "16px",
+                    "gap-md": "16px",
+                    "gap-sm": "8px",
+                    "margin-desktop": "24px",
+                    "gap-xs": "4px",
+                    "margin-mobile": "16px",
+                    "touch-target-min": "44px"
+            },
+            "fontFamily": {
+                    "label-caps": ["Inter"],
+                    "label-micro": ["Inter"],
+                    "body-lg": ["Inter"],
+                    "headline-lg": ["Inter"],
+                    "headline-md": ["Inter"],
+                    "body-sm": ["Inter"],
+                    "nav-item": ["Inter"],
+                    "body-md": ["Inter"]
+            },
+            "fontSize": {
+                    "label-caps": ["10px", {"lineHeight": "12px", "letterSpacing": "0.15em", "fontWeight": "700"}],
+                    "label-micro": ["9px", {"lineHeight": "10px", "letterSpacing": "0.2em", "fontWeight": "800"}],
+                    "body-lg": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                    "headline-lg": ["20px", {"lineHeight": "28px", "letterSpacing": "0.02em", "fontWeight": "700"}],
+                    "headline-md": ["18px", {"lineHeight": "24px", "letterSpacing": "0.01em", "fontWeight": "700"}],
+                    "body-sm": ["12px", {"lineHeight": "16px", "fontWeight": "400"}],
+                    "nav-item": ["14px", {"lineHeight": "20px", "fontWeight": "500"}],
+                    "body-md": ["14px", {"lineHeight": "20px", "fontWeight": "400"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        body {
+            background-color: #0c1324;
+            color: #dce1fb;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .hide-scrollbar::-webkit-scrollbar { display: none; }
+        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        
+        .hero-gradient {
+            background: linear-gradient(to top, #0c1324 0%, rgba(12, 19, 36, 0.4) 40%, transparent 100%);
+        }
+        .glass-effect {
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+        }
+        @keyframes loading {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(200%); }
+        }
+    </style>
+</head>
+<body class="font-body-md text-body-md overflow-x-hidden pb-24">
+<!-- Toast Container -->
+<div class="fixed top-20 left-1/2 -translate-x-1/2 z-[100] flex flex-col gap-2 pointer-events-none w-[90%] max-w-sm" id="toast-container"></div>
+<!-- Fullscreen Content Loader -->
+<div class="fixed inset-0 bg-background/95 flex flex-col items-center justify-center gap-5 z-[90] hidden" id="fullscreen-loader">
+<div class="relative w-12 h-12">
+<div class="absolute inset-0 border-2 border-primary/10 rounded-full"></div>
+<div class="absolute inset-0 border-2 border-t-primary border-l-transparent border-r-transparent border-b-transparent rounded-full animate-spin"></div>
+</div>
+<div class="text-center space-y-1">
+<p class="text-[10px] font-bold uppercase tracking-[0.3em] text-text-secondary" id="loader-msg">Conectando</p>
+<div class="w-48 h-0.5 bg-surface-container-highest rounded-full mt-2 overflow-hidden">
+<div class="h-full bg-primary/50 w-1/3 animate-[loading_2s_infinite_ease-in-out]"></div>
+</div>
+</div>
+</div>
+<!-- Video Player Modal/Overlay -->
+<div class="fixed inset-0 bg-black z-[80] flex flex-col hidden" id="player-modal">
+<div class="relative flex-1 flex flex-col items-center justify-center bg-black group">
+<button class="absolute top-4 left-4 z-50 p-2 bg-surface-glass rounded-full text-white backdrop-blur-md border border-white/10" onclick="closeVideoPlayer()">
+<span class="material-symbols-outlined">arrow_back</span>
+</button>
+<video autoplay="" class="w-full h-full object-contain" controls="" id="main-video-player" playsinline=""></video>
+<div class="absolute inset-0 flex flex-col items-center justify-center bg-black/60 gap-4" id="player-spinner">
+<div class="w-10 h-10 border-2 border-primary/20 border-t-primary rounded-full animate-spin"></div>
+<span class="text-[10px] font-bold text-primary uppercase tracking-widest">Carregando Stream</span>
+</div>
+</div>
+<!-- Player Sidebar (EPG/Info) -->
+<div class="bg-surface-container p-4 border-t border-muted/30 max-h-[40%] overflow-y-auto hidden" id="player-sidebar">
+<div class="flex justify-between items-start mb-4">
+<div>
+<h2 class="font-headline-md text-text-primary" id="playing-content-title">Stream Title</h2>
+<p class="text-label-caps text-text-muted uppercase" id="playing-content-info">Info</p>
+</div>
+<button class="text-primary" id="btn-stream-fav" onclick="toggleStreamFavorite()">
+<span class="material-symbols-outlined">favorite</span>
+</button>
+</div>
+<div class="space-y-4">
+<div class="space-y-2">
+<p class="text-label-caps text-text-muted uppercase tracking-widest">Guia de Programação</p>
+<div class="space-y-2" id="player-epg-list">
+<p class="text-body-sm text-text-muted italic">Nenhum dado de guia disponível.</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- TopAppBar -->
+<header class="fixed top-0 w-full z-50 backdrop-blur-md bg-surface-glass border-b border-muted/30 shadow-sm flex justify-between items-center px-margin-mobile h-16">
+<div class="flex items-center gap-sm active:scale-95 transition-transform" onclick="toggleSettingsTab()">
+<span class="material-symbols-outlined text-primary">menu</span>
+</div>
+<div class="font-headline-lg text-headline-lg font-bold tracking-widest text-primary italic">POLEGAR TV</div>
+<div class="flex items-center gap-sm active:scale-95 transition-transform">
+<span class="material-symbols-outlined text-primary">search</span>
+</div>
+</header>
+<main class="mt-16" id="main-content">
+<!-- Home Tab -->
+<div class="tab-pane" id="tab-home">
+<!-- Hero Banner Section -->
+<section class="relative w-full aspect-[9/12] md:aspect-video overflow-hidden">
+<div class="absolute inset-0 w-full h-full bg-cover bg-center" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuAuIpu6WSuK8oSDTqeqYueUeONwwBKP3wmGb_ClgMzGojCG0EAt7Tdv5LUvx16mhSr87qgDD8AV9U_GwJ9DXr0aXyZBknofK_uf_PxOR779P-tsZbLoiNvcad3f0dgNv6EVpsHVxqCqcJhiIMNghmJdG2vIx5ODx6q7Do28x-oIvMGuD1Wbtg5MZ8wAwgZYzdhb1MLcNafdGuvBFOf8vVHttQarI-IVZbEcsp8wXnLJvqX9bMS9pCtU')"></div>
+<div class="absolute inset-0 hero-gradient"></div>
+<div class="absolute bottom-0 left-0 w-full p-margin-mobile flex flex-col gap-sm">
+<div class="flex items-center gap-xs text-tertiary">
+<span class="material-symbols-outlined text-[14px]" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="font-label-caps text-label-caps uppercase">Destaque de Hoje</span>
+</div>
+<h1 class="font-headline-lg text-[28px] leading-tight text-text-primary font-extrabold uppercase">NEON VELOCITY</h1>
+<p class="text-text-secondary font-body-sm max-w-[80%] line-clamp-2">Em um futuro onde o tempo é a única moeda, um piloto rebelde deve cruzar a fronteira proibida.</p>
+<div class="flex items-center gap-md mt-sm">
+<button class="flex-1 h-touch-target-min bg-gradient-to-r from-primary to-secondary text-on-primary font-bold rounded-lg flex items-center justify-center gap-sm active:scale-95 transition-all">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">play_arrow</span>
+                        Assistir Agora
+                    </button>
+<button class="w-touch-target-min h-touch-target-min border border-muted/50 bg-surface-glass rounded-lg flex items-center justify-center text-text-primary active:scale-95 transition-all">
+<span class="material-symbols-outlined">add</span>
+</button>
+</div>
+</div>
+</section>
+<!-- Continuar Assistindo -->
+<section class="mt-8 px-margin-mobile">
+<div class="flex justify-between items-end mb-4">
+<h2 class="font-headline-md text-headline-md text-text-primary uppercase tracking-wider">Continuar Assistindo</h2>
+<span class="font-label-caps text-label-caps text-primary uppercase">Ver Tudo</span>
+</div>
+<div class="flex gap-gutter overflow-x-auto hide-scrollbar pb-2">
+<div class="flex-none w-64 group relative">
+<div class="relative aspect-video rounded-xl overflow-hidden border border-muted/30">
+<div class="absolute inset-0 bg-cover bg-center" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuCCODMQYlZ8wEp2D3c7KaFeKKIWtTupRtWXCtdID2LHSnYMFwfErI3A2Vv_2r2r6ak_QIKR0iN274_e_ugv8062Zkr1amGd3Vfj5SEzhdeVC_7xl3kMGTFX_pZzzWcx7ipac1Y6mCjnKr4WGB9ZEouaC18-auZKIoHk53nH0J5KSg4OfvNlLZxpT3T2hRa72XbVTZU0dT3c99X_1BAVV9jPKxeF_lgJ3QKawUUbSZYur7a_IfpNYmZ2')"></div>
+<div class="absolute bottom-0 left-0 w-full h-1 bg-surface-container-highest">
+<div class="h-full bg-primary" style="width: 65%;"></div>
+</div>
+</div>
+<div class="mt-2">
+<h3 class="font-body-md font-bold text-text-primary truncate">O Protocolo Ghost</h3>
+</div>
+</div>
+</div>
+</section>
+</div>
+<!-- Explorer Tab (Live, VOD, Series) -->
+<div class="tab-pane hidden px-margin-mobile pt-4" id="tab-explorer">
+<div class="flex items-center gap-4 mb-6 overflow-x-auto hide-scrollbar pb-2" id="categories-list">
+<!-- Dynamic Categories -->
+</div>
+<div class="grid grid-cols-2 sm:grid-cols-3 gap-4 pb-20" id="streams-grid">
+<!-- Dynamic Streams -->
+</div>
+</div>
+<!-- Settings Tab (Connection) -->
+<div class="tab-pane hidden px-margin-mobile pt-8 flex flex-col items-center" id="tab-settings">
+<div class="w-full max-w-md bg-surface-container rounded-2xl p-6 border border-muted/30 shadow-xl space-y-6">
+<div class="text-center">
+<h2 class="font-headline-lg text-text-primary">Configurações</h2>
+<p class="text-body-sm text-text-muted">Acesse sua conta Xtream Codes</p>
+</div>
+<form class="space-y-4" id="connection-form" onsubmit="handleManualLogin(event)">
+<div class="space-y-2">
+<label class="text-label-caps text-text-muted uppercase">Servidor</label>
+<input class="w-full bg-surface-dim border border-muted/30 rounded-lg px-4 py-2 text-text-primary text-sm focus:border-primary outline-none" id="input-host" required="" type="url" value="http://pirulito.lat"/>
+</div>
+<div class="space-y-2">
+<label class="text-label-caps text-text-muted uppercase">Usuário</label>
+<input class="w-full bg-surface-dim border border-muted/30 rounded-lg px-4 py-2 text-text-primary text-sm focus:border-primary outline-none" id="input-username" required="" type="text" value="94562465"/>
+</div>
+<div class="space-y-2">
+<label class="text-label-caps text-text-muted uppercase">Senha</label>
+<input class="w-full bg-surface-dim border border-muted/30 rounded-lg px-4 py-2 text-text-primary text-sm focus:border-primary outline-none" id="input-password" required="" type="password" value="49126914"/>
+</div>
+<div class="pt-2">
+<div class="flex items-center justify-between p-3 bg-surface-dim rounded-xl border border-muted/30 mb-4">
+<span class="text-label-caps text-text-secondary uppercase">CORS Proxy</span>
+<input checked="" class="w-4 h-4 rounded text-primary bg-surface-container border-muted/30" id="toggle-cors" onchange="toggleCorsProxy()" type="checkbox"/>
+</div>
+<select class="w-full bg-surface-dim border border-muted/30 rounded-lg px-4 py-2 text-text-primary text-[10px] font-bold uppercase outline-none" id="select-proxy-selector" onchange="handleProxyChange()">
+</select>
+</div>
+<button class="w-full py-3 bg-primary text-on-primary font-bold rounded-xl active:scale-95 transition-all uppercase tracking-widest text-xs" type="submit">
+                    Salvar e Conectar
+                </button>
+</form>
+<div class="hidden p-4 bg-surface-dim rounded-xl border border-muted/30 flex items-center justify-between" id="sidebar-account-card">
+<div>
+<p class="font-bold text-text-primary text-sm" id="card-username">Usuário</p>
+<p class="text-[10px] text-text-muted" id="card-status">Expira: --/--/----</p>
+</div>
+<div class="flex items-center gap-2">
+<div class="w-2 h-2 rounded-full bg-tertiary animate-pulse"></div>
+<span class="text-label-caps text-tertiary uppercase" id="connection-indicator">Online</span>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- BottomNavBar -->
+<nav class="fixed bottom-0 w-full z-50 backdrop-blur-md bg-surface-glass rounded-t-xl border-t border-muted/30 shadow-[0_-4px_20px_rgba(0,0,0,0.4)] flex justify-around items-center h-20 pb-safe">
+<a class="nav-item flex flex-col items-center justify-center text-primary group" href="javascript:void(0)" id="btn-tab-home" onclick="switchTab('home')">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">home</span>
+<span class="font-label-caps text-label-caps">Home</span>
+<div class="indicator w-1 h-1 rounded-full bg-primary mt-1"></div>
+</a>
+<a class="nav-item flex flex-col items-center justify-center text-text-secondary group" href="javascript:void(0)" id="btn-tab-live" onclick="switchTab('live')">
+<span class="material-symbols-outlined">live_tv</span>
+<span class="font-label-caps text-label-caps">Live</span>
+<div class="indicator w-1 h-1 rounded-full bg-primary mt-1 opacity-0"></div>
+</a>
+<a class="nav-item flex flex-col items-center justify-center text-text-secondary group" href="javascript:void(0)" id="btn-tab-vod" onclick="switchTab('vod')">
+<span class="material-symbols-outlined">movie</span>
+<span class="font-label-caps text-label-caps">VOD</span>
+<div class="indicator w-1 h-1 rounded-full bg-primary mt-1 opacity-0"></div>
+</a>
+<a class="nav-item flex flex-col items-center justify-center text-text-secondary group" href="javascript:void(0)" id="btn-tab-series" onclick="switchTab('series')">
+<span class="material-symbols-outlined">theaters</span>
+<span class="font-label-caps text-label-caps">Series</span>
+<div class="indicator w-1 h-1 rounded-full bg-primary mt-1 opacity-0"></div>
+</a>
+<a class="nav-item flex flex-col items-center justify-center text-text-secondary group" href="javascript:void(0)" id="btn-tab-settings" onclick="switchTab('settings')">
+<span class="material-symbols-outlined">settings</span>
+<span class="font-label-caps text-label-caps">Settings</span>
+<div class="indicator w-1 h-1 rounded-full bg-primary mt-1 opacity-0"></div>
+</a>
+</nav>
+<script>
+    const state = {
+        host: '',
+        username: '',
+        password: '',
+        isLoggedIn: false,
+        useCorsProxy: true,
+        proxies: [
+            { name: 'AllOrigins (EUA)', url: 'https://api.allorigins.win/raw?url=', encode: true },
+            { name: 'CorsProxy.io (Global)', url: 'https://corsproxy.io/?url=', encode: true },
+            { name: 'Codetabs (Rápido)', url: 'https://api.codetabs.com/v1/proxy?quest=', encode: true },
+            { name: 'Direct (Desativado)', url: '', encode: false }
+        ],
+        currentProxyIndex: 0,
+        liveCategories: [],
+        vodCategories: [],
+        seriesCategories: [],
+        currentCategoryType: '',
+        currentCategoryId: '',
+        cachedStreams: [],
+        favorites: JSON.parse(localStorage.getItem('xtream_favorites') || '[]'),
+        activePlayer: null,
+        hlsInstance: null,
+        currentPlayingStream: null,
+        searchQuery: '',
+        sortOrder: 'asc'
+    };
+
+    window.onload = function() {
+        const proxySelect = document.getElementById('select-proxy-selector');
+        proxySelect.innerHTML = '';
+        state.proxies.forEach((proxy, idx) => {
+            const opt = document.createElement('option');
+            opt.value = idx;
+            opt.textContent = proxy.name;
+            proxySelect.appendChild(opt);
+        });
+
+        const savedConfig = localStorage.getItem('xtream_config');
+        if (savedConfig) {
+            try {
+                const parsed = JSON.parse(savedConfig);
+                document.getElementById('input-host').value = parsed.host || 'http://pirulito.lat';
+                document.getElementById('input-username').value = parsed.username || '94562465';
+                document.getElementById('input-password').value = parsed.password || '49126914';
+state.useCorsProxy = parsed.useCorsProxy ?? true;
+                state.currentProxyIndex = parsed.currentProxyIndex ?? 0;
+                document.getElementById('toggle-cors').checked = state.useCorsProxy;
+                document.getElementById('select-proxy-selector').value = state.currentProxyIndex;
+            } catch(e) {}
+        }
+
+        // Conexão automática imediata ao carregar a página
+        handleLogin();
+    };
+
+    function showToast(message, type = 'info') {
+        const container = document.getElementById('toast-container');
+        const toast = document.createElement('div');
+        let bg = 'bg-surface-container-high';
+        let icon = 'info';
+        
+        if (type === 'success') icon = 'check_circle';
+        if (type === 'error') icon = 'error';
+
+        toast.className = `${bg} p-4 rounded-xl border border-muted/30 shadow-2xl flex items-center gap-3 text-text-primary text-[10px] font-bold uppercase tracking-widest backdrop-blur-md animate-bounce-in pointer-events-auto`;
+        toast.innerHTML = `<span class="material-symbols-outlined text-primary">${icon}</span><div class="flex-1">${message}</div>`;
+        container.appendChild(toast);
+        
+        setTimeout(() => {
+            toast.classList.add('opacity-0', '-translate-y-2');
+            setTimeout(() => toast.remove(), 300);
+        }, 3000);
+    }
+
+    function showFullscreenLoader(show, msg = "PROCESSANDO") {
+        const loader = document.getElementById('fullscreen-loader');
+        document.getElementById('loader-msg').textContent = msg;
+        show ? loader.classList.remove('hidden') : loader.classList.add('hidden');
+    }
+
+    function toggleCorsProxy() {
+        state.useCorsProxy = document.getElementById('toggle-cors').checked;
+    }
+
+    function handleProxyChange() {
+        state.currentProxyIndex = parseInt(document.getElementById('select-proxy-selector').value);
+    }
+
+    async function fetchWithProxyRotation(action = '', additionalParams = {}) {
+        let baseApiUrl = `${state.host}/player_api.php?username=${state.username}&password=${state.password}`;
+        if (action) baseApiUrl += `&action=${action}`;
+        for (const [key, value] of Object.entries(additionalParams)) {
+            baseApiUrl += `&${key}=${encodeURIComponent(value)}`;
+        }
+
+        if (!state.useCorsProxy) {
+            const response = await fetch(baseApiUrl);
+            if (!response.ok) throw new Error(`HTTP ${response.status}`);
+            return await response.json();
+        }
+      let startIndex = state.currentProxyIndex;
+        for (let i = 0; i < state.proxies.length; i++) {
+            let currentIndex = (startIndex + i) % state.proxies.length;
+            let activeProxy = state.proxies[currentIndex];
+            if (activeProxy.url === '' && i < state.proxies.length - 1) continue;
+            let requestUrl = activeProxy.encode ? `${activeProxy.url}${encodeURIComponent(baseApiUrl)}` : `${activeProxy.url}${baseApiUrl}`;
+            try {
+                const controller = new AbortController();
+                const timeoutId = setTimeout(() => controller.abort(), 8000);
+                const response = await fetch(requestUrl, { signal: controller.signal });
+                clearTimeout(timeoutId);
+                if (!response.ok) throw new Error(`Status ${response.status}`);
+                const data = await response.json();
+                state.currentProxyIndex = currentIndex;
+                return data;
+            } catch (err) { console.warn(`Proxy ${activeProxy.name} falhou.`); }
+        }
+        throw new Error("Falha geral na rede.");
+    }
+
+    function handleManualLogin(event) {
+        if (event) event.preventDefault();
+        handleLogin();
+    }
+
+    async function handleLogin() {
+        state.host = document.getElementById('input-host').value.trim();
+        state.username = document.getElementById('input-username').value.trim();
+        state.password = document.getElementById('input-password').value.trim();
+        
+        showFullscreenLoader(true, "AUTENTICANDO");
+
+        try {
+            const data = await fetchWithProxyRotation(); 
+            if (data.user_info && data.user_info.auth === 1) {
+                state.isLoggedIn = true;
+                localStorage.setItem('xtream_config', JSON.stringify({
+                    host: state.host, username: state.username, password: state.password, 
+                    useCorsProxy: state.useCorsProxy, currentProxyIndex: state.currentProxyIndex
+                }));
+                
+                document.getElementById('sidebar-account-card').classList.remove('hidden');
+                document.getElementById('card-username').textContent = data.user_info.username;
+                let expStr = data.user_info.exp_date ? `Exp: ${new Date(parseInt(data.user_info.exp_date) * 1000).toLocaleDateString()}` : 'Vitalício';
+                document.getElementById('card-status').textContent = expStr;
+                
+                showToast("Conectado com sucesso!", "success");
+                fetchMainCategories();
+            } else {
+                throw new Error("Credenciais inválidas");
+            }
+        } catch (err) {
+            showToast(err.message, "error");
+            switchTab('settings');
+        } finally {
+            showFullscreenLoader(false);
+        }
+    }
+
+    async function fetchMainCategories() {
+        try {
+            const [liveCat, vodCat, seriesCat] = await Promise.all([
+                fetchWithProxyRotation('get_live_categories'),
+                fetchWithProxyRotation('get_vod_categories'),
+                fetchWithProxyRotation('get_series_categories')
+            ]);
+            state.liveCategories = liveCat || [];
+            state.vodCategories = vodCat || [];
+            state.seriesCategories = seriesCat || [];
+        } catch(e) { showToast("Erro ao carregar categorias", "error"); }
+    }
+  function switchTab(tabId) {
+        // Update UI
+        document.querySelectorAll('.tab-pane').forEach(el => el.classList.add('hidden'));
+        document.querySelectorAll('.nav-item').forEach(el => {
+            el.classList.remove('text-primary');
+            el.classList.add('text-text-secondary');
+            el.querySelector('.indicator').classList.add('opacity-0');
+        });
+
+        const activeNav = document.getElementById(`btn-tab-${tabId}`);
+        if (activeNav) {
+            activeNav.classList.remove('text-text-secondary');
+            activeNav.classList.add('text-primary');
+            activeNav.querySelector('.indicator').classList.remove('opacity-0');
+        }
+
+        if (tabId === 'home') {
+            document.getElementById('tab-home').classList.remove('hidden');
+        } else if (tabId === 'settings') {
+            document.getElementById('tab-settings').classList.remove('hidden');
+        } else {
+            document.getElementById('tab-explorer').classList.remove('hidden');
+            loadContentTab(tabId);
+        }
+    }
+
+    function loadContentTab(contentType) {
+        state.currentCategoryType = contentType;
+        let categories = contentType === 'live' ? state.liveCategories : (contentType === 'vod' ? state.vodCategories : state.seriesCategories);
+        const list = document.getElementById('categories-list');
+        list.innerHTML = '';
+        
+        categories.forEach((cat, idx) => {
+            const btn = document.createElement('button');
+            btn.className = `flex-none px-4 py-2 rounded-full text-xs font-bold uppercase tracking-widest transition-all ${idx === 0 ? 'bg-primary text-on-primary' : 'bg-surface-container-high text-text-muted'}`;
+            btn.textContent = cat.category_name;
+            btn.onclick = (e) => {
+                document.querySelectorAll('#categories-list button').forEach(b => {
+                    b.classList.remove('bg-primary', 'text-on-primary');
+                    b.classList.add('bg-surface-container-high', 'text-text-muted');
+                });
+                btn.classList.add('bg-primary', 'text-on-primary');
+                selectCategory(cat.category_id);
+            };
+            list.appendChild(btn);
+        });
+
+        if (categories[0]) selectCategory(categories[0].category_id);
+    }
+
+    async function selectCategory(catId) {
+        state.currentCategoryId = catId;
+        showFullscreenLoader(true, "CARREGANDO");
+        try {
+            let action = state.currentCategoryType === 'live' ? 'get_live_streams' : (state.currentCategoryType === 'vod' ? 'get_vod_streams' : 'get_series');
+            state.cachedStreams = await fetchWithProxyRotation(action, { category_id: catId });
+            renderStreams(state.cachedStreams);
+        } catch(e) { showToast("Falha ao listar streams", "error"); }
+        finally { showFullscreenLoader(false); }
+    }
+
+    function renderStreams(items) {
+        const grid = document.getElementById('streams-grid');
+        grid.innerHTML = '';
+        
+        items.forEach(item => {
+            const id = item.stream_id || item.series_id;
+            const name = item.name || item.title;
+            const thumb = item.stream_icon || item.cover || `https://placehold.co/200x300/020617/1e293b?text=${name.charAt(0)}`;
+            
+            const card = document.createElement('div');
+            card.className = "flex flex-col gap-sm active:scale-95 transition-transform";
+            card.onclick = () => openStreamItem(item);
+            card.innerHTML = `
+                <div class="aspect-[2/3] rounded-xl overflow-hidden border border-muted/30 relative bg-surface-container">
+                    <img src="${thumb}" loading="lazy" class="w-full h-full object-cover">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent flex items-end p-2">
+                        <span class="text-[8px] font-bold text-white/50 truncate uppercase">${name}</span>
+                    </div>
+                </div>
+            `;
+            grid.appendChild(card);
+        });
+    }
+  function openStreamItem(item) {
+        state.currentPlayingStream = item;
+        const id = item.stream_id || item.series_id;
+        let type = state.currentCategoryType === 'vod' ? 'movie' : (state.currentCategoryType === 'series' ? 'series' : 'live');
+        let ext = item.container_extension || (type === 'live' ? 'ts' : 'mp4');
+        const url = `${state.host}/${type}/${state.username}/${state.password}/${id}.${ext}`;
+        
+        document.getElementById('playing-content-title').textContent = item.name || item.title;
+        document.getElementById('playing-content-info').textContent = `${state.currentCategoryType.toUpperCase()} • ID ${id}`;
+        
+        document.getElementById('player-modal').classList.remove('hidden');
+        initVideoPlayer(url, ext);
+        if (state.currentCategoryType === 'live') fetchEPGForCurrentStream();
+    }
+
+    function initVideoPlayer(url, ext) {
+        const video = document.getElementById('main-video-player');
+        const spinner = document.getElementById('player-spinner');
+        spinner.classList.remove('hidden');
+        
+        if (state.hlsInstance) state.hlsInstance.destroy();
+        if (state.activePlayer) state.activePlayer.destroy();
+        
+        let src = url;
+        const proxy = state.proxies[state.currentProxyIndex];
+        if (state.useCorsProxy && proxy && proxy.url !== '') {
+            src = proxy.encode ? `${proxy.url}${encodeURIComponent(url)}` : `${proxy.url}${url}`;
+        }
+
+        if (ext === 'm3u8') {
+            if (Hls.isSupported()) {
+                state.hlsInstance = new Hls();
+                state.hlsInstance.loadSource(src);
+                state.hlsInstance.attachMedia(video);
+            } else { video.src = src; }
+        } else if (ext === 'ts') {
+            if (mpegts.getFeatureList().mseLivePlayback) {
+                state.activePlayer = mpegts.createPlayer({ type: 'mse', isLive: true, url: src });
+                state.activePlayer.attachMediaElement(video);
+                state.activePlayer.load();
+            } else { video.src = src; }
+        } else {
+            video.src = src;
+        }
+
+        video.onplaying = () => spinner.classList.add('hidden');
+        video.onerror = () => { 
+            spinner.classList.add('hidden'); 
+            showToast("Erro de reprodução. Tente outro proxy.", "error"); 
+        };
+        video.play().catch(() => {});
+    }
+
+    function closeVideoPlayer() {
+        const v = document.getElementById('main-video-player');
+        v.pause(); v.src = '';
+        if (state.hlsInstance) state.hlsInstance.destroy();
+        if (state.activePlayer) state.activePlayer.destroy();
+        document.getElementById('player-modal').classList.add('hidden');
+    }
+
+    async function fetchEPGForCurrentStream() {
+        const list = document.getElementById('player-epg-list');
+        list.innerHTML = '<p class="text-body-sm text-text-muted animate-pulse">Sincronizando guia...</p>';
+        try {
+            const data = await fetchWithProxyRotation('get_simple_data_table', { stream_id: state.currentPlayingStream.stream_id });
+            list.innerHTML = '';
+            if (data && data.epg_listings && data.epg_listings.length > 0) {
+                data.epg_listings.forEach(l => {
+                    const div = document.createElement('div');
+                    div.className = "p-2 bg-surface-container-high rounded border border-muted/20";
+                    div.innerHTML = `<div class="flex justify-between text-[10px] font-bold text-primary"><span>${l.title}</span><span>${l.start}</span></div><p class="text-[9px] text-text-muted mt-1">${l.description || ''}</p>`;
+                    list.appendChild(div);
+                });
+            } else {
+                list.innerHTML = '<p class="text-body-sm text-text-muted italic">Nenhum programa listado.</p>';
+            }
+        } catch(e) { list.innerHTML = ''; }
+    }
+
+    function toggleSettingsTab() {
+        switchTab('settings');
+    }
+</script>
+</body>
+</html>
