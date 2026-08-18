@@ -73,9 +73,7 @@
             background: #0c1324;
             color: #dce1fb;
             font-family: 'Inter', sans-serif;
-
             -webkit-tap-highlight-color: transparent;
-
             overflow-x: hidden;
         }
 
@@ -245,7 +243,7 @@
 
 
     <!-- ============================================================
-         MAIN
+         CONTEÚDO PRINCIPAL
          ============================================================ -->
 
     <main
@@ -265,7 +263,7 @@
                 class="relative w-full max-w-6xl mx-auto aspect-video bg-black rounded-2xl overflow-hidden border border-white/10 player-glow">
 
 
-                <!-- PLACEHOLDER -->
+                <!-- PLAYER VAZIO -->
 
                 <div
                     id="playerPlaceholder"
@@ -321,7 +319,7 @@
                 </iframe>
 
 
-                <!-- LOADING -->
+                <!-- CARREGANDO -->
 
                 <div
                     id="playerLoading"
@@ -352,7 +350,7 @@
 
 
             <!-- ====================================================
-                 NOW PLAYING
+                 CANAL ATUAL
                  ==================================================== -->
 
             <div
@@ -423,7 +421,8 @@
         <!-- ========================================================
              LISTA DE CANAIS
              
-             Essa seção é escondida quando um canal é selecionado.
+             Esta seção é escondida quando um canal é selecionado.
+             O botão Canais da barra inferior alterna sua visibilidade.
              ======================================================== -->
 
         <section
@@ -433,6 +432,8 @@
             <div
                 class="max-w-6xl mx-auto">
 
+
+                <!-- TÍTULO -->
 
                 <div
                     class="flex items-end justify-between mb-4">
@@ -477,7 +478,7 @@
                 </div>
 
 
-                <!-- GRID DE CANAIS -->
+                <!-- GRID -->
 
                 <div
                     id="channelsGrid"
@@ -531,13 +532,23 @@
         </button>
 
 
-        <!-- CANAIS -->
+        <!-- ========================================================
+             CANAIS
+
+             Este botão funciona como um interruptor:
+
+             clique 1 = mostra
+             clique 2 = oculta
+             clique 3 = mostra
+             ======================================================== -->
 
         <button
             id="navChannels"
             class="flex flex-col items-center justify-center gap-1 text-textSecondary min-w-[64px]">
 
-            <span class="material-symbols-outlined">
+            <span
+                id="navChannelsIcon"
+                class="material-symbols-outlined">
 
                 live_tv
 
@@ -553,6 +564,7 @@
 
 
             <span
+                id="navChannelsIndicator"
                 class="w-1 h-1 rounded-full bg-primary opacity-0">
 
             </span>
@@ -560,7 +572,7 @@
         </button>
 
 
-        <!-- BUSCA -->
+        <!-- BUSCAR -->
 
         <button
             id="navSearch"
@@ -589,7 +601,7 @@
         </button>
 
 
-        <!-- CONFIG -->
+        <!-- CONFIGURAÇÕES -->
 
         <button
             id="navSettings"
@@ -707,10 +719,10 @@
 
 
         /* ============================================================
-           LOGO DO CANAL
+           OBTER LOGO DO CANAL
 
-           A logo vem do parâmetro "img" existente
-           no próprio link do canal.
+           A logo é retirada do parâmetro "img" existente
+           no link do próprio canal.
            ============================================================ */
 
         function getLogoFromLink(link) {
@@ -886,7 +898,7 @@
             }
 
 
-            /* BUSCA */
+            /* FILTRO DE BUSCA */
 
             if (
                 searchQuery.trim() !== ''
@@ -912,7 +924,7 @@
             }
 
 
-            /* NENHUM RESULTADO */
+            /* NENHUM CANAL */
 
             if (
                 channels.length === 0
@@ -1034,7 +1046,7 @@
 
 
         /* ============================================================
-           FILTRO
+           FILTRAR CATEGORIA
            ============================================================ */
 
         function filterCategory(category) {
@@ -1102,7 +1114,7 @@
                 );
 
 
-            /* MOSTRAR PLAYER */
+            /* MOSTRA O PLAYER */
 
             placeholder.classList.add(
                 'hidden'
@@ -1128,7 +1140,7 @@
                 link;
 
 
-            /* INFORMAÇÕES */
+            /* DADOS DO CANAL */
 
             currentTitle.textContent =
                 name;
@@ -1148,10 +1160,7 @@
 
 
             /* ========================================================
-               OCULTAR LISTA DE CANAIS
-
-               Ao selecionar um canal, toda a seção que fica
-               abaixo do player desaparece.
+               ESCONDE A LISTA AUTOMATICAMENTE
                ======================================================== */
 
             const channelsSection =
@@ -1169,7 +1178,12 @@
             }
 
 
-            /* IR PARA O PLAYER */
+            /* Atualiza o estado visual do botão */
+
+            updateChannelsButton();
+
+
+            /* VOLTA PARA O PLAYER */
 
             window.scrollTo({
 
@@ -1180,7 +1194,7 @@
             });
 
 
-            /* LOADING */
+            /* FINALIZA O LOADING */
 
             player.onload =
                 function () {
@@ -1200,10 +1214,10 @@
 
 
         /* ============================================================
-           MOSTRAR LISTA NOVAMENTE
+           MOSTRAR / OCULTAR LISTA
            ============================================================ */
 
-        function showChannelsSection() {
+        function toggleChannelsSection() {
 
             const channelsSection =
                 document.getElementById(
@@ -1211,10 +1225,135 @@
                 );
 
 
-            if (channelsSection) {
+            if (!channelsSection) {
+                return;
+            }
 
-                channelsSection.classList.remove(
-                    'hidden'
+
+            /*
+             * toggle:
+             *
+             * se estiver oculto -> mostra
+             * se estiver visível -> oculta
+             */
+
+            channelsSection.classList.toggle(
+                'hidden'
+            );
+
+
+            updateChannelsButton();
+
+
+            /*
+             * Se acabou de mostrar,
+             * leva o usuário até a lista.
+             */
+
+            if (
+                !channelsSection
+                    .classList
+                    .contains('hidden')
+            ) {
+
+                setTimeout(() => {
+
+                    channelsSection.scrollIntoView({
+
+                        behavior: 'smooth',
+
+                        block: 'start'
+
+                    });
+
+                }, 100);
+
+            }
+
+        }
+
+
+        /* ============================================================
+           ATUALIZAR VISUAL DO BOTÃO CANAIS
+           ============================================================ */
+
+        function updateChannelsButton() {
+
+            const channelsSection =
+                document.getElementById(
+                    'channelsSection'
+                );
+
+
+            const button =
+                document.getElementById(
+                    'navChannels'
+                );
+
+
+            const indicator =
+                document.getElementById(
+                    'navChannelsIndicator'
+                );
+
+
+            if (
+                !channelsSection ||
+                !button ||
+                !indicator
+            ) {
+
+                return;
+
+            }
+
+
+            const visible =
+                !channelsSection
+                    .classList
+                    .contains('hidden');
+
+
+            if (visible) {
+
+                button.classList.remove(
+                    'text-textSecondary'
+                );
+
+
+                button.classList.add(
+                    'text-primary'
+                );
+
+
+                indicator.classList.remove(
+                    'opacity-0'
+                );
+
+
+                indicator.classList.add(
+                    'opacity-100'
+                );
+
+            } else {
+
+                button.classList.remove(
+                    'text-primary'
+                );
+
+
+                button.classList.add(
+                    'text-textSecondary'
+                );
+
+
+                indicator.classList.remove(
+                    'opacity-100'
+                );
+
+
+                indicator.classList.add(
+                    'opacity-0'
                 );
 
             }
@@ -1234,22 +1373,34 @@
                 'click',
                 () => {
 
-                    showChannelsSection();
+                    const channelsSection =
+                        document.getElementById(
+                            'channelsSection'
+                        );
+
+
+                    if (!channelsSection) {
+                        return;
+                    }
+
+
+                    channelsSection.classList.remove(
+                        'hidden'
+                    );
+
+
+                    updateChannelsButton();
 
 
                     setTimeout(() => {
 
-                        document
-                            .getElementById(
-                                'channelsSection'
-                            )
-                            .scrollIntoView({
+                        channelsSection.scrollIntoView({
 
-                                behavior: 'smooth',
+                            behavior: 'smooth',
 
-                                block: 'start'
+                            block: 'start'
 
-                            });
+                        });
 
                     }, 100);
 
@@ -1258,7 +1409,15 @@
 
 
         /* ============================================================
-           BOTÃO CANAIS DA BARRA INFERIOR
+           BOTÃO "CANAIS" DA BARRA INFERIOR
+
+           AQUI ESTÁ A NOVA FUNÇÃO:
+
+           clique 1 -> mostra
+           clique 2 -> oculta
+           clique 3 -> mostra
+           clique 4 -> oculta
+           ...
            ============================================================ */
 
         document
@@ -1269,24 +1428,7 @@
                 'click',
                 () => {
 
-                    showChannelsSection();
-
-
-                    setTimeout(() => {
-
-                        document
-                            .getElementById(
-                                'channelsSection'
-                            )
-                            .scrollIntoView({
-
-                                behavior: 'smooth',
-
-                                block: 'start'
-
-                            });
-
-                    }, 100);
+                    toggleChannelsSection();
 
                 }
             );
@@ -1370,12 +1512,26 @@
 
 
                 /*
-                 * Se o usuário estiver procurando,
-                 * mostramos novamente a lista.
+                 * Ao pesquisar, garante que
+                 * a lista fique visível.
                  */
 
-                showChannelsSection();
+                const channelsSection =
+                    document.getElementById(
+                        'channelsSection'
+                    );
 
+
+                if (channelsSection) {
+
+                    channelsSection.classList.remove(
+                        'hidden'
+                    );
+
+                }
+
+
+                updateChannelsButton();
 
                 renderChannels();
 
@@ -1442,7 +1598,7 @@
 
 
         /* ============================================================
-           HOME
+           INÍCIO
            ============================================================ */
 
         document
@@ -1477,11 +1633,6 @@
                 'click',
                 () => {
 
-                    /*
-                     * Por enquanto o botão Config não abre
-                     * nenhum menu lateral, pois ele foi removido.
-                     */
-
                     console.log(
                         'Configurações'
                     );
@@ -1499,6 +1650,8 @@
             () => {
 
                 loadChannelData();
+
+                updateChannelsButton();
 
             }
         );
