@@ -472,30 +472,23 @@
 
         <button
             id="navHome"
+            onclick="window.location.href='index.html';"
             class="flex flex-col items-center justify-center gap-1 text-primary min-w-[64px]">
 
             <span
                 class="material-symbols-outlined"
                 style="font-variation-settings:'FILL' 1;">
-
                 home
-
             </span>
-
 
             <span
                 class="text-[9px] uppercase tracking-wider font-bold">
-
                 Início
-
             </span>
-
 
             <span
                 class="w-1 h-1 rounded-full bg-primary">
-
             </span>
-
         </button>
 
 
@@ -582,7 +575,7 @@
             </span>
 
 
-            <span
+            <spana
                 class="text-[9px] uppercase tracking-wider font-bold">
 
                 Config
@@ -623,7 +616,8 @@
             try {
 
                 const response =
-                    await fetch('canais.json');
+                    // await fetch('canais.json');
+                    await fetch('https://boatvapp.github.io/canais.json');
 
 
                 if (!response.ok) {
