@@ -125,7 +125,7 @@
         // Function to fetch channel data from canais.json
         async function loadChannelData() {
             try {
-                const response = await fetch('http://boatvapp.github.io/canais.json');
+                const response = await fetch('canais.json');
                 if (!response.ok) {
                     throw new Error('Erro ao carregar o arquivo canais.json');
                 }
