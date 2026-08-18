@@ -6,10 +6,8 @@
 
     <title>BOA.TV</title>
 
-    <!-- Tailwind -->
     <script src="https://cdn.tailwindcss.com"></script>
 
-    <!-- Material Symbols -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Material+Symbols+Outlined:FILL@0..1&display=swap" rel="stylesheet">
 
     <script>
@@ -115,17 +113,6 @@
             -webkit-backdrop-filter: blur(14px);
         }
 
-        .hero-gradient {
-            background:
-                linear-gradient(
-                    to top,
-                    #0c1324 0%,
-                    rgba(12, 19, 36, 0.85) 35%,
-                    rgba(12, 19, 36, 0.15) 75%,
-                    transparent 100%
-                );
-        }
-
         .channel-card {
             transition:
                 transform .18s ease,
@@ -168,7 +155,7 @@
 
 <body class="pb-24">
 
-    <!-- Toast -->
+    <!-- TOAST -->
     <div
         id="toast-container"
         class="fixed top-20 left-1/2 -translate-x-1/2 z-[100] w-[90%] max-w-sm pointer-events-none">
@@ -232,7 +219,7 @@
     </div>
 
 
-    <!-- SIDEBAR / CATEGORY MENU -->
+    <!-- SIDEBAR -->
     <aside
         id="sidebar"
         class="fixed top-16 bottom-20 left-0 z-40 w-[300px] max-w-[85vw]
@@ -241,12 +228,12 @@
 
         <div class="h-full flex flex-col">
 
-            <!-- Menu title -->
             <div class="p-4 border-b border-white/5">
 
                 <div class="flex items-center justify-between">
 
                     <div>
+
                         <p class="text-[10px] uppercase tracking-[.2em] font-bold text-textMuted">
                             Navegação
                         </p>
@@ -254,6 +241,7 @@
                         <h2 class="text-lg font-bold text-white mt-1">
                             Canais
                         </h2>
+
                     </div>
 
                     <button
@@ -271,17 +259,12 @@
             </div>
 
 
-            <!-- Categories -->
             <div
                 id="categoryContainer"
                 class="flex gap-2 p-3 overflow-x-auto hide-scrollbar border-b border-white/5">
-
-                <!-- Categorias carregadas pelo JS -->
-
             </div>
 
 
-            <!-- Channels -->
             <div
                 id="channelsList"
                 class="flex-1 overflow-y-auto p-3 space-y-2">
@@ -312,7 +295,7 @@
         class="pt-16 min-h-screen">
 
 
-        <!-- HERO / PLAYER -->
+        <!-- PLAYER -->
         <section
             class="relative w-full px-4 pt-4">
 
@@ -320,7 +303,6 @@
                 id="playerWrapper"
                 class="relative w-full max-w-6xl mx-auto aspect-video bg-black rounded-2xl overflow-hidden border border-white/10 player-glow">
 
-                <!-- Placeholder -->
                 <div
                     id="playerPlaceholder"
                     class="absolute inset-0 flex flex-col items-center justify-center text-center p-6">
@@ -354,7 +336,6 @@
                 </div>
 
 
-                <!-- Player -->
                 <iframe
                     id="videoPlayer"
                     class="w-full h-full border-0 hidden"
@@ -363,7 +344,6 @@
                 </iframe>
 
 
-                <!-- Player loading -->
                 <div
                     id="playerLoading"
                     class="absolute inset-0 hidden items-center justify-center bg-black/70">
@@ -438,8 +418,14 @@
         </section>
 
 
-        <!-- CHANNEL SECTION -->
-        <section class="mt-8 px-4">
+        <!-- LISTA DE CANAIS -->
+        <!--
+            Esta seção recebe o ID "channelsSection".
+            Quando um canal é selecionado, ela é ocultada.
+        -->
+        <section
+            id="channelsSection"
+            class="mt-8 px-4">
 
             <div class="max-w-6xl mx-auto">
 
@@ -468,21 +454,15 @@
                 </div>
 
 
-                <!-- Categories desktop/mobile -->
                 <div
                     id="categoryContainerMain"
                     class="flex gap-2 overflow-x-auto hide-scrollbar pb-3">
-
                 </div>
 
 
-                <!-- Channel grid -->
                 <div
                     id="channelsGrid"
                     class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3">
-
-                    <!-- Preenchido pelo JS -->
-
                 </div>
 
             </div>
@@ -570,12 +550,6 @@
 
     <script>
 
-        /*
-         * ============================================================
-         * DADOS DOS CANAIS
-         * ============================================================
-         */
-
         let channelData = {};
 
         let currentActiveCategory = "ALL";
@@ -585,7 +559,7 @@
 
         /*
          * ============================================================
-         * CARREGAMENTO DO canais.json
+         * CARREGAR CANAIS
          * ============================================================
          */
 
@@ -593,13 +567,17 @@
 
             try {
 
-                const response = await fetch('https://boatvapp.github.io/canais.json');
+                const response =
+                    await fetch('canais.json');
 
                 if (!response.ok) {
-                    throw new Error('Erro ao carregar o arquivo canais.json');
+                    throw new Error(
+                        'Erro ao carregar o arquivo canais.json'
+                    );
                 }
 
-                channelData = await response.json();
+                channelData =
+                    await response.json();
 
                 renderCategories();
 
@@ -610,7 +588,7 @@
                 console.error(error);
 
                 const errorHTML = `
-                    <div class="col-span-full text-center py-12 text-red-400">
+                    <div class="text-center py-12 text-red-400">
 
                         <span class="material-symbols-outlined text-3xl mb-3">
                             error
@@ -627,10 +605,96 @@
                     </div>
                 `;
 
-                document.getElementById('channelsList').innerHTML = errorHTML;
+                document.getElementById(
+                    'channelsList'
+                ).innerHTML = errorHTML;
 
-                document.getElementById('channelsGrid').innerHTML = errorHTML;
+                document.getElementById(
+                    'channelsGrid'
+                ).innerHTML = errorHTML;
+
             }
+
+        }
+
+
+        /*
+         * ============================================================
+         * LOGO DO CANAL
+         * ============================================================
+         *
+         * A logo é obtida do parâmetro "img"
+         * existente no link do próprio canal.
+         */
+
+        function getLogoFromLink(link) {
+
+            try {
+
+                const url =
+                    new URL(
+                        link,
+                        window.location.href
+                    );
+
+                const img =
+                    url.searchParams.get('img');
+
+                if (img) {
+
+                    return decodeURIComponent(img);
+
+                }
+
+                return 'https://via.placeholder.com/200';
+
+            } catch (error) {
+
+                console.warn(
+                    'Não foi possível obter a logo pelo link:',
+                    error
+                );
+
+                return 'https://via.placeholder.com/200';
+
+            }
+
+        }
+
+
+        /*
+         * ============================================================
+         * ESCAPAR HTML
+         * ============================================================
+         */
+
+        function escapeHTML(value) {
+
+            return String(value ?? '')
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#039;');
+
+        }
+
+
+        function escapeAttribute(value) {
+
+            return escapeHTML(value);
+
+        }
+
+
+        function escapeJS(value) {
+
+            return String(value ?? '')
+                .replace(/\\/g, '\\\\')
+                .replace(/'/g, "\\'")
+                .replace(/"/g, '\\"')
+                .replace(/\r/g, '\\r')
+                .replace(/\n/g, '\\n');
 
         }
 
@@ -643,15 +707,18 @@
 
         function renderCategories() {
 
-            const categories = Object.keys(channelData);
+            const categories =
+                Object.keys(channelData);
 
             let html = `
                 <button
                     onclick="filterCategory('ALL')"
                     class="category-btn flex-none px-4 py-2 rounded-full text-[10px] font-bold uppercase tracking-wider
-                    ${currentActiveCategory === 'ALL'
-                        ? 'active'
-                        : 'bg-surfaceHigh text-textSecondary'}">
+                    ${
+                        currentActiveCategory === 'ALL'
+                            ? 'active'
+                            : 'bg-surfaceHigh text-textSecondary'
+                    }">
 
                     Todos
 
@@ -661,44 +728,60 @@
 
             categories.forEach(cat => {
 
-                const isActive = currentActiveCategory === cat;
+                const isActive =
+                    currentActiveCategory === cat;
+
 
                 html += `
+
                     <button
-                        onclick="filterCategory('${escapeAttribute(cat)}')"
+                        onclick="filterCategory('${escapeJS(cat)}')"
                         class="category-btn flex-none px-4 py-2 rounded-full text-[10px] font-bold uppercase tracking-wider
-                        ${isActive
-                            ? 'active'
-                            : 'bg-surfaceHigh text-textSecondary'}">
+                        ${
+                            isActive
+                                ? 'active'
+                                : 'bg-surfaceHigh text-textSecondary'
+                        }">
 
                         ${escapeHTML(cat)}
 
                     </button>
+
                 `;
 
             });
 
 
-            document.getElementById('categoryContainer').innerHTML = html;
+            document.getElementById(
+                'categoryContainer'
+            ).innerHTML = html;
 
-            document.getElementById('categoryContainerMain').innerHTML = html;
+
+            document.getElementById(
+                'categoryContainerMain'
+            ).innerHTML = html;
 
         }
 
 
         /*
          * ============================================================
-         * CANAIS
+         * RENDERIZAR CANAIS
          * ============================================================
          */
 
         function renderChannels() {
 
             const listContainer =
-                document.getElementById('channelsList');
+                document.getElementById(
+                    'channelsList'
+                );
+
 
             const gridContainer =
-                document.getElementById('channelsGrid');
+                document.getElementById(
+                    'channelsGrid'
+                );
 
 
             let matchedChannels = [];
@@ -706,17 +789,20 @@
 
             if (currentActiveCategory === 'ALL') {
 
-                Object.values(channelData).forEach(group => {
+                Object.values(channelData)
+                    .forEach(group => {
 
-                    matchedChannels =
-                        matchedChannels.concat(group);
+                        matchedChannels =
+                            matchedChannels.concat(group);
 
-                });
+                    });
 
             } else {
 
                 matchedChannels =
-                    channelData[currentActiveCategory] || [];
+                    channelData[
+                        currentActiveCategory
+                    ] || [];
 
             }
 
@@ -730,10 +816,13 @@
                 const query =
                     searchQuery.toLowerCase();
 
+
                 matchedChannels =
                     matchedChannels.filter(ch =>
                         ch.nome &&
-                        ch.nome.toLowerCase().includes(query)
+                        ch.nome
+                            .toLowerCase()
+                            .includes(query)
                     );
 
             }
@@ -746,6 +835,7 @@
             if (matchedChannels.length === 0) {
 
                 const emptyHTML = `
+
                     <div class="text-center py-12 text-textMuted">
 
                         <span class="material-symbols-outlined text-3xl mb-3">
@@ -757,15 +847,17 @@
                         </p>
 
                     </div>
+
                 `;
 
-                listContainer.innerHTML = emptyHTML;
 
-                gridContainer.innerHTML = `
-                    <div class="col-span-full">
-                        ${emptyHTML}
-                    </div>
-                `;
+                listContainer.innerHTML =
+                    emptyHTML;
+
+
+                gridContainer.innerHTML =
+                    emptyHTML;
+
 
                 return;
 
@@ -781,9 +873,8 @@
 
             matchedChannels.forEach(ch => {
 
-                const safeImg =
-                    ch.capa ||
-                    'https://via.placeholder.com/80';
+                const logo =
+                    getLogoFromLink(ch.link);
 
 
                 sidebarHTML += `
@@ -792,7 +883,7 @@
                         onclick="playChannel(
                             '${escapeJS(ch.link)}',
                             '${escapeJS(ch.nome)}',
-                            '${escapeJS(safeImg)}',
+                            '${escapeJS(logo)}',
                             '${escapeJS(ch.categoria)}'
                         )"
                         class="channel-card flex items-center gap-3 p-2 rounded-xl
@@ -804,7 +895,7 @@
                                    p-1 flex-shrink-0">
 
                             <img
-                                src="${escapeAttribute(safeImg)}"
+                                src="${escapeAttribute(logo)}"
                                 alt=""
                                 class="w-full h-full object-contain"
                                 onerror="this.src='https://via.placeholder.com/80'">
@@ -847,7 +938,8 @@
             });
 
 
-            listContainer.innerHTML = sidebarHTML;
+            listContainer.innerHTML =
+                sidebarHTML;
 
 
             /*
@@ -859,9 +951,8 @@
 
             matchedChannels.forEach(ch => {
 
-                const safeImg =
-                    ch.capa ||
-                    'https://via.placeholder.com/200';
+                const logo =
+                    getLogoFromLink(ch.link);
 
 
                 gridHTML += `
@@ -870,7 +961,7 @@
                         onclick="playChannel(
                             '${escapeJS(ch.link)}',
                             '${escapeJS(ch.nome)}',
-                            '${escapeJS(safeImg)}',
+                            '${escapeJS(logo)}',
                             '${escapeJS(ch.categoria)}'
                         )"
                         class="channel-card cursor-pointer">
@@ -880,7 +971,7 @@
                                    bg-surfaceContainer border border-white/5">
 
                             <img
-                                src="${escapeAttribute(safeImg)}"
+                                src="${escapeAttribute(logo)}"
                                 alt="${escapeAttribute(ch.nome)}"
                                 loading="lazy"
                                 class="w-full h-full object-contain p-4"
@@ -931,7 +1022,8 @@
             });
 
 
-            gridContainer.innerHTML = gridHTML;
+            gridContainer.innerHTML =
+                gridHTML;
 
         }
 
@@ -944,7 +1036,8 @@
 
         function filterCategory(category) {
 
-            currentActiveCategory = category;
+            currentActiveCategory =
+                category;
 
             renderCategories();
 
@@ -967,75 +1060,142 @@
         ) {
 
             const player =
-                document.getElementById('videoPlayer');
+                document.getElementById(
+                    'videoPlayer'
+                );
+
 
             const placeholder =
-                document.getElementById('playerPlaceholder');
+                document.getElementById(
+                    'playerPlaceholder'
+                );
+
 
             const nowPlaying =
-                document.getElementById('nowPlaying');
+                document.getElementById(
+                    'nowPlaying'
+                );
+
 
             const currentTitle =
-                document.getElementById('currentTitle');
+                document.getElementById(
+                    'currentTitle'
+                );
+
 
             const currentLogo =
-                document.getElementById('currentLogo');
+                document.getElementById(
+                    'currentLogo'
+                );
+
 
             const currentCategory =
-                document.getElementById('currentCategory');
+                document.getElementById(
+                    'currentCategory'
+                );
+
 
             const loading =
-                document.getElementById('playerLoading');
-
-
-            loading.classList.remove('hidden');
-
-            loading.classList.add('flex');
-
-            placeholder.classList.add('hidden');
-
-            player.classList.remove('hidden');
-
-            player.src = link;
-
-
-            currentTitle.textContent = name;
-
-            currentLogo.src = capa;
-
-            currentCategory.textContent = categoria;
-
-            nowPlaying.classList.remove('hidden');
+                document.getElementById(
+                    'playerLoading'
+                );
 
 
             /*
-             * Fecha o menu no celular
+             * MOSTRA O PLAYER
              */
 
-            if (window.innerWidth < 768) {
+            placeholder.classList.add(
+                'hidden'
+            );
 
-                document
-                    .getElementById('sidebar')
-                    .classList.add('-translate-x-full');
+
+            player.classList.remove(
+                'hidden'
+            );
+
+
+            loading.classList.remove(
+                'hidden'
+            );
+
+
+            loading.classList.add(
+                'flex'
+            );
+
+
+            player.src =
+                link;
+
+
+            /*
+             * INFORMAÇÕES DO CANAL
+             */
+
+            currentTitle.textContent =
+                name;
+
+
+            /*
+             * A logo continua sendo
+             * obtida pelo link.
+             */
+
+            currentLogo.src =
+                getLogoFromLink(link);
+
+
+            currentCategory.textContent =
+                categoria;
+
+
+            nowPlaying.classList.remove(
+                'hidden'
+            );
+
+
+            /*
+             * ========================================================
+             * OCULTAR A LISTA DE CANAIS ABAIXO DO PLAYER
+             * ========================================================
+             */
+
+            const channelsSection =
+                document.getElementById(
+                    'channelsSection'
+                );
+
+
+            if (channelsSection) {
+
+                channelsSection.classList.add(
+                    'hidden'
+                );
 
             }
 
 
             /*
-             * Esconde loading quando o iframe carregar
+             * FECHAR SIDEBAR NO CELULAR
              */
 
-            player.onload = function () {
+            if (window.innerWidth < 768) {
 
-                loading.classList.add('hidden');
+                document
+                    .getElementById(
+                        'sidebar'
+                    )
+                    .classList.add(
+                        '-translate-x-full'
+                    );
 
-                loading.classList.remove('flex');
-
-            };
+            }
 
 
             /*
-             * Scroll para o player
+             * VOLTAR AO TOPO,
+             * DEIXANDO O PLAYER VISÍVEL
              */
 
             window.scrollTo({
@@ -1043,42 +1203,48 @@
                 behavior: 'smooth'
             });
 
+
+            /*
+             * FINALIZAR LOADING
+             */
+
+            player.onload =
+                function () {
+
+                    loading.classList.add(
+                        'hidden'
+                    );
+
+                    loading.classList.remove(
+                        'flex'
+                    );
+
+                };
+
         }
 
 
         /*
          * ============================================================
-         * ESCAPES DE SEGURANÇA PARA HTML/JS
+         * MOSTRAR LISTA DE CANAIS
          * ============================================================
          */
 
-        function escapeHTML(value) {
+        function showChannelsSection() {
 
-            return String(value ?? '')
-                .replace(/&/g, '&amp;')
-                .replace(/</g, '&lt;')
-                .replace(/>/g, '&gt;')
-                .replace(/"/g, '&quot;')
-                .replace(/'/g, '&#039;');
-
-        }
+            const channelsSection =
+                document.getElementById(
+                    'channelsSection'
+                );
 
 
-        function escapeAttribute(value) {
+            if (channelsSection) {
 
-            return escapeHTML(value);
+                channelsSection.classList.remove(
+                    'hidden'
+                );
 
-        }
-
-
-        function escapeJS(value) {
-
-            return String(value ?? '')
-                .replace(/\\/g, '\\\\')
-                .replace(/'/g, "\\'")
-                .replace(/"/g, '\\"')
-                .replace(/\r/g, '\\r')
-                .replace(/\n/g, '\\n');
+            }
 
         }
 
@@ -1092,15 +1258,22 @@
         function toggleSidebar() {
 
             const sidebar =
-                document.getElementById('sidebar');
+                document.getElementById(
+                    'sidebar'
+                );
 
-            sidebar.classList.toggle('-translate-x-full');
+
+            sidebar.classList.toggle(
+                '-translate-x-full'
+            );
 
         }
 
 
         document
-            .getElementById('sidebarToggle')
+            .getElementById(
+                'sidebarToggle'
+            )
             .addEventListener(
                 'click',
                 toggleSidebar
@@ -1108,42 +1281,97 @@
 
 
         document
-            .getElementById('closeSidebar')
+            .getElementById(
+                'closeSidebar'
+            )
             .addEventListener(
                 'click',
                 () => {
 
                     document
-                        .getElementById('sidebar')
-                        .classList.add('-translate-x-full');
+                        .getElementById(
+                            'sidebar'
+                        )
+                        .classList.add(
+                            '-translate-x-full'
+                        );
 
                 }
             );
 
 
+        /*
+         * ============================================================
+         * BOTÃO VER CANAIS
+         * ============================================================
+         */
+
         document
-            .getElementById('openChannels')
+            .getElementById(
+                'openChannels'
+            )
             .addEventListener(
                 'click',
                 () => {
 
+                    showChannelsSection();
+
                     document
-                        .getElementById('sidebar')
-                        .classList.remove('-translate-x-full');
+                        .getElementById(
+                            'sidebar'
+                        )
+                        .classList.remove(
+                            '-translate-x-full'
+                        );
 
                 }
             );
 
 
+        /*
+         * ============================================================
+         * BOTÃO CANAIS DA BARRA INFERIOR
+         * ============================================================
+         *
+         * Além de abrir o menu lateral, ele também
+         * mostra novamente a lista abaixo do player.
+         */
+
         document
-            .getElementById('navChannels')
+            .getElementById(
+                'navChannels'
+            )
             .addEventListener(
                 'click',
                 () => {
 
+                    showChannelsSection();
+
                     document
-                        .getElementById('sidebar')
-                        .classList.remove('-translate-x-full');
+                        .getElementById(
+                            'sidebar'
+                        )
+                        .classList.remove(
+                            '-translate-x-full'
+                        );
+
+                    setTimeout(() => {
+
+                        const channelsSection =
+                            document.getElementById(
+                                'channelsSection'
+                            );
+
+                        if (channelsSection) {
+
+                            channelsSection.scrollIntoView({
+                                behavior: 'smooth',
+                                block: 'start'
+                            });
+
+                        }
+
+                    }, 100);
 
                 }
             );
@@ -1156,20 +1384,35 @@
          */
 
         const searchInput =
-            document.getElementById('searchInput');
+            document.getElementById(
+                'searchInput'
+            );
+
 
         const mobileSearch =
-            document.getElementById('mobileSearch');
+            document.getElementById(
+                'mobileSearch'
+            );
+
 
         const clearSearch =
-            document.getElementById('clearSearch');
+            document.getElementById(
+                'clearSearch'
+            );
 
 
         function toggleSearch() {
 
-            mobileSearch.classList.toggle('hidden');
+            mobileSearch.classList.toggle(
+                'hidden'
+            );
 
-            if (!mobileSearch.classList.contains('hidden')) {
+
+            if (
+                !mobileSearch
+                    .classList
+                    .contains('hidden')
+            ) {
 
                 searchInput.focus();
 
@@ -1179,7 +1422,9 @@
 
 
         document
-            .getElementById('searchButton')
+            .getElementById(
+                'searchButton'
+            )
             .addEventListener(
                 'click',
                 toggleSearch
@@ -1187,7 +1432,9 @@
 
 
         document
-            .getElementById('navSearch')
+            .getElementById(
+                'navSearch'
+            )
             .addEventListener(
                 'click',
                 toggleSearch
@@ -1201,15 +1448,23 @@
                 searchQuery =
                     event.target.value;
 
-                if (searchQuery.trim() !== '') {
 
-                    clearSearch.classList.remove('hidden');
+                if (
+                    searchQuery.trim() !== ''
+                ) {
+
+                    clearSearch.classList.remove(
+                        'hidden'
+                    );
 
                 } else {
 
-                    clearSearch.classList.add('hidden');
+                    clearSearch.classList.add(
+                        'hidden'
+                    );
 
                 }
+
 
                 renderChannels();
 
@@ -1225,7 +1480,9 @@
 
                 searchQuery = '';
 
-                clearSearch.classList.add('hidden');
+                clearSearch.classList.add(
+                    'hidden'
+                );
 
                 renderChannels();
 
@@ -1240,19 +1497,28 @@
          */
 
         document
-            .getElementById('fullscreenPlayer')
+            .getElementById(
+                'fullscreenPlayer'
+            )
             .addEventListener(
                 'click',
                 () => {
 
                     const wrapper =
-                        document.getElementById('playerWrapper');
+                        document.getElementById(
+                            'playerWrapper'
+                        );
 
-                    if (wrapper.requestFullscreen) {
+
+                    if (
+                        wrapper.requestFullscreen
+                    ) {
 
                         wrapper.requestFullscreen();
 
-                    } else if (wrapper.webkitRequestFullscreen) {
+                    } else if (
+                        wrapper.webkitRequestFullscreen
+                    ) {
 
                         wrapper.webkitRequestFullscreen();
 
@@ -1269,7 +1535,9 @@
          */
 
         document
-            .getElementById('navHome')
+            .getElementById(
+                'navHome'
+            )
             .addEventListener(
                 'click',
                 () => {
@@ -1285,24 +1553,25 @@
 
         /*
          * ============================================================
-         * CONFIG
+         * CONFIGURAÇÕES
          * ============================================================
          */
 
         document
-            .getElementById('navSettings')
+            .getElementById(
+                'navSettings'
+            )
             .addEventListener(
                 'click',
                 () => {
 
-                    /*
-                     * O layout não altera a lógica existente.
-                     * O botão permanece reservado para configurações.
-                     */
-
                     document
-                        .getElementById('sidebar')
-                        .classList.remove('-translate-x-full');
+                        .getElementById(
+                            'sidebar'
+                        )
+                        .classList.remove(
+                            '-translate-x-full'
+                        );
 
                 }
             );
