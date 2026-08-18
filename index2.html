@@ -133,8 +133,8 @@
         let channelData = {}, currentActiveCategory = "ALL", searchQuery = "", hlsInstance = null;
         async function loadChannelData() {
             try {
-                // const response = await fetch('https://boatvapp.github.io/canais.json');
-                const response = await fetch('canais.json');
+                const response = await fetch('https://boatvapp.github.io/canais.json');
+                // const response = await fetch('canais.json');
                 channelData = await response.json();
                 renderCategories(); renderChannels();
             } catch (error) { console.error(error); }
