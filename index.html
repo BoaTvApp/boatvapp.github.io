@@ -197,7 +197,7 @@
 
 
     <!-- ============================================================
-         HEADER
+         CABEÇALHO
          ============================================================ -->
 
     <header
@@ -253,73 +253,36 @@
 
         <!-- ========================================================
              PLAYER
+
+             IMPORTANTE:
+             A seção começa com "hidden".
+             Portanto, o player NÃO aparece quando a página abre.
+
+             Ela será exibida somente depois que um canal for
+             selecionado.
              ======================================================== -->
 
         <section
-            class="relative w-full px-4 pt-4">
+            id="playerSection"
+            class="relative w-full px-4 pt-4 hidden">
+
 
             <div
                 id="playerWrapper"
                 class="relative w-full max-w-6xl mx-auto aspect-video bg-black rounded-2xl overflow-hidden border border-white/10 player-glow">
 
 
-                <!-- PLAYER VAZIO -->
-
-                <div
-                    id="playerPlaceholder"
-                    class="absolute inset-0 flex flex-col items-center justify-center text-center p-6">
-
-                    <div
-                        class="w-20 h-20 rounded-full bg-surfaceContainer flex items-center justify-center mb-4">
-
-                        <span
-                            class="material-symbols-outlined text-4xl text-primary">
-
-                            live_tv
-
-                        </span>
-
-                    </div>
-
-
-                    <h1
-                        class="text-lg font-bold text-white">
-
-                        BOA.TV
-
-                    </h1>
-
-
-                    <p
-                        class="text-xs text-textSecondary mt-2 max-w-xs">
-
-                        Selecione um canal para iniciar a transmissão.
-
-                    </p>
-
-
-                    <button
-                        id="openChannels"
-                        class="mt-5 px-5 py-3 bg-primary text-surface rounded-xl text-xs font-bold uppercase tracking-wider active:scale-95 transition">
-
-                        Ver Canais
-
-                    </button>
-
-                </div>
-
-
                 <!-- PLAYER -->
 
                 <iframe
                     id="videoPlayer"
-                    class="w-full h-full border-0 hidden"
+                    class="w-full h-full border-0"
                     allowfullscreen
                     allow="autoplay; encrypted-media">
                 </iframe>
 
 
-                <!-- CARREGANDO -->
+                <!-- LOADING -->
 
                 <div
                     id="playerLoading"
@@ -350,12 +313,12 @@
 
 
             <!-- ====================================================
-                 CANAL ATUAL
+                 INFORMAÇÕES DO CANAL
                  ==================================================== -->
 
             <div
                 id="nowPlaying"
-                class="hidden w-full max-w-6xl mx-auto mt-3 bg-surfaceContainer rounded-xl border border-white/5 p-3">
+                class="w-full max-w-6xl mx-auto mt-3 bg-surfaceContainer rounded-xl border border-white/5 p-3">
 
                 <div
                     class="flex items-center gap-3">
@@ -420,14 +383,18 @@
 
         <!-- ========================================================
              LISTA DE CANAIS
-             
-             Esta seção é escondida quando um canal é selecionado.
-             O botão Canais da barra inferior alterna sua visibilidade.
+
+             A lista começa visível.
+
+             Quando um canal é selecionado:
+             - player aparece
+             - lista desaparece
              ======================================================== -->
 
         <section
             id="channelsSection"
             class="mt-8 px-4">
+
 
             <div
                 class="max-w-6xl mx-auto">
@@ -478,7 +445,7 @@
                 </div>
 
 
-                <!-- GRID -->
+                <!-- GRID DE CANAIS -->
 
                 <div
                     id="channelsGrid"
@@ -535,19 +502,18 @@
         <!-- ========================================================
              CANAIS
 
-             Este botão funciona como um interruptor:
-
-             clique 1 = mostra
-             clique 2 = oculta
-             clique 3 = mostra
+             Clique:
+             - mostra
+             - oculta
+             - mostra
+             - oculta
              ======================================================== -->
 
         <button
             id="navChannels"
-            class="flex flex-col items-center justify-center gap-1 text-textSecondary min-w-[64px]">
+            class="flex flex-col items-center justify-center gap-1 text-primary min-w-[64px]">
 
             <span
-                id="navChannelsIcon"
                 class="material-symbols-outlined">
 
                 live_tv
@@ -565,7 +531,7 @@
 
             <span
                 id="navChannelsIndicator"
-                class="w-1 h-1 rounded-full bg-primary opacity-0">
+                class="w-1 h-1 rounded-full bg-primary">
 
             </span>
 
@@ -578,7 +544,8 @@
             id="navSearch"
             class="flex flex-col items-center justify-center gap-1 text-textSecondary min-w-[64px]">
 
-            <span class="material-symbols-outlined">
+            <span
+                class="material-symbols-outlined">
 
                 search
 
@@ -607,7 +574,8 @@
             id="navSettings"
             class="flex flex-col items-center justify-center gap-1 text-textSecondary min-w-[64px]">
 
-            <span class="material-symbols-outlined">
+            <span
+                class="material-symbols-outlined">
 
                 settings
 
@@ -637,6 +605,7 @@
          ============================================================ -->
 
     <script>
+
 
         let channelData = {};
 
@@ -719,10 +688,10 @@
 
 
         /* ============================================================
-           OBTER LOGO DO CANAL
+           LOGO
 
-           A logo é retirada do parâmetro "img" existente
-           no link do próprio canal.
+           A logo continua vindo do parâmetro "img" do link
+           do próprio canal.
            ============================================================ */
 
         function getLogoFromLink(link) {
@@ -898,7 +867,7 @@
             }
 
 
-            /* FILTRO DE BUSCA */
+            /* BUSCA */
 
             if (
                 searchQuery.trim() !== ''
@@ -924,7 +893,7 @@
             }
 
 
-            /* NENHUM CANAL */
+            /* NENHUM RESULTADO */
 
             if (
                 channels.length === 0
@@ -1072,15 +1041,21 @@
             categoria
         ) {
 
+            const playerSection =
+                document.getElementById(
+                    'playerSection'
+                );
+
+
             const player =
                 document.getElementById(
                     'videoPlayer'
                 );
 
 
-            const placeholder =
+            const channelsSection =
                 document.getElementById(
-                    'playerPlaceholder'
+                    'channelsSection'
                 );
 
 
@@ -1114,17 +1089,23 @@
                 );
 
 
-            /* MOSTRA O PLAYER */
+            /*
+             * ========================================================
+             * AGORA O PLAYER SÓ É MOSTRADO AQUI.
+             *
+             * Antes de selecionar o canal, playerSection possui
+             * a classe "hidden".
+             * ========================================================
+             */
 
-            placeholder.classList.add(
+            playerSection.classList.remove(
                 'hidden'
             );
 
 
-            player.classList.remove(
-                'hidden'
-            );
-
+            /*
+             * Mostra loading
+             */
 
             loading.classList.remove(
                 'hidden'
@@ -1136,11 +1117,17 @@
             );
 
 
+            /*
+             * Define o canal
+             */
+
             player.src =
                 link;
 
 
-            /* DADOS DO CANAL */
+            /*
+             * Informações do canal
+             */
 
             currentTitle.textContent =
                 name;
@@ -1159,42 +1146,44 @@
             );
 
 
-            /* ========================================================
-               ESCONDE A LISTA AUTOMATICAMENTE
-               ======================================================== */
+            /*
+             * ========================================================
+             * OCULTA A LISTA DE CANAIS
+             * ========================================================
+             */
 
-            const channelsSection =
-                document.getElementById(
-                    'channelsSection'
-                );
-
-
-            if (channelsSection) {
-
-                channelsSection.classList.add(
-                    'hidden'
-                );
-
-            }
+            channelsSection.classList.add(
+                'hidden'
+            );
 
 
-            /* Atualiza o estado visual do botão */
+            /*
+             * Atualiza botão Canais
+             */
 
             updateChannelsButton();
 
 
-            /* VOLTA PARA O PLAYER */
+            /*
+             * Vai para o player
+             */
 
-            window.scrollTo({
+            setTimeout(() => {
 
-                top: 0,
+                playerSection.scrollIntoView({
 
-                behavior: 'smooth'
+                    behavior: 'smooth',
 
-            });
+                    block: 'start'
+
+                });
+
+            }, 100);
 
 
-            /* FINALIZA O LOADING */
+            /*
+             * Remove loading quando o iframe carregar
+             */
 
             player.onload =
                 function () {
@@ -1214,7 +1203,7 @@
 
 
         /* ============================================================
-           MOSTRAR / OCULTAR LISTA
+           MOSTRAR / OCULTAR CANAIS
            ============================================================ */
 
         function toggleChannelsSection() {
@@ -1226,15 +1215,17 @@
 
 
             if (!channelsSection) {
+
                 return;
+
             }
 
 
             /*
-             * toggle:
+             * Alterna:
              *
-             * se estiver oculto -> mostra
-             * se estiver visível -> oculta
+             * hidden -> visível
+             * visível -> hidden
              */
 
             channelsSection.classList.toggle(
@@ -1246,8 +1237,8 @@
 
 
             /*
-             * Se acabou de mostrar,
-             * leva o usuário até a lista.
+             * Se acabou de mostrar a lista,
+             * leva até ela.
              */
 
             if (
@@ -1274,7 +1265,7 @@
 
 
         /* ============================================================
-           ATUALIZAR VISUAL DO BOTÃO CANAIS
+           ESTADO VISUAL DO BOTÃO CANAIS
            ============================================================ */
 
         function updateChannelsButton() {
@@ -1362,62 +1353,7 @@
 
 
         /* ============================================================
-           BOTÃO "VER CANAIS"
-           ============================================================ */
-
-        document
-            .getElementById(
-                'openChannels'
-            )
-            .addEventListener(
-                'click',
-                () => {
-
-                    const channelsSection =
-                        document.getElementById(
-                            'channelsSection'
-                        );
-
-
-                    if (!channelsSection) {
-                        return;
-                    }
-
-
-                    channelsSection.classList.remove(
-                        'hidden'
-                    );
-
-
-                    updateChannelsButton();
-
-
-                    setTimeout(() => {
-
-                        channelsSection.scrollIntoView({
-
-                            behavior: 'smooth',
-
-                            block: 'start'
-
-                        });
-
-                    }, 100);
-
-                }
-            );
-
-
-        /* ============================================================
-           BOTÃO "CANAIS" DA BARRA INFERIOR
-
-           AQUI ESTÁ A NOVA FUNÇÃO:
-
-           clique 1 -> mostra
-           clique 2 -> oculta
-           clique 3 -> mostra
-           clique 4 -> oculta
-           ...
+           BOTÃO CANAIS
            ============================================================ */
 
         document
@@ -1512,8 +1448,8 @@
 
 
                 /*
-                 * Ao pesquisar, garante que
-                 * a lista fique visível.
+                 * Se estiver pesquisando,
+                 * mostra a lista.
                  */
 
                 const channelsSection =
@@ -1522,13 +1458,9 @@
                     );
 
 
-                if (channelsSection) {
-
-                    channelsSection.classList.remove(
-                        'hidden'
-                    );
-
-                }
+                channelsSection.classList.remove(
+                    'hidden'
+                );
 
 
                 updateChannelsButton();
