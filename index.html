@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Canais Ao Vivo - t12.html</title>
+    <title>Canais Ao Vivo - v1.0</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
@@ -49,7 +49,7 @@
                 <i class="fa-solid fa-bars"></i>
             </button>
             <h1 class="text-lg md:text-xl font-bold tracking-wide flex items-center gap-2">
-                <i class="fa-solid fa-tv text-accent"></i> IPTV Player <span class="text-xs bg-accent/20 text-accent px-2 py-0.5 rounded-full font-mono">t12.html</span>
+                <i class="fa-solid fa-tv text-accent"></i> BOA.TV <span class="text-xs bg-accent/20 text-accent px-2 py-0.5 rounded-full font-mono">v1.0</span>
             </h1>
         </div>
         <div class="relative w-48 md:w-72">
@@ -125,7 +125,7 @@
         // Function to fetch channel data from canais.json
         async function loadChannelData() {
             try {
-                const response = await fetch('canais.json');
+                const response = await fetch('http://boatvapp.github.io/canais.json');
                 if (!response.ok) {
                     throw new Error('Erro ao carregar o arquivo canais.json');
                 }
