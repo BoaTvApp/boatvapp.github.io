@@ -69,11 +69,45 @@
 
 
         body {
-            background: #0c1324;
+            background: linear-gradient(180deg, #0b1021 0%, #161720 100%) !important;
             color: #dce1fb;
             font-family: 'Inter', sans-serif;
             -webkit-tap-highlight-color: transparent;
             overflow-x: hidden;
+            position: relative;
+            min-height: 100vh;
+        }
+
+        /* Brilho Neon Azul - Canto Superior Esquerdo */
+        body::before {
+            content: '';
+            position: fixed;
+            top: -150px;
+            left: -150px;
+            width: 400px;
+            height: 400px;
+            background: #00d2ff;
+            border-radius: 50%;
+            filter: blur(120px);
+            opacity: 0.25;
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        /* Brilho Neon Rosa/Roxo - Canto Inferior Direito */
+        body::after {
+            content: '';
+            position: fixed;
+            bottom: -150px;
+            right: -150px;
+            width: 400px;
+            height: 400px;
+            background: #ff007f;
+            border-radius: 50%;
+            filter: blur(120px);
+            opacity: 0.25;
+            z-index: -1;
+            pointer-events: none;
         }
 
 
