@@ -54,7 +54,6 @@
 
 
     <style>
-
         * {
             box-sizing: border-box;
         }
@@ -80,27 +79,18 @@
 
         .material-symbols-outlined {
             font-family: 'Material Symbols Outlined';
-
             font-weight: normal;
             font-style: normal;
-
             font-size: 24px;
             line-height: 1;
-
             letter-spacing: normal;
             text-transform: none;
-
             display: inline-block;
-
             white-space: nowrap;
             word-wrap: normal;
-
             direction: ltr;
-
             font-feature-settings: 'liga';
-
             -webkit-font-feature-settings: 'liga';
-
             -webkit-font-smoothing: antialiased;
         }
 
@@ -135,7 +125,6 @@
 
         .glass {
             background: rgba(15, 23, 42, 0.72);
-
             backdrop-filter: blur(14px);
             -webkit-backdrop-filter: blur(14px);
         }
@@ -151,9 +140,7 @@
 
         .channel-card:hover {
             transform: translateY(-2px);
-
             background: #23293c;
-
             border-color: rgba(173,198,255,.25);
         }
 
@@ -246,19 +233,12 @@
          CONTEÚDO PRINCIPAL
          ============================================================ -->
 
-<main
+    <main
         id="main-content"
         class="pt-16 min-h-screen">
 
         <!-- ========================================================
              PLAYER
-
-             IMPORTANTE:
-             A seção começa com "hidden".
-             Portanto, o player NÃO aparece quando a página abre.
-
-             Ela será exibida somente depois que um canal for
-             selecionado.
              ======================================================== -->
 
         <section
@@ -359,12 +339,6 @@
 
         <!-- ========================================================
              LISTA DE CANAIS
-
-             A lista começa visível.
-
-             Quando um canal é selecionado:
-             - player aparece
-             - lista desaparece
              ======================================================== -->
 
         <section
@@ -418,9 +392,35 @@
 
                     <!-- GRID DE CANAIS (Direita) -->
                     <div
-                        id="channelsGrid"
-                        class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 lg:col-span-3">
+                        id="channelsGridWrapper"
+                        class="lg:col-span-3 transition-all duration-300">
 
+                        <!-- BARRA DE CATEGORIA SELECIONADA (Exibida somente quando uma categoria específica é selecionada) -->
+                        <div
+                            id="categoryHeaderBar"
+                            class="hidden items-center justify-between mb-4 bg-surfaceContainer px-4 py-3 rounded-xl border border-white/5">
+
+                            <div class="flex items-center gap-2">
+                                <span class="material-symbols-outlined text-primary text-lg">folder</span>
+                                <span class="text-sm font-bold text-white" id="activeCategoryTitle">Categoria</span>
+                            </div>
+
+                            <button
+                                onclick="filterCategory('ALL')"
+                                class="text-[10px] uppercase tracking-wider text-primary font-bold flex items-center gap-1 hover:underline bg-surfaceHigh px-3 py-1.5 rounded-lg border border-white/5">
+
+                                <span class="material-symbols-outlined text-sm">arrow_back</span>
+                                Todas as categorias
+
+                            </button>
+
+                        </div>
+
+                        <div
+                            id="channelsGrid"
+                            class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
+
+                        </div>
                     </div>
 
                 </div>
@@ -464,15 +464,7 @@
         </button>
 
 
-        <!-- ========================================================
-             CANAIS
-
-             Clique:
-             - mostra
-             - oculta
-             - mostra
-             - oculta
-             ======================================================== -->
+        <!-- CANAIS -->
 
         <button
             id="navChannels"
@@ -547,7 +539,7 @@
             </span>
 
 
-            <spana
+            <span
                 class="text-[9px] uppercase tracking-wider font-bold">
 
                 Config
@@ -571,7 +563,6 @@
 
     <script>
 
-
         let channelData = {};
 
         let currentActiveCategory = "ALL";
@@ -588,7 +579,6 @@
             try {
 
                 const response =
-                    // await fetch('canais.json');
                     await fetch('https://boatvapp.github.io/canais.json');
 
 
@@ -655,9 +645,6 @@
     
         /* ============================================================
            LOGO
-    
-           A logo continua vindo do parâmetro "img" do link
-           do próprio canal.
            ============================================================ */
     
         function getLogoFromLink(link) {
@@ -749,14 +736,15 @@
 
                 <button
                     onclick="filterCategory('ALL')"
-                    class="category-btn flex-none px-4 py-2 rounded-full text-[10px] font-bold uppercase tracking-wider
+                    class="category-btn flex-none px-4 py-2.5 rounded-xl text-[10px] font-bold uppercase tracking-wider text-left flex items-center justify-between
                     ${
                         currentActiveCategory === 'ALL'
-                            ? 'active'
-                            : 'bg-surfaceHigh text-textSecondary'
+                            ? 'active shadow-lg shadow-primary/10'
+                            : 'bg-surfaceHigh text-textSecondary hover:text-white'
                     }">
 
-                    Todos
+                    <span>Todos</span>
+                    <span class="material-symbols-outlined text-sm">chevron_right</span>
 
                 </button>
 
@@ -773,14 +761,15 @@
 
                     <button
                         onclick="filterCategory('${escapeJS(category)}')"
-                        class="category-btn flex-none px-4 py-2 rounded-full text-[10px] font-bold uppercase tracking-wider
+                        class="category-btn flex-none px-4 py-2.5 rounded-xl text-[10px] font-bold uppercase tracking-wider text-left flex items-center justify-between
                         ${
                             active
-                                ? 'active'
-                                : 'bg-surfaceHigh text-textSecondary'
+                                ? 'active shadow-lg shadow-primary/10'
+                                : 'bg-surfaceHigh text-textSecondary hover:text-white'
                         }">
 
-                        ${escapeHTML(category)}
+                        <span class="truncate pr-2">${escapeHTML(category)}</span>
+                        <span class="material-symbols-outlined text-sm flex-shrink-0">chevron_right</span>
 
                     </button>
 
@@ -981,7 +970,7 @@
 
 
         /* ============================================================
-           FILTRAR CATEGORIA
+           FILTRAR CATEGORIA (OCULTA CATEGORIAS E MOSTA APENAS OS CANAIS)
            ============================================================ */
 
         function filterCategory(category) {
@@ -993,6 +982,56 @@
             renderCategories();
 
             renderChannels();
+
+
+            const categoryContainer =
+                document.getElementById(
+                    'categoryContainerMain'
+                );
+
+            const channelsWrapper =
+                document.getElementById(
+                    'channelsGridWrapper'
+                );
+
+            const categoryHeaderBar =
+                document.getElementById(
+                    'categoryHeaderBar'
+                );
+
+            const activeCategoryTitle =
+                document.getElementById(
+                    'activeCategoryTitle'
+                );
+
+
+            if (category === 'ALL') {
+                // Se 'ALL' (Todos) for selecionado, mostra a lista de categorias e retorna o grid para 3 colunas
+                categoryContainer.classList.remove('hidden');
+                channelsWrapper.classList.remove('lg:col-span-4');
+                channelsWrapper.classList.add('lg:col-span-3');
+                if (categoryHeaderBar) {
+                    categoryHeaderBar.classList.remove('flex');
+                    categoryHeaderBar.classList.add('hidden');
+                }
+            } else {
+                // Se uma categoria específica for selecionada, oculta as categorias e expande o grid de canais para 100% (lg:col-span-4)
+                categoryContainer.classList.add('hidden');
+                channelsWrapper.classList.remove('lg:col-span-3');
+                channelsWrapper.classList.add('lg:col-span-4');
+                
+                if (categoryHeaderBar && activeCategoryTitle) {
+                    activeCategoryTitle.textContent = category;
+                    categoryHeaderBar.classList.remove('hidden');
+                    categoryHeaderBar.classList.add('flex');
+                }
+            }
+
+            // Rola suavemente para o topo da grade de canais
+            document.getElementById('channelsSection').scrollIntoView({
+                behavior: 'smooth',
+                block: 'start'
+            });
 
         }
 
@@ -1055,23 +1094,10 @@
                 );
 
 
-            /*
-             * ========================================================
-             * AGORA O PLAYER SÓ É MOSTRADO AQUI.
-             *
-             * Antes de selecionar o canal, playerSection possui
-             * a classe "hidden".
-             * ========================================================
-             */
-
             playerSection.classList.remove(
                 'hidden'
             );
 
-
-            /*
-             * Mostra loading
-             */
 
             loading.classList.remove(
                 'hidden'
@@ -1083,17 +1109,9 @@
             );
 
 
-            /*
-             * Define o canal
-             */
-
             player.src =
                 link;
 
-
-            /*
-             * Informações do canal
-             */
 
             currentTitle.textContent =
                 name;
@@ -1112,27 +1130,13 @@
             );
 
 
-            /*
-             * ========================================================
-             * OCULTA A LISTA DE CANAIS
-             * ========================================================
-             */
-
             channelsSection.classList.add(
                 'hidden'
             );
 
 
-            /*
-             * Atualiza botão Canais
-             */
-
             updateChannelsButton();
 
-
-            /*
-             * Vai para o player
-             */
 
             setTimeout(() => {
 
@@ -1146,10 +1150,6 @@
 
             }, 100);
 
-
-            /*
-             * Remove loading quando o iframe carregar
-             */
 
             player.onload =
                 function () {
@@ -1187,13 +1187,6 @@
             }
 
 
-            /*
-             * Alterna:
-             *
-             * hidden -> visível
-             * visível -> hidden
-             */
-
             channelsSection.classList.toggle(
                 'hidden'
             );
@@ -1201,11 +1194,6 @@
 
             updateChannelsButton();
 
-
-            /*
-             * Se acabou de mostrar a lista,
-             * leva até ela.
-             */
 
             if (
                 !channelsSection
@@ -1412,11 +1400,6 @@
 
                 }
 
-
-                /*
-                 * Se estiver pesquisando,
-                 * mostra a lista.
-                 */
 
                 const channelsSection =
                     document.getElementById(
