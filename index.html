@@ -750,75 +750,64 @@
         }
 
 
-/* ============================================================
-            CARREGAR CANAIS
-            ============================================================ */
+        /* ============================================================
+           CATEGORIAS
+           ============================================================ */
 
-        async function loadChannelData() {
+        function renderCategories() {
 
-            try {
-
-                const response = await fetch('https://embed.bugoumods.com/?api=1&t=live&c=16462,15197,15182,15183,15188,15193,15187,15186,15190,15705,15192,16324,15211,17553,15195,15180,15213,15201,15206,15208,15207,16545,15216,14868,15214,16546,16466,16514,16516,16518,16519,15707,15218,15228,15229&uid=6a825cdf96e92');
-
-
-                if (!response.ok) {
-
-                    throw new Error(
-                        'Erro ao carregar os dados da API de canais'
-                    );
-
-                }
+            const categories =
+                Object.keys(channelData);
 
 
-                channelData =
-                    await response.json();
+            let html = `
+
+                <button
+                    onclick="filterCategory('ALL')"
+                    class="category-btn flex-none px-4 py-2 rounded-full text-[10px] font-bold uppercase tracking-wider
+                    ${
+                        currentActiveCategory === 'ALL'
+                            ? 'active'
+                            : 'bg-surfaceHigh text-textSecondary'
+                    }">
+
+                    Todos
+
+                </button>
+
+            `;
 
 
-                renderCategories();
+            categories.forEach(category => {
 
-                renderChannels();
-
-
-            } catch (error) {
-
-                console.error(error);
+                const active =
+                    currentActiveCategory === category;
 
 
-                document.getElementById(
-                    'channelsGrid'
-                ).innerHTML = `
+                html += `
 
-                    <div
-                        class="col-span-full text-center py-12 text-red-400">
+                    <button
+                        onclick="filterCategory('${escapeJS(category)}')"
+                        class="category-btn flex-none px-4 py-2 rounded-full text-[10px] font-bold uppercase tracking-wider
+                        ${
+                            active
+                                ? 'active'
+                                : 'bg-surfaceHigh text-textSecondary'
+                        }">
 
-                        <span
-                            class="material-symbols-outlined text-3xl mb-3">
+                        ${escapeHTML(category)}
 
-                            error
+                    </button>
 
-                        </span>
-
-
-                        <p class="text-sm font-semibold">
-
-                            Erro ao carregar canais
-
-                        </p>
-                
-                
-                        <p
-                            class="text-[10px] text-textMuted mt-2">    
-                
-                            Verifique a conexão ou se o link da API está funcional.
-                
-                        </p>
-                
-                    </div>
-                
                 `;
-                
-            }
-            
+
+            });
+
+
+            document.getElementById(
+                'categoryContainerMain'
+            ).innerHTML = html;
+
         }
 
 
