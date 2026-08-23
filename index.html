@@ -269,6 +269,7 @@
 
             </div>
 
+            <!-- INFORMAÇÕES DO CANAL -->
             <div
                 id="nowPlaying"
                 class="w-full max-w-6xl mx-auto mt-3 bg-surfaceContainer rounded-xl border border-white/5 p-3">
@@ -297,6 +298,25 @@
                     </div>
                 </div>
 
+            </div>
+            
+            <!-- ====================================================
+                 PROGRAMAÇÃO DO CANAL (EPG)
+                 ==================================================== -->
+            <div
+                id="channelSchedule"
+                class="w-full max-w-6xl mx-auto mt-4 bg-surfaceContainer rounded-xl border border-white/5 p-4">
+                
+                <h3 class="text-xs uppercase tracking-[.15em] font-bold text-textSecondary mb-3 flex items-center gap-2">
+                    <span class="material-symbols-outlined text-sm">calendar_today</span>
+                    Programação
+                </h3>
+                
+                <!-- Lista de Programas renderizada via JS -->
+                <div id="scheduleList" class="flex flex-col gap-2">
+                    <!-- Conteúdo inserido dinamicamente -->
+                </div>
+                
             </div>
 
         </section>
@@ -384,7 +404,6 @@
         <!-- INÍCIO -->
         <button
             id="navHome"
-            onclick="window.location.href='/';"
             class="flex flex-col items-center justify-center gap-1 text-primary min-w-[64px]">
 
             <span class="material-symbols-outlined" style="font-variation-settings:'FILL' 1;">
@@ -709,7 +728,7 @@
 
 
         /* ============================================================
-           REPRODUZIR CANAL
+           REPRODUZIR CANAL E EXIBIR PROGRAMAÇÃO
            ============================================================ */
 
         function playChannel(link, name, categoria) {
@@ -726,6 +745,9 @@
             const currentLogo = document.getElementById('currentLogo');
             const currentCategory = document.getElementById('currentCategory');
             const loading = document.getElementById('playerLoading');
+            
+            // Programação EPG
+            const scheduleList = document.getElementById('scheduleList');
 
             playerSection.classList.remove('hidden');
             loading.classList.remove('hidden');
@@ -735,6 +757,48 @@
             currentTitle.textContent = name;
             currentLogo.src = getLogoFromLink(link);
             currentCategory.textContent = categoria || '';
+
+            // Lógica para encontrar a programação do canal clicado
+            let foundChannel = null;
+            
+            // Procura o canal clicado dentro do channelData
+            for (const categoryKey in channelData) {
+                const match = channelData[categoryKey].find(c => c.link === link && c.nome === name);
+                if (match) {
+                    foundChannel = match;
+                    break;
+                }
+            }
+            
+            // Renderiza a programação (se existir e for um array)
+            if (foundChannel && foundChannel.programacao && foundChannel.programacao.length > 0) {
+                let scheduleHTML = '';
+                
+                foundChannel.programacao.forEach(prog => {
+                    // Destaque visual caso o programa seja o 'atual'
+                    const isNow = prog.atual ? 'text-primary font-bold' : 'text-white';
+                    const dot = prog.atual ? '<span class="w-2 h-2 rounded-full bg-tertiary animate-pulse"></span>' : '';
+                    
+                    scheduleHTML += `
+                        <div class="flex items-center gap-3 bg-surfacePanel p-3 rounded-lg border border-white/5">
+                            <div class="text-xs font-mono text-textMuted w-12">${escapeHTML(prog.horario)}</div>
+                            <div class="flex-1 text-sm ${isNow} truncate">${escapeHTML(prog.titulo)}</div>
+                            ${dot}
+                        </div>
+                    `;
+                });
+                
+                scheduleList.innerHTML = scheduleHTML;
+                
+            } else {
+                // Caso não tenha programação no JSON para esse canal
+                scheduleList.innerHTML = `
+                    <div class="text-center py-6 text-textMuted bg-surfacePanel rounded-lg border border-white/5">
+                        <span class="material-symbols-outlined text-2xl mb-2 opacity-50">event_busy</span>
+                        <p class="text-xs">Programação indisponível para este canal.</p>
+                    </div>
+                `;
+            }
 
             nowPlaying.classList.remove('hidden');
             channelsSection.classList.add('hidden');
@@ -909,7 +973,6 @@
            ============================================================ */
 
         document.getElementById('navHome').addEventListener('click', () => {
-            // Isso garante que o site seja completamente recarregado na página inicial 
             window.location.href = '/';
         });
 
