@@ -246,10 +246,9 @@
          CONTEÚDO PRINCIPAL
          ============================================================ -->
 
-    <main
+<main
         id="main-content"
         class="pt-16 min-h-screen">
-
 
         <!-- ========================================================
              PLAYER
@@ -266,11 +265,9 @@
             id="playerSection"
             class="relative w-full px-4 pt-4 hidden">
 
-
             <div
                 id="playerWrapper"
                 class="relative w-full max-w-6xl mx-auto aspect-video bg-black rounded-2xl overflow-hidden border border-white/10 player-glow">
-
 
                 <!-- PLAYER -->
 
@@ -280,7 +277,6 @@
                     allowfullscreen
                     allow="autoplay; encrypted-media">
                 </iframe>
-
 
                 <!-- LOADING -->
 
@@ -297,7 +293,6 @@
 
                         </span>
 
-
                         <p
                             class="text-[10px] uppercase tracking-widest text-primary mt-3">
 
@@ -311,7 +306,6 @@
 
             </div>
 
-
             <!-- ====================================================
                  INFORMAÇÕES DO CANAL
                  ==================================================== -->
@@ -323,13 +317,11 @@
                 <div
                     class="flex items-center gap-3">
 
-
                     <img
                         id="currentLogo"
                         src=""
                         alt=""
                         class="w-12 h-12 rounded-lg object-contain bg-surfacePanel border border-white/5 p-1">
-
 
                     <div
                         class="flex-1 min-w-0">
@@ -341,7 +333,6 @@
 
                         </p>
 
-
                         <h2
                             id="currentTitle"
                             class="font-bold text-white truncate mt-1">
@@ -349,7 +340,6 @@
                             Nome do Canal
 
                         </h2>
-
 
                         <p
                             id="currentCategory"
@@ -367,7 +357,6 @@
 
         </section>
 
-
         <!-- ========================================================
              LISTA DE CANAIS
 
@@ -382,10 +371,8 @@
             id="channelsSection"
             class="mt-8 px-4">
 
-
             <div
-                class="max-w-6xl mx-auto">
-
+                class="max-w-7xl mx-auto">
 
                 <!-- TÍTULO -->
 
@@ -401,7 +388,6 @@
 
                         </p>
 
-
                         <h2
                             class="text-xl font-bold text-white mt-1">
 
@@ -410,7 +396,6 @@
                         </h2>
 
                     </div>
-
 
                     <button
                         id="clearSearch"
@@ -422,21 +407,21 @@
 
                 </div>
 
+                <!-- LAYOUT COM DUAS COLUNAS (CATEGORIAS À ESQUERDA / CANAIS À DIREITA) -->
+                <div class="grid grid-cols-1 lg:grid-cols-4 gap-6 items-start">
 
-                <!-- CATEGORIAS -->
+                    <!-- CATEGORIAS (Esquerda) -->
+                    <div
+                        id="categoryContainerMain"
+                        class="flex flex-col gap-2 overflow-y-auto hide-scrollbar max-h-[70vh] pr-2 lg:col-span-1">
+                    </div>
 
-                <div
-                    id="categoryContainerMain"
-                    class="flex gap-2 overflow-x-auto hide-scrollbar pb-3">
+                    <!-- GRID DE CANAIS (Direita) -->
+                    <div
+                        id="channelsGrid"
+                        class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 lg:col-span-3">
 
-                </div>
-
-
-                <!-- GRID DE CANAIS -->
-
-                <div
-                    id="channelsGrid"
-                    class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3">
+                    </div>
 
                 </div>
 
