@@ -268,7 +268,7 @@
             <input
                 id="searchInput"
                 type="text"
-                placeholder="Buscar canal..."
+                placeholder="Buscar..."
                 class="w-full bg-surfacePanel border border-white/10 rounded-xl pl-11 pr-4 py-3 text-sm text-white outline-none focus:border-primary transition-all duration-300">
 
         </div>
@@ -374,10 +374,54 @@
 
 
         <!-- ========================================================
+             INÍCIO (HOME - CARROSSÉIS)
+             ======================================================== -->
+        <section id="homeSection" class="mt-8 px-4">
+            <div class="max-w-7xl mx-auto">
+                
+                <!-- TÍTULO -->
+                <div class="flex items-end justify-between mb-6">
+                    <div>
+                        <p class="text-[9px] uppercase tracking-[.2em] font-bold text-primary">
+                            Bem-vindo
+                        </p>
+                        <h2 class="text-2xl font-bold text-white mt-1">
+                            Descubra
+                        </h2>
+                    </div>
+                </div>
+
+                <!-- DESTAQUES POR CATEGORIA (CANAIS HORIZONTAIS) -->
+                <div class="featured-channels-wrapper mb-8 hidden">
+                    <h3 class="text-xs uppercase tracking-[.15em] font-bold text-textSecondary mb-3 flex items-center gap-2">
+                        <span class="material-symbols-outlined text-sm text-primary">star</span>
+                        Canais em Destaque
+                    </h3>
+                    <div class="featured-channels-grid flex gap-3 overflow-x-auto snap-x snap-mandatory hide-scrollbar transition-opacity duration-500 opacity-100 pb-2">
+                        <!-- Carregado via JS dinamicamente -->
+                    </div>
+                </div>
+
+                <!-- DESTAQUES / LANÇAMENTOS (FILMES HORIZONTAIS) -->
+                <div class="featured-movies-wrapper mb-8 hidden">
+                    <h3 class="text-xs uppercase tracking-[.15em] font-bold text-textSecondary mb-3 flex items-center gap-2">
+                        <span class="material-symbols-outlined text-sm text-primary">local_fire_department</span>
+                        Filmes em Destaque
+                    </h3>
+                    <div class="featured-movies-grid flex gap-3 overflow-x-auto snap-x snap-mandatory hide-scrollbar transition-opacity duration-500 opacity-100 pb-2">
+                        <!-- Carregado via JS dinamicamente -->
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+
+        <!-- ========================================================
              LISTA DE CANAIS
              ======================================================== -->
 
-        <section id="channelsSection" class="mt-8 px-4">
+        <section id="channelsSection" class="mt-8 px-4 hidden">
             <div class="max-w-7xl mx-auto">
 
                 <!-- TÍTULO -->
@@ -408,13 +452,13 @@
                     </button>
                 </div>
 
-                <!-- DESTAQUES POR CATEGORIA (CANAIS HORIZONTAIS) -->
-                <div id="featuredChannelsWrapper" class="mb-8 hidden">
+                <!-- DESTAQUES POR CATEGORIA (CANAIS HORIZONTAIS) DENTRO DA ABA -->
+                <div class="featured-channels-wrapper mb-8 hidden">
                     <h3 class="text-xs uppercase tracking-[.15em] font-bold text-textSecondary mb-3 flex items-center gap-2">
                         <span class="material-symbols-outlined text-sm text-primary">star</span>
-                        Em Destaque
+                        Canais em Destaque
                     </h3>
-                    <div id="featuredChannelsGrid" class="flex gap-3 overflow-x-auto snap-x snap-mandatory hide-scrollbar transition-opacity duration-500 opacity-100 pb-2">
+                    <div class="featured-channels-grid flex gap-3 overflow-x-auto snap-x snap-mandatory hide-scrollbar transition-opacity duration-500 opacity-100 pb-2">
                         <!-- Carregado via JS dinamicamente -->
                     </div>
                 </div>
@@ -462,13 +506,13 @@
                     </button>
                 </div>
 
-                <!-- DESTAQUES / LANÇAMENTOS (FILMES HORIZONTAIS) -->
-                <div id="featuredMoviesWrapper" class="mb-8 hidden">
+                <!-- DESTAQUES / LANÇAMENTOS (FILMES HORIZONTAIS) DENTRO DA ABA -->
+                <div class="featured-movies-wrapper mb-8 hidden">
                     <h3 class="text-xs uppercase tracking-[.15em] font-bold text-textSecondary mb-3 flex items-center gap-2">
                         <span class="material-symbols-outlined text-sm text-primary">local_fire_department</span>
                         Lançamentos
                     </h3>
-                    <div id="featuredMoviesGrid" class="flex gap-3 overflow-x-auto snap-x snap-mandatory hide-scrollbar transition-opacity duration-500 opacity-100 pb-2">
+                    <div class="featured-movies-grid flex gap-3 overflow-x-auto snap-x snap-mandatory hide-scrollbar transition-opacity duration-500 opacity-100 pb-2">
                         <!-- Carregado via JS dinamicamente -->
                     </div>
                 </div>
@@ -560,20 +604,20 @@
             <span class="text-[9px] uppercase tracking-wider font-bold">
                 Início
             </span>
-            <span class="w-1 h-1 rounded-full bg-primary opacity-100"></span>
+            <span id="navHomeIndicator" class="w-1 h-1 rounded-full bg-primary opacity-100 transition-opacity"></span>
         </button>
 
         <!-- CANAIS -->
         <button
             id="navChannels"
-            class="flex flex-col items-center justify-center gap-1 text-primary flex-1">
+            class="flex flex-col items-center justify-center gap-1 text-textSecondary flex-1">
             <span class="material-symbols-outlined">
                 live_tv
             </span>
             <span class="text-[9px] uppercase tracking-wider font-bold">
                 Canais
             </span>
-            <span id="navChannelsIndicator" class="w-1 h-1 rounded-full bg-primary opacity-100 transition-opacity"></span>
+            <span id="navChannelsIndicator" class="w-1 h-1 rounded-full bg-primary opacity-0 transition-opacity"></span>
         </button>
 
         <!-- FILMES -->
@@ -630,8 +674,8 @@
         let searchQuery = "";
         let isSearchMode = false;
         
-        // Controle de Abas Ativas ('channels' ou 'movies')
-        let currentTab = 'channels';
+        // Controle de Abas Ativas ('home', 'channels' ou 'movies')
+        let currentTab = 'home';
         
         // Controle do Carrosséis
         let featuredMoviesInterval;
@@ -736,13 +780,12 @@
 
         
         /* ============================================================
-           GERADOR DE EPG SIMULADO (CASO O JSON NÃO TENHA PROGRAMAÇÃO)
+           GERADOR DE EPG SIMULADO
            ============================================================ */
            
         function gerarProgramacaoSimulada(nomeCanal) {
             const now = new Date();
             
-            // Função rápida para formatar a hora (ex: 14:30)
             const format = (d) => String(d.getHours()).padStart(2, '0') + ':' + String(d.getMinutes()).padStart(2, '0');
             
             const prev = new Date(now); prev.setHours(prev.getHours() - 1);
@@ -759,7 +802,7 @@
 
 
         /* ============================================================
-           CARROSSEL DE CANAIS EM DESTAQUE
+           CARROSSEL DE CANAIS EM DESTAQUE (MULTIPLAS TELAS)
            ============================================================ */
 
         function updateFeaturedChannels() {
@@ -775,46 +818,46 @@
 
             if (selectedChannels.length === 0) return;
 
-            const grid = document.getElementById('featuredChannelsGrid');
-            if(!grid) return;
+            const grids = document.querySelectorAll('.featured-channels-grid');
+            if(grids.length === 0) return;
 
-            grid.style.opacity = '0';
+            grids.forEach(grid => { grid.style.opacity = '0'; });
 
             setTimeout(() => {
-                grid.innerHTML = '';
-                
-                selectedChannels.forEach(channel => {
-                    const logo = getLogoFromLink(channel.link);
-                    const card = document.createElement('div');
-                    
-                    card.className = 'channel-card cursor-pointer flex-none w-32 sm:w-40 snap-start relative aspect-square rounded-xl overflow-hidden bg-surfacePanel border border-white/5 group shadow-lg flex items-center justify-center p-4 sm:p-5';
-                    card.onclick = () => playMedia(channel, channel.categoriaObj, 'channel');
-                    
-                    card.innerHTML = `
-                        <img src="${escapeAttribute(logo)}" alt="${escapeAttribute(channel.nome)}" loading="lazy" class="w-full h-full object-contain group-hover:scale-110 transition-transform duration-700" onerror="this.src='https://via.placeholder.com/200?text=Canal'">
+                grids.forEach(grid => {
+                    grid.innerHTML = '';
+                    selectedChannels.forEach(channel => {
+                        const logo = getLogoFromLink(channel.link);
+                        const card = document.createElement('div');
                         
-                        <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent flex flex-col justify-end p-2 sm:p-3 opacity-100">
-                            <span class="px-1.5 py-0.5 rounded bg-primary/20 text-primary border border-primary/30 text-[8px] font-bold uppercase tracking-widest w-max mb-1 shadow-lg backdrop-blur-sm truncate max-w-full">
-                                ${escapeHTML(channel.categoriaObj)}
-                            </span>
-                            <p class="text-[10px] sm:text-xs font-bold text-white leading-tight truncate drop-shadow-md">
-                                ${escapeHTML(channel.nome)}
-                            </p>
-                        </div>
-                    `;
-                    grid.appendChild(card);
+                        card.className = 'channel-card cursor-pointer flex-none w-32 sm:w-40 snap-start relative aspect-square rounded-xl overflow-hidden bg-surfacePanel border border-white/5 group shadow-lg flex items-center justify-center p-4 sm:p-5';
+                        card.onclick = () => playMedia(channel, channel.categoriaObj, 'channel');
+                        
+                        card.innerHTML = `
+                            <img src="${escapeAttribute(logo)}" alt="${escapeAttribute(channel.nome)}" loading="lazy" class="w-full h-full object-contain group-hover:scale-110 transition-transform duration-700" onerror="this.src='https://via.placeholder.com/200?text=Canal'">
+                            
+                            <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent flex flex-col justify-end p-2 sm:p-3 opacity-100">
+                                <span class="px-1.5 py-0.5 rounded bg-primary/20 text-primary border border-primary/30 text-[8px] font-bold uppercase tracking-widest w-max mb-1 shadow-lg backdrop-blur-sm truncate max-w-full">
+                                    ${escapeHTML(channel.categoriaObj)}
+                                </span>
+                                <p class="text-[10px] sm:text-xs font-bold text-white leading-tight truncate drop-shadow-md">
+                                    ${escapeHTML(channel.nome)}
+                                </p>
+                            </div>
+                        `;
+                        grid.appendChild(card);
+                    });
+                    grid.style.opacity = '1';
                 });
-                
-                grid.style.opacity = '1';
             }, 300);
         }
 
         function startFeaturedChannels() {
             if (featuredChannelsInterval) clearInterval(featuredChannelsInterval);
             
-            const featuredWrapper = document.getElementById('featuredChannelsWrapper');
-            if (featuredWrapper && Object.keys(channelData).length > 0 && searchQuery.trim() === '') {
-                featuredWrapper.classList.remove('hidden');
+            const wrappers = document.querySelectorAll('.featured-channels-wrapper');
+            if (wrappers.length > 0 && Object.keys(channelData).length > 0) {
+                wrappers.forEach(w => w.classList.remove('hidden'));
                 updateFeaturedChannels(); 
                 featuredChannelsInterval = setInterval(updateFeaturedChannels, 10000);
             }
@@ -822,7 +865,7 @@
 
 
         /* ============================================================
-           CARROSSEL DE LANÇAMENTOS (FILMES)
+           CARROSSEL DE LANÇAMENTOS / FILMES (MULTIPLAS TELAS)
            ============================================================ */
 
         function updateFeaturedMovies() {
@@ -836,49 +879,49 @@
             const shuffled = allMovies.sort(() => 0.5 - Math.random());
             const selected = shuffled.slice(0, 3); 
 
-            const grid = document.getElementById('featuredMoviesGrid');
-            if(!grid) return;
+            const grids = document.querySelectorAll('.featured-movies-grid');
+            if(grids.length === 0) return;
 
-            grid.style.opacity = '0';
+            grids.forEach(grid => { grid.style.opacity = '0'; });
 
             setTimeout(() => {
-                grid.innerHTML = '';
-                
-                selected.forEach(movie => {
-                    const poster = getMovieImage(movie);
-                    const card = document.createElement('div');
-                    
-                    card.className = 'channel-card cursor-pointer flex-none w-56 sm:w-64 snap-start relative aspect-video rounded-xl overflow-hidden bg-surfacePanel border border-white/5 group shadow-lg';
-                    card.onclick = () => playMedia(movie, movie.categoriaObj, 'movie');
-                    
-                    card.innerHTML = `
-                        <img src="${escapeAttribute(poster)}" alt="${escapeAttribute(movie.nome)}" loading="lazy" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" onerror="this.src='https://via.placeholder.com/600x400?text=Lançamento'">
+                grids.forEach(grid => {
+                    grid.innerHTML = '';
+                    selected.forEach(movie => {
+                        const poster = getMovieImage(movie);
+                        const card = document.createElement('div');
                         
-                        <div class="absolute inset-0 bg-gradient-to-t from-black/95 via-black/20 to-transparent flex flex-col justify-end p-4">
-                            <span class="px-2 py-1 rounded bg-primary text-background text-[9px] font-bold uppercase tracking-widest w-max mb-2 shadow-lg">
-                                Destaque
-                            </span>
-                            <p class="text-sm md:text-base font-bold text-white leading-tight line-clamp-2 drop-shadow-md">
-                                ${escapeHTML(movie.nome)}
-                            </p>
-                            <p class="text-[10px] text-primary/80 mt-1 line-clamp-1 drop-shadow-md font-medium uppercase tracking-wider">
-                                ${escapeHTML(movie.categoriaObj)}
-                            </p>
-                        </div>
-                    `;
-                    grid.appendChild(card);
+                        card.className = 'channel-card cursor-pointer flex-none w-56 sm:w-64 snap-start relative aspect-video rounded-xl overflow-hidden bg-surfacePanel border border-white/5 group shadow-lg';
+                        card.onclick = () => playMedia(movie, movie.categoriaObj, 'movie');
+                        
+                        card.innerHTML = `
+                            <img src="${escapeAttribute(poster)}" alt="${escapeAttribute(movie.nome)}" loading="lazy" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" onerror="this.src='https://via.placeholder.com/600x400?text=Lançamento'">
+                            
+                            <div class="absolute inset-0 bg-gradient-to-t from-black/95 via-black/20 to-transparent flex flex-col justify-end p-4">
+                                <span class="px-2 py-1 rounded bg-primary text-background text-[9px] font-bold uppercase tracking-widest w-max mb-2 shadow-lg">
+                                    Destaque
+                                </span>
+                                <p class="text-sm md:text-base font-bold text-white leading-tight line-clamp-2 drop-shadow-md">
+                                    ${escapeHTML(movie.nome)}
+                                </p>
+                                <p class="text-[10px] text-primary/80 mt-1 line-clamp-1 drop-shadow-md font-medium uppercase tracking-wider">
+                                    ${escapeHTML(movie.categoriaObj)}
+                                </p>
+                            </div>
+                        `;
+                        grid.appendChild(card);
+                    });
+                    grid.style.opacity = '1';
                 });
-                
-                grid.style.opacity = '1';
             }, 300);
         }
 
         function startFeaturedMovies() {
             if (featuredMoviesInterval) clearInterval(featuredMoviesInterval);
             
-            const featuredWrapper = document.getElementById('featuredMoviesWrapper');
-            if (featuredWrapper && Object.keys(movieData).length > 0 && searchQuery.trim() === '') {
-                featuredWrapper.classList.remove('hidden');
+            const wrappers = document.querySelectorAll('.featured-movies-wrapper');
+            if (wrappers.length > 0 && Object.keys(movieData).length > 0) {
+                wrappers.forEach(w => w.classList.remove('hidden'));
                 updateFeaturedMovies(); 
                 featuredMoviesInterval = setInterval(updateFeaturedMovies, 10000);
             }
@@ -891,15 +934,18 @@
 
         function renderAccordion() {
             const container = document.getElementById('accordionContainer');
-            const featuredWrapper = document.getElementById('featuredChannelsWrapper');
-
             container.innerHTML = '';
             let totalEncontrados = 0;
-
+            
+            const featuredWrappers = document.querySelectorAll('.featured-channels-wrapper');
+            
+            // Oculta todos os carrosséis de canais durante a busca, ou exibe se não houver busca
             if (searchQuery.trim() !== '') {
-                if (featuredWrapper) featuredWrapper.classList.add('hidden');
+                featuredWrappers.forEach(w => w.classList.add('hidden'));
             } else {
-                if (featuredWrapper && Object.keys(channelData).length > 0) featuredWrapper.classList.remove('hidden');
+                if (Object.keys(channelData).length > 0) {
+                    featuredWrappers.forEach(w => w.classList.remove('hidden'));
+                }
             }
 
             if (categoryViewMode === 'grid') {
@@ -1055,17 +1101,20 @@
 
         function renderMovieAccordion() {
             const container = document.getElementById('movieAccordionContainer');
-            const featuredWrapper = document.getElementById('featuredMoviesWrapper');
-
             if(!container) return; 
             
             container.innerHTML = '';
             let totalEncontrados = 0;
 
+            const featuredWrappers = document.querySelectorAll('.featured-movies-wrapper');
+            
+            // Oculta todos os carrosséis de filmes durante a busca, ou exibe se não houver busca
             if (searchQuery.trim() !== '') {
-                if (featuredWrapper) featuredWrapper.classList.add('hidden');
+                featuredWrappers.forEach(w => w.classList.add('hidden'));
             } else {
-                if (featuredWrapper && Object.keys(movieData).length > 0) featuredWrapper.classList.remove('hidden');
+                if (Object.keys(movieData).length > 0) {
+                    featuredWrappers.forEach(w => w.classList.remove('hidden'));
+                }
             }
 
             if (categoryViewMode === 'grid') {
@@ -1216,7 +1265,7 @@
 
 
         /* ============================================================
-           REPRODUZIR MÍDIA E MOSTRAR EPG (ATUALIZADO)
+           REPRODUZIR MÍDIA E MOSTRAR EPG
            ============================================================ */
 
         function playMedia(mediaObj, categoria, type) {
@@ -1226,6 +1275,8 @@
 
             const playerSection = document.getElementById('playerSection');
             const player = document.getElementById('videoPlayer');
+            
+            const homeSection = document.getElementById('homeSection');
             const channelsSection = document.getElementById('channelsSection');
             const moviesSection = document.getElementById('moviesSection');
             
@@ -1250,19 +1301,15 @@
                 nowPlayingLabel.textContent = "Filme";
                 currentLogo.src = getMovieImage(mediaObj);
                 currentLogo.classList.replace('object-contain', 'object-cover');
-                // Esconder EPG de Programação para Filmes
                 scheduleSection.classList.add('hidden');
             } else {
                 nowPlayingLabel.textContent = "Assistindo agora";
                 currentLogo.src = getLogoFromLink(mediaObj.link);
                 currentLogo.classList.replace('object-cover', 'object-contain');
-                // Mostrar EPG de Programação para Canais
                 scheduleSection.classList.remove('hidden');
                 
-                // LÓGICA DE PROGRAMAÇÃO CORRIGIDA
                 let progData = mediaObj.programacao || mediaObj.epg;
 
-                // 1. Se a programação for apenas um texto (ex: "Jornal do Meio Dia")
                 if (typeof progData === 'string' && progData.trim() !== '') {
                     scheduleList.innerHTML = `
                         <div class="flex items-center gap-3 bg-surfacePanel p-3 rounded-lg border border-white/5">
@@ -1272,12 +1319,10 @@
                     `;
                 } 
                 else {
-                    // 2. Se o arquivo não tem programação ou ela estiver vazia, geramos uma fake!
                     if (!Array.isArray(progData) || progData.length === 0) {
                         progData = gerarProgramacaoSimulada(mediaObj.nome);
                     }
 
-                    // 3. Renderiza a grade (agora garantido que tem dados para desenhar)
                     if (Array.isArray(progData) && progData.length > 0) {
                         let scheduleHTML = '';
                         progData.forEach(prog => {
@@ -1301,7 +1346,8 @@
 
             document.getElementById('nowPlaying').classList.remove('hidden');
             
-            // Oculta abas
+            // Oculta abas do menu
+            homeSection.classList.add('hidden');
             channelsSection.classList.add('hidden');
             moviesSection.classList.add('hidden');
             
@@ -1323,9 +1369,10 @@
            ============================================================ */
 
         function updateNavStates() {
-            const channelsSection = document.getElementById('channelsSection');
-            const moviesSection = document.getElementById('moviesSection');
             const searchInput = document.getElementById('searchInput');
+            
+            const btnHome = document.getElementById('navHome');
+            const indHome = document.getElementById('navHomeIndicator');
             
             const btnChannels = document.getElementById('navChannels');
             const indChannels = document.getElementById('navChannelsIndicator');
@@ -1336,26 +1383,26 @@
             // Ajusta o Placeholder da Busca
             if (currentTab === 'channels') {
                 searchInput.placeholder = "Buscar canal...";
-            } else {
+            } else if (currentTab === 'movies') {
                 searchInput.placeholder = "Buscar filme...";
+            } else {
+                searchInput.placeholder = "Buscar...";
             }
 
-            // Verifica se a aba de Canais está ativa na tela
-            if (!channelsSection.classList.contains('hidden') && moviesSection.classList.contains('hidden')) {
+            // Reseta todos os botões e indicadores
+            [btnHome, btnChannels, btnMovies].forEach(btn => btn.classList.replace('text-primary', 'text-textSecondary'));
+            [indHome, indChannels, indMovies].forEach(ind => ind.classList.replace('opacity-100', 'opacity-0'));
+
+            // Aplica estado ativo apenas na aba atual
+            if (currentTab === 'home') {
+                btnHome.classList.replace('text-textSecondary', 'text-primary');
+                indHome.classList.replace('opacity-0', 'opacity-100');
+            } else if (currentTab === 'channels') {
                 btnChannels.classList.replace('text-textSecondary', 'text-primary');
                 indChannels.classList.replace('opacity-0', 'opacity-100');
-            } else {
-                btnChannels.classList.replace('text-primary', 'text-textSecondary');
-                indChannels.classList.replace('opacity-100', 'opacity-0');
-            }
-
-            // Verifica se a aba de Filmes está ativa na tela
-            if (!moviesSection.classList.contains('hidden') && channelsSection.classList.contains('hidden')) {
+            } else if (currentTab === 'movies') {
                 btnMovies.classList.replace('text-textSecondary', 'text-primary');
                 indMovies.classList.replace('opacity-0', 'opacity-100');
-            } else {
-                btnMovies.classList.replace('text-primary', 'text-textSecondary');
-                indMovies.classList.replace('opacity-100', 'opacity-0');
             }
         }
 
@@ -1378,6 +1425,13 @@
             isSearchMode = true;
             mobileSearch.classList.remove('hidden');
             searchInput.focus();
+            
+            // Se estiver na Home, redireciona a pesquisa para a aba de Canais por padrão
+            if (currentTab === 'home') {
+                currentTab = 'channels';
+            }
+            
+            document.getElementById('homeSection').classList.add('hidden');
             
             if (currentTab === 'channels') {
                 document.getElementById('normalTitleContainer').classList.add('hidden');
@@ -1413,7 +1467,7 @@
             
             if (currentTab === 'channels') {
                 renderAccordion(); 
-            } else {
+            } else if (currentTab === 'movies') {
                 renderMovieAccordion();
             }
         }
@@ -1460,19 +1514,19 @@
            MUDANÇA DE ABAS / NAVEGAÇÃO SPA
            ============================================================ */
 
-        // INÍCIO (Reseta a plataforma)
+        // INÍCIO (Home - Destaques)
         document.getElementById('navHome').addEventListener('click', () => {
+            currentTab = 'home';
             const player = document.getElementById('videoPlayer');
             player.src = '';
             
-            currentTab = 'channels'; // Voltar para Canais por padrão
-
             document.getElementById('playerSection').classList.add('hidden');
             document.getElementById('nowPlaying').classList.add('hidden');
             document.getElementById('channelSchedule').classList.add('hidden');
 
             document.getElementById('moviesSection').classList.add('hidden');
-            document.getElementById('channelsSection').classList.remove('hidden');
+            document.getElementById('channelsSection').classList.add('hidden');
+            document.getElementById('homeSection').classList.remove('hidden');
 
             if (isSearchMode) closeSearch();
 
@@ -1480,13 +1534,15 @@
             window.scrollTo({ top: 0, behavior: 'smooth' });
         });
 
-        // CANAIS
+        // CANAIS (Lista Completa + Carrossel de Canais)
         document.getElementById('navChannels').addEventListener('click', () => {
             currentTab = 'channels';
+            const homeSection = document.getElementById('homeSection');
             const channelsSection = document.getElementById('channelsSection');
             const moviesSection = document.getElementById('moviesSection');
             const playerSection = document.getElementById('playerSection');
             
+            homeSection.classList.add('hidden');
             moviesSection.classList.add('hidden');
             
             if (playerSection.classList.contains('hidden') || isSearchMode) {
@@ -1501,7 +1557,6 @@
                 }
             }
             
-            // Re-renderiza a busca se estiver aberta
             if(isSearchMode) {
                 document.getElementById('normalTitleContainer').classList.add('hidden');
                 document.getElementById('searchTitleContainer').classList.remove('hidden');
@@ -1511,13 +1566,15 @@
             updateNavStates();
         });
 
-        // FILMES
+        // FILMES (Lista Completa + Carrossel de Filmes)
         document.getElementById('navMovies').addEventListener('click', () => {
             currentTab = 'movies';
+            const homeSection = document.getElementById('homeSection');
             const channelsSection = document.getElementById('channelsSection');
             const moviesSection = document.getElementById('moviesSection');
             const playerSection = document.getElementById('playerSection');
             
+            homeSection.classList.add('hidden');
             channelsSection.classList.add('hidden');
             
             if (playerSection.classList.contains('hidden') || isSearchMode) {
@@ -1532,7 +1589,6 @@
                 }
             }
             
-            // Re-renderiza a busca se estiver aberta
             if(isSearchMode) {
                 document.getElementById('normalMovieTitleContainer').classList.add('hidden');
                 document.getElementById('searchMovieTitleContainer').classList.remove('hidden');
