@@ -451,6 +451,18 @@
                     </button>
                 </div>
 
+                <!-- DESTAQUES / LANÇAMENTOS (NOVO) -->
+                <div id="featuredMoviesWrapper" class="mb-8 hidden">
+                    <h3 class="text-xs uppercase tracking-[.15em] font-bold text-textSecondary mb-3 flex items-center gap-2">
+                        <span class="material-symbols-outlined text-sm text-primary">local_fire_department</span>
+                        Lançamentos
+                    </h3>
+                    <!-- Grid que receberá os filmes sorteados -->
+                    <div id="featuredMoviesGrid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 transition-opacity duration-500 opacity-100">
+                        <!-- Carregado via JS dinamicamente -->
+                    </div>
+                </div>
+
                 <!-- CONTAINER DO ACCORDION FILMES -->
                 <div id="movieAccordionContainer">
                 </div>
@@ -516,7 +528,7 @@
             </div>
 
             <div class="text-center mt-6">
-                <p class="text-[10px] text-textMuted uppercase tracking-widest">BOA.TV v1.3</p>
+                <p class="text-[10px] text-textMuted uppercase tracking-widest">BOA.TV v1.4</p>
             </div>
         </div>
     </div>
@@ -611,6 +623,9 @@
         // Controle de Abas Ativas ('channels' ou 'movies')
         let currentTab = 'channels';
         
+        // Controle do Carrossel de Lançamentos
+        let featuredMoviesInterval;
+        
         // Carrega o modo de visualização salvo ou define os padrões
         let channelViewMode = localStorage.getItem('boatv_channelViewMode') || 'grid';
         let categoryViewMode = localStorage.getItem('boatv_categoryViewMode') || 'list';
@@ -659,6 +674,9 @@
                 if (!responseMovies.ok) throw new Error('Erro ao carregar filmes.json');
                 movieData = await responseMovies.json();
                 renderMovieAccordion();
+                
+                // Inicia o carrossel de lançamentos apenas após os dados carregarem
+                startFeaturedMovies(); 
             } catch (error) {
                 console.error(error);
                 // Se o arquivo ainda não existir, mostra uma mensagem amigável de "Em Breve"
@@ -669,7 +687,7 @@
                         </div>
                         <h3 class="text-lg font-bold text-white mb-2">Catálogo em Breve</h3>
                         <p class="text-[13px] text-textSecondary max-w-[280px] leading-relaxed">
-                            A lista de filmes está sendo preparada.
+                            A lista de filmes está sendo preparada e logo estará disponível.
                         </p>
                     </div>
                 `;
@@ -705,6 +723,81 @@
             return String(value ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#039;');
         }
         function escapeAttribute(value) { return escapeHTML(value); }
+
+
+        /* ============================================================
+           CARROSSEL DE LANÇAMENTOS (FILMES)
+           ============================================================ */
+
+        function updateFeaturedMovies() {
+            const allMovies = [];
+            for (const cat in movieData) {
+                // Junta todos os filmes num array só e anexa a categoria a qual pertencem
+                movieData[cat].forEach(m => allMovies.push({...m, categoriaObj: cat}));
+            }
+
+            if (allMovies.length === 0) return;
+
+            // Embaralha (shuffle) e pega 3 filmes aleatórios
+            const shuffled = allMovies.sort(() => 0.5 - Math.random());
+            
+            // Renderiza 3 itens
+            const selected = shuffled.slice(0, 3); 
+
+            const grid = document.getElementById('featuredMoviesGrid');
+            if(!grid) return;
+
+            // Inicia o efeito de esmaecer (Fade Out)
+            grid.style.opacity = '0';
+
+            setTimeout(() => {
+                grid.innerHTML = '';
+                
+                selected.forEach(movie => {
+                    const poster = getMovieImage(movie);
+                    const card = document.createElement('div');
+                    
+                    // Cartão de lançamento com sombra e gradiente forte
+                    card.className = 'channel-card cursor-pointer relative aspect-video sm:aspect-[4/3] md:aspect-video rounded-xl overflow-hidden bg-surfacePanel border border-white/5 group shadow-lg';
+                    card.onclick = () => playMedia(movie, movie.categoriaObj, 'movie');
+                    
+                    card.innerHTML = `
+                        <img src="${escapeAttribute(poster)}" alt="${escapeAttribute(movie.nome)}" loading="lazy" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" onerror="this.src='https://via.placeholder.com/600x400?text=Lançamento'">
+                        
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/95 via-black/20 to-transparent flex flex-col justify-end p-4">
+                            <span class="px-2 py-1 rounded bg-primary text-background text-[9px] font-bold uppercase tracking-widest w-max mb-2 shadow-lg">
+                                Destaque
+                            </span>
+                            <p class="text-sm md:text-base font-bold text-white leading-tight line-clamp-2 drop-shadow-md">
+                                ${escapeHTML(movie.nome)}
+                            </p>
+                            <p class="text-[10px] text-primary/80 mt-1 line-clamp-1 drop-shadow-md font-medium uppercase tracking-wider">
+                                ${escapeHTML(movie.categoriaObj)}
+                            </p>
+                        </div>
+                    `;
+                    grid.appendChild(card);
+                });
+                
+                // Finaliza o efeito reaparecendo (Fade In)
+                grid.style.opacity = '1';
+            }, 300); // Espera 300ms do fade-out do Tailwind para trocar as imagens
+        }
+
+        function startFeaturedMovies() {
+            // Limpa caso a pessoa já tenha iniciado antes
+            if (featuredMoviesInterval) clearInterval(featuredMoviesInterval);
+            
+            const featuredWrapper = document.getElementById('featuredMoviesWrapper');
+            // Só exibe se houver filmes e não houver pesquisa ativa
+            if (featuredWrapper && Object.keys(movieData).length > 0 && searchQuery.trim() === '') {
+                featuredWrapper.classList.remove('hidden');
+                updateFeaturedMovies(); // Exibe os 3 primeiros
+                
+                // Rotaciona a cada 10 segundos (10.000 ms)
+                featuredMoviesInterval = setInterval(updateFeaturedMovies, 10000);
+            }
+        }
 
 
         /* ============================================================
@@ -779,7 +872,6 @@
                     card.onclick = () => playMedia(channel, categoria, 'channel');
                     
                     if (channelViewMode === 'grid') {
-                        // Aspect ratio 1:1 para Canais
                         card.className = 'channel-card cursor-pointer relative aspect-square rounded-xl overflow-hidden bg-surfacePanel border border-white/5 group';
                         card.innerHTML = `
                             <img src="${escapeAttribute(logo)}" alt="${escapeAttribute(channel.nome)}" loading="lazy" class="w-full h-full object-contain p-4 group-hover:scale-105 transition-transform" onerror="this.src='https://via.placeholder.com/200'">
@@ -870,10 +962,19 @@
 
         function renderMovieAccordion() {
             const container = document.getElementById('movieAccordionContainer');
-            if(!container) return; // Evita erro se a div sumir
+            const featuredWrapper = document.getElementById('featuredMoviesWrapper');
+
+            if(!container) return; 
             
             container.innerHTML = '';
             let totalEncontrados = 0;
+
+            // Oculta a área de destaques se o usuário estiver digitando uma busca para focar nos resultados
+            if (searchQuery.trim() !== '') {
+                if (featuredWrapper) featuredWrapper.classList.add('hidden');
+            } else {
+                if (featuredWrapper && Object.keys(movieData).length > 0) featuredWrapper.classList.remove('hidden');
+            }
 
             if (categoryViewMode === 'grid') {
                 container.className = 'grid grid-cols-2 sm:grid-cols-3 gap-3 w-full relative';
