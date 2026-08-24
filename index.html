@@ -408,6 +408,17 @@
                     </button>
                 </div>
 
+                <!-- DESTAQUES POR CATEGORIA (CANAIS HORIZONTAIS) -->
+                <div id="featuredChannelsWrapper" class="mb-8 hidden">
+                    <h3 class="text-xs uppercase tracking-[.15em] font-bold text-textSecondary mb-3 flex items-center gap-2">
+                        <span class="material-symbols-outlined text-sm text-primary">star</span>
+                        Em Destaque
+                    </h3>
+                    <div id="featuredChannelsGrid" class="flex gap-3 overflow-x-auto snap-x snap-mandatory hide-scrollbar transition-opacity duration-500 opacity-100 pb-2">
+                        <!-- Carregado via JS dinamicamente -->
+                    </div>
+                </div>
+
                 <!-- CONTAINER DO ACCORDION CANAIS -->
                 <div id="accordionContainer">
                 </div>
@@ -451,14 +462,13 @@
                     </button>
                 </div>
 
-                <!-- DESTAQUES / LANÇAMENTOS (NOVO) -->
+                <!-- DESTAQUES / LANÇAMENTOS (FILMES HORIZONTAIS) -->
                 <div id="featuredMoviesWrapper" class="mb-8 hidden">
                     <h3 class="text-xs uppercase tracking-[.15em] font-bold text-textSecondary mb-3 flex items-center gap-2">
                         <span class="material-symbols-outlined text-sm text-primary">local_fire_department</span>
                         Lançamentos
                     </h3>
-                    <!-- Grid que receberá os filmes sorteados -->
-                    <div id="featuredMoviesGrid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 transition-opacity duration-500 opacity-100">
+                    <div id="featuredMoviesGrid" class="flex gap-3 overflow-x-auto snap-x snap-mandatory hide-scrollbar transition-opacity duration-500 opacity-100 pb-2">
                         <!-- Carregado via JS dinamicamente -->
                     </div>
                 </div>
@@ -623,8 +633,9 @@
         // Controle de Abas Ativas ('channels' ou 'movies')
         let currentTab = 'channels';
         
-        // Controle do Carrossel de Lançamentos
+        // Controle do Carrosséis
         let featuredMoviesInterval;
+        let featuredChannelsInterval;
         
         // Carrega o modo de visualização salvo ou define os padrões
         let channelViewMode = localStorage.getItem('boatv_channelViewMode') || 'grid';
@@ -650,6 +661,8 @@
                 if (!response.ok) throw new Error('Erro ao carregar canais.json');
                 channelData = await response.json();
                 renderAccordion();
+                
+                startFeaturedChannels();
             } catch (error) {
                 console.error(error);
                 channelContainer.innerHTML = `
@@ -675,11 +688,9 @@
                 movieData = await responseMovies.json();
                 renderMovieAccordion();
                 
-                // Inicia o carrossel de lançamentos apenas após os dados carregarem
                 startFeaturedMovies(); 
             } catch (error) {
                 console.error(error);
-                // Se o arquivo ainda não existir, mostra uma mensagem amigável de "Em Breve"
                 movieContainer.innerHTML = `
                     <div class="w-full bg-surfaceContainer border border-white/5 rounded-2xl p-10 flex flex-col items-center justify-center text-center mt-6 shadow-inner col-span-full">
                         <div class="w-20 h-20 bg-surfacePanel rounded-full flex items-center justify-center mb-5 border border-white/5">
@@ -712,7 +723,6 @@
             }
         }
 
-        // Tenta pegar a imagem do filme, se não tiver 'img' tenta extrair do link como os canais
         function getMovieImage(movie) {
             if (movie.img && movie.img.trim() !== '') return movie.img;
             if (movie.logo && movie.logo.trim() !== '') return movie.logo;
@@ -724,6 +734,92 @@
         }
         function escapeAttribute(value) { return escapeHTML(value); }
 
+        
+        /* ============================================================
+           GERADOR DE EPG SIMULADO (CASO O JSON NÃO TENHA PROGRAMAÇÃO)
+           ============================================================ */
+           
+        function gerarProgramacaoSimulada(nomeCanal) {
+            const now = new Date();
+            
+            // Função rápida para formatar a hora (ex: 14:30)
+            const format = (d) => String(d.getHours()).padStart(2, '0') + ':' + String(d.getMinutes()).padStart(2, '0');
+            
+            const prev = new Date(now); prev.setHours(prev.getHours() - 1);
+            const next = new Date(now); next.setHours(next.getHours() + 1);
+            const next2 = new Date(now); next2.setHours(next2.getHours() + 2);
+            
+            return [
+                { horario: format(prev), titulo: 'Programa Anterior', atual: false },
+                { horario: format(now), titulo: nomeCanal ? `Ao Vivo: ${nomeCanal}` : 'Transmissão Ao Vivo', atual: true },
+                { horario: format(next), titulo: 'Próxima Atração', atual: false },
+                { horario: format(next2), titulo: 'Sessão Especial', atual: false }
+            ];
+        }
+
+
+        /* ============================================================
+           CARROSSEL DE CANAIS EM DESTAQUE
+           ============================================================ */
+
+        function updateFeaturedChannels() {
+            const selectedChannels = [];
+            
+            for (const cat in channelData) {
+                const channels = channelData[cat];
+                if (channels.length > 0) {
+                    const randomChannel = channels[Math.floor(Math.random() * channels.length)];
+                    selectedChannels.push({...randomChannel, categoriaObj: cat});
+                }
+            }
+
+            if (selectedChannels.length === 0) return;
+
+            const grid = document.getElementById('featuredChannelsGrid');
+            if(!grid) return;
+
+            grid.style.opacity = '0';
+
+            setTimeout(() => {
+                grid.innerHTML = '';
+                
+                selectedChannels.forEach(channel => {
+                    const logo = getLogoFromLink(channel.link);
+                    const card = document.createElement('div');
+                    
+                    card.className = 'channel-card cursor-pointer flex-none w-32 sm:w-40 snap-start relative aspect-square rounded-xl overflow-hidden bg-surfacePanel border border-white/5 group shadow-lg flex items-center justify-center p-4 sm:p-5';
+                    card.onclick = () => playMedia(channel, channel.categoriaObj, 'channel');
+                    
+                    card.innerHTML = `
+                        <img src="${escapeAttribute(logo)}" alt="${escapeAttribute(channel.nome)}" loading="lazy" class="w-full h-full object-contain group-hover:scale-110 transition-transform duration-700" onerror="this.src='https://via.placeholder.com/200?text=Canal'">
+                        
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent flex flex-col justify-end p-2 sm:p-3 opacity-100">
+                            <span class="px-1.5 py-0.5 rounded bg-primary/20 text-primary border border-primary/30 text-[8px] font-bold uppercase tracking-widest w-max mb-1 shadow-lg backdrop-blur-sm truncate max-w-full">
+                                ${escapeHTML(channel.categoriaObj)}
+                            </span>
+                            <p class="text-[10px] sm:text-xs font-bold text-white leading-tight truncate drop-shadow-md">
+                                ${escapeHTML(channel.nome)}
+                            </p>
+                        </div>
+                    `;
+                    grid.appendChild(card);
+                });
+                
+                grid.style.opacity = '1';
+            }, 300);
+        }
+
+        function startFeaturedChannels() {
+            if (featuredChannelsInterval) clearInterval(featuredChannelsInterval);
+            
+            const featuredWrapper = document.getElementById('featuredChannelsWrapper');
+            if (featuredWrapper && Object.keys(channelData).length > 0 && searchQuery.trim() === '') {
+                featuredWrapper.classList.remove('hidden');
+                updateFeaturedChannels(); 
+                featuredChannelsInterval = setInterval(updateFeaturedChannels, 10000);
+            }
+        }
+
 
         /* ============================================================
            CARROSSEL DE LANÇAMENTOS (FILMES)
@@ -732,22 +828,17 @@
         function updateFeaturedMovies() {
             const allMovies = [];
             for (const cat in movieData) {
-                // Junta todos os filmes num array só e anexa a categoria a qual pertencem
                 movieData[cat].forEach(m => allMovies.push({...m, categoriaObj: cat}));
             }
 
             if (allMovies.length === 0) return;
 
-            // Embaralha (shuffle) e pega 3 filmes aleatórios
             const shuffled = allMovies.sort(() => 0.5 - Math.random());
-            
-            // Renderiza 3 itens
             const selected = shuffled.slice(0, 3); 
 
             const grid = document.getElementById('featuredMoviesGrid');
             if(!grid) return;
 
-            // Inicia o efeito de esmaecer (Fade Out)
             grid.style.opacity = '0';
 
             setTimeout(() => {
@@ -757,8 +848,7 @@
                     const poster = getMovieImage(movie);
                     const card = document.createElement('div');
                     
-                    // Cartão de lançamento com sombra e gradiente forte
-                    card.className = 'channel-card cursor-pointer relative aspect-video sm:aspect-[4/3] md:aspect-video rounded-xl overflow-hidden bg-surfacePanel border border-white/5 group shadow-lg';
+                    card.className = 'channel-card cursor-pointer flex-none w-56 sm:w-64 snap-start relative aspect-video rounded-xl overflow-hidden bg-surfacePanel border border-white/5 group shadow-lg';
                     card.onclick = () => playMedia(movie, movie.categoriaObj, 'movie');
                     
                     card.innerHTML = `
@@ -779,22 +869,17 @@
                     grid.appendChild(card);
                 });
                 
-                // Finaliza o efeito reaparecendo (Fade In)
                 grid.style.opacity = '1';
-            }, 300); // Espera 300ms do fade-out do Tailwind para trocar as imagens
+            }, 300);
         }
 
         function startFeaturedMovies() {
-            // Limpa caso a pessoa já tenha iniciado antes
             if (featuredMoviesInterval) clearInterval(featuredMoviesInterval);
             
             const featuredWrapper = document.getElementById('featuredMoviesWrapper');
-            // Só exibe se houver filmes e não houver pesquisa ativa
             if (featuredWrapper && Object.keys(movieData).length > 0 && searchQuery.trim() === '') {
                 featuredWrapper.classList.remove('hidden');
-                updateFeaturedMovies(); // Exibe os 3 primeiros
-                
-                // Rotaciona a cada 10 segundos (10.000 ms)
+                updateFeaturedMovies(); 
                 featuredMoviesInterval = setInterval(updateFeaturedMovies, 10000);
             }
         }
@@ -806,8 +891,16 @@
 
         function renderAccordion() {
             const container = document.getElementById('accordionContainer');
+            const featuredWrapper = document.getElementById('featuredChannelsWrapper');
+
             container.innerHTML = '';
             let totalEncontrados = 0;
+
+            if (searchQuery.trim() !== '') {
+                if (featuredWrapper) featuredWrapper.classList.add('hidden');
+            } else {
+                if (featuredWrapper && Object.keys(channelData).length > 0) featuredWrapper.classList.remove('hidden');
+            }
 
             if (categoryViewMode === 'grid') {
                 container.className = 'grid grid-cols-2 sm:grid-cols-3 gap-3 w-full relative';
@@ -969,7 +1062,6 @@
             container.innerHTML = '';
             let totalEncontrados = 0;
 
-            // Oculta a área de destaques se o usuário estiver digitando uma busca para focar nos resultados
             if (searchQuery.trim() !== '') {
                 if (featuredWrapper) featuredWrapper.classList.add('hidden');
             } else {
@@ -1039,7 +1131,6 @@
                     card.onclick = () => playMedia(movie, categoria, 'movie');
                     
                     if (channelViewMode === 'grid') {
-                        // Aspect ratio 2:3 para Pôsteres de Filmes
                         card.className = 'channel-card cursor-pointer relative aspect-[2/3] rounded-xl overflow-hidden bg-surfacePanel border border-white/5 group';
                         card.innerHTML = `
                             <img src="${escapeAttribute(poster)}" alt="${escapeAttribute(movie.nome)}" loading="lazy" class="w-full h-full object-cover group-hover:scale-105 transition-transform" onerror="this.src='https://via.placeholder.com/200x300?text=Filme'">
@@ -1125,7 +1216,7 @@
 
 
         /* ============================================================
-           REPRODUZIR MÍDIA (CANAIS OU FILMES)
+           REPRODUZIR MÍDIA E MOSTRAR EPG (ATUALIZADO)
            ============================================================ */
 
         function playMedia(mediaObj, categoria, type) {
@@ -1168,28 +1259,43 @@
                 // Mostrar EPG de Programação para Canais
                 scheduleSection.classList.remove('hidden');
                 
-                // Lógica para EPG de Canal
-                if (mediaObj.programacao && mediaObj.programacao.length > 0) {
-                    let scheduleHTML = '';
-                    mediaObj.programacao.forEach(prog => {
-                        const isNow = prog.atual ? 'text-primary font-bold' : 'text-white';
-                        const dot = prog.atual ? '<span class="w-2 h-2 rounded-full bg-tertiary animate-pulse"></span>' : '';
-                        scheduleHTML += `
-                            <div class="flex items-center gap-3 bg-surfacePanel p-3 rounded-lg border border-white/5">
-                                <div class="text-xs font-mono text-textMuted w-12">${escapeHTML(prog.horario)}</div>
-                                <div class="flex-1 text-sm ${isNow} truncate">${escapeHTML(prog.titulo)}</div>
-                                ${dot}
-                            </div>
-                        `;
-                    });
-                    scheduleList.innerHTML = scheduleHTML;
-                } else {
+                // LÓGICA DE PROGRAMAÇÃO CORRIGIDA
+                let progData = mediaObj.programacao || mediaObj.epg;
+
+                // 1. Se a programação for apenas um texto (ex: "Jornal do Meio Dia")
+                if (typeof progData === 'string' && progData.trim() !== '') {
                     scheduleList.innerHTML = `
-                        <div class="text-center py-6 text-textMuted bg-surfacePanel rounded-lg border border-white/5">
-                            <span class="material-symbols-outlined text-2xl mb-2 opacity-50">event_busy</span>
-                            <p class="text-xs">Programação indisponível para este canal.</p>
+                        <div class="flex items-center gap-3 bg-surfacePanel p-3 rounded-lg border border-white/5">
+                            <span class="w-2 h-2 rounded-full bg-tertiary animate-pulse"></span>
+                            <div class="flex-1 text-sm text-primary font-bold">${escapeHTML(progData)}</div>
                         </div>
                     `;
+                } 
+                else {
+                    // 2. Se o arquivo não tem programação ou ela estiver vazia, geramos uma fake!
+                    if (!Array.isArray(progData) || progData.length === 0) {
+                        progData = gerarProgramacaoSimulada(mediaObj.nome);
+                    }
+
+                    // 3. Renderiza a grade (agora garantido que tem dados para desenhar)
+                    if (Array.isArray(progData) && progData.length > 0) {
+                        let scheduleHTML = '';
+                        progData.forEach(prog => {
+                            const isNow = prog.atual ? 'text-primary font-bold' : 'text-white';
+                            const dot = prog.atual ? '<span class="w-2 h-2 rounded-full bg-tertiary animate-pulse"></span>' : '';
+                            const title = prog.titulo || prog.title || prog.nome || 'Atração';
+                            const time = prog.horario || prog.time || '--:--';
+                            
+                            scheduleHTML += `
+                                <div class="flex items-center gap-3 bg-surfacePanel p-3 rounded-lg border border-white/5">
+                                    <div class="text-xs font-mono text-textMuted w-12">${escapeHTML(time)}</div>
+                                    <div class="flex-1 text-sm ${isNow} truncate">${escapeHTML(title)}</div>
+                                    ${dot}
+                                </div>
+                            `;
+                        });
+                        scheduleList.innerHTML = scheduleHTML;
+                    }
                 }
             }
 
