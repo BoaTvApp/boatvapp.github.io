@@ -184,17 +184,6 @@
         }
 
 
-        .category-btn {
-            transition: all .2s ease;
-        }
-
-
-        .category-btn.active {
-            background: #adc6ff;
-            color: #0c1324;
-        }
-
-
         .bottom-nav {
             padding-bottom: env(safe-area-inset-bottom);
         }
@@ -207,6 +196,26 @@
 
         .player-glow {
             box-shadow: 0 20px 60px rgba(0,0,0,.45);
+        }
+
+        /* Classes para o Menu Sanfona (Lista) */
+        .accordion-panel {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+        }
+        
+        .arrow {
+            transition: transform 0.3s ease;
+        }
+        
+        /* Animação para a exibição de categorias em Grade */
+        @keyframes fadeInDown {
+            from { opacity: 0; transform: translateY(-5px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-fade-in-down {
+            animation: fadeInDown 0.25s ease-out forwards;
         }
 
     </style>
@@ -223,11 +232,19 @@
 
     <header class="fixed top-0 left-0 right-0 z-50 h-16 glass border-b border-white/5 flex items-center justify-center px-4">
         
-        <div class="font-extrabold tracking-[0.15em] text-primary italic text-lg flex items-center gap-3">
+        <div class="flex items-center gap-3">
             
-            <img src="https://boatvapp.github.io/img/ico_logo4.ico" alt="Ícone BOATV" class="w-8 h-8 rounded-full object-cover"/>
+            <img src="https://boatvapp.github.io/img/ico_logo4.ico" alt="Ícone BOATV" class="w-9 h-9 rounded-full object-cover shadow-[0_0_15px_rgba(173,198,255,0.4)]"/>
 
-            BOA.TV
+            <div class="flex flex-col justify-center">
+                <span class="font-extrabold tracking-[0.15em] italic text-base bg-gradient-to-r from-primary via-purple-300 to-tertiary text-transparent bg-clip-text drop-shadow-sm leading-none">
+                    BOA.TV
+                </span>
+                <span class="text-[9px] font-medium tracking-widest text-textSecondary uppercase mt-1 leading-none">
+                    Sua TV Online
+                </span>
+            </div>
+            
         </div>
 
     </header>
@@ -252,7 +269,7 @@
                 id="searchInput"
                 type="text"
                 placeholder="Buscar canal..."
-                class="w-full bg-surfacePanel border border-white/10 rounded-xl pl-11 pr-4 py-3 text-sm text-white outline-none focus:border-primary">
+                class="w-full bg-surfacePanel border border-white/10 rounded-xl pl-11 pr-4 py-3 text-sm text-white outline-none focus:border-primary transition-all duration-300">
 
         </div>
 
@@ -303,7 +320,7 @@
 
             </div>
 
-            <!-- INFORMAÇÕES DO CANAL -->
+            <!-- INFORMAÇÕES DO CANAL/FILME -->
             <div
                 id="nowPlaying"
                 class="w-full max-w-6xl mx-auto mt-3 bg-surfaceContainer rounded-xl border border-white/5 p-3">
@@ -316,13 +333,13 @@
                         class="w-12 h-12 rounded-lg object-contain bg-surfacePanel border border-white/5 p-1">
 
                     <div class="flex-1 min-w-0">
-                        <p class="text-[9px] uppercase tracking-[.15em] text-textMuted">
+                        <p id="nowPlayingLabel" class="text-[9px] uppercase tracking-[.15em] text-textMuted">
                             Assistindo agora
                         </p>
                         <h2
                             id="currentTitle"
                             class="font-bold text-white truncate mt-1">
-                            Nome do Canal
+                            Nome
                         </h2>
                         <p
                             id="currentCategory"
@@ -339,7 +356,7 @@
                  ==================================================== -->
             <div
                 id="channelSchedule"
-                class="w-full max-w-6xl mx-auto mt-4 bg-surfaceContainer rounded-xl border border-white/5 p-4">
+                class="w-full max-w-6xl mx-auto mt-4 bg-surfaceContainer rounded-xl border border-white/5 p-4 hidden">
                 
                 <h3 class="text-xs uppercase tracking-[.15em] font-bold text-textSecondary mb-3 flex items-center gap-2">
                     <span class="material-symbols-outlined text-sm">calendar_today</span>
@@ -371,7 +388,7 @@
                             TV ao vivo
                         </p>
                         <h2 class="text-xl font-bold text-white mt-1">
-                            Canais
+                            Categorias
                         </h2>
                     </div>
 
@@ -380,47 +397,62 @@
                             Busca
                         </p>
                         <h2 class="text-xl font-bold text-white mt-1">
-                            Resultados da busca
+                            Canais encontrados
                         </h2>
                     </div>
 
                     <button
-                        id="clearSearch"
-                        class="hidden text-[10px] uppercase tracking-wider text-textSecondary">
+                        id="clearSearchChannel"
+                        class="hidden text-[10px] uppercase tracking-wider text-textSecondary clear-search-btn">
                         Limpar
                     </button>
                 </div>
 
-                <!-- LAYOUT COM DUAS COLUNAS -->
-                <div class="grid grid-cols-1 lg:grid-cols-4 gap-6 items-start">
+                <!-- CONTAINER DO ACCORDION CANAIS -->
+                <div id="accordionContainer">
+                </div>
 
-                    <!-- CATEGORIAS -->
-                    <div
-                        id="categoryContainerMain"
-                        class="flex flex-col gap-2 overflow-y-auto hide-scrollbar max-h-[70vh] pr-2 lg:col-span-1">
+            </div>
+        </section>
+
+
+        <!-- ========================================================
+             LISTA DE FILMES
+             ======================================================== -->
+
+        <section id="moviesSection" class="mt-8 px-4 hidden">
+            <div class="max-w-7xl mx-auto">
+                
+                <!-- TÍTULO -->
+                <div class="flex items-end justify-between mb-4">
+                    
+                    <div id="normalMovieTitleContainer">
+                        <p class="text-[9px] uppercase tracking-[.2em] font-bold text-primary">
+                            Catálogo
+                        </p>
+                        <h2 class="text-xl font-bold text-white mt-1">
+                            Filmes
+                        </h2>
                     </div>
 
-                    <!-- GRID DE CANAIS -->
-                    <div id="channelsGridWrapper" class="lg:col-span-3 transition-all duration-300">
-
-                        <div id="categoryHeaderBar" class="hidden items-center justify-between mb-4 bg-surfaceContainer px-4 py-3 rounded-xl border border-white/5">
-                            <div class="flex items-center gap-2">
-                                <span class="material-symbols-outlined text-primary text-lg">folder</span>
-                                <span class="text-sm font-bold text-white" id="activeCategoryTitle">Categoria</span>
-                            </div>
-                            <button
-                                onclick="filterCategory('ALL')"
-                                class="text-[10px] uppercase tracking-wider text-primary font-bold flex items-center gap-1 hover:underline bg-surfaceHigh px-3 py-1.5 rounded-lg border border-white/5">
-                                <span class="material-symbols-outlined text-sm">arrow_back</span>
-                                Todas as categorias
-                            </button>
-                        </div>
-
-                        <div id="channelsGrid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
-                        </div>
-
+                    <div id="searchMovieTitleContainer" class="hidden">
+                        <p class="text-[9px] uppercase tracking-[.2em] font-bold text-primary">
+                            Busca
+                        </p>
+                        <h2 class="text-xl font-bold text-white mt-1">
+                            Filmes encontrados
+                        </h2>
                     </div>
 
+                    <button
+                        id="clearSearchMovie"
+                        class="hidden text-[10px] uppercase tracking-wider text-textSecondary clear-search-btn">
+                        Limpar
+                    </button>
+                </div>
+
+                <!-- CONTAINER DO ACCORDION FILMES -->
+                <div id="movieAccordionContainer">
                 </div>
 
             </div>
@@ -430,72 +462,135 @@
 
 
     <!-- ============================================================
+         MODAL DE CONFIGURAÇÕES
+         ============================================================ -->
+
+    <div id="settingsModal" class="fixed inset-0 z-[60] hidden">
+        <!-- Backdrop (Fundo Escuro) -->
+        <div class="absolute inset-0 bg-black/60 backdrop-blur-sm transition-opacity opacity-0" id="settingsBackdrop"></div>
+        
+        <!-- Painel de Configurações -->
+        <div class="absolute bottom-0 left-0 right-0 bg-surfaceContainer border-t border-white/10 rounded-t-2xl p-6 transform translate-y-full transition-transform duration-300 shadow-[0_-10px_40px_rgba(0,0,0,0.5)] max-h-[85vh] overflow-y-auto hide-scrollbar" id="settingsPanel">
+            
+            <!-- Linha de arrastar (estética mobile) -->
+            <div class="w-12 h-1.5 bg-white/10 rounded-full mx-auto mb-5"></div>
+
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-xl font-bold text-white flex items-center gap-2">
+                    <span class="material-symbols-outlined text-primary">tune</span>
+                    Configurações
+                </h2>
+                <button id="closeSettings" class="w-8 h-8 flex items-center justify-center rounded-full bg-white/5 text-textSecondary hover:text-white hover:bg-white/10 transition-colors">
+                    <span class="material-symbols-outlined text-xl">close</span>
+                </button>
+            </div>
+            
+            <!-- Config. 1: CATEGORIAS -->
+            <div class="mb-5">
+                <p class="text-xs uppercase tracking-wider font-bold text-textSecondary mb-3">Visualização de Categorias</p>
+                <div class="flex gap-3">
+                    <button id="catViewGridBtn" class="flex-1 py-3 px-4 rounded-xl border border-white/10 text-textSecondary bg-surfaceHigh hover:bg-white/5 flex flex-col items-center justify-center gap-1 transition-colors shadow-sm">
+                        <span class="material-symbols-outlined mb-1">dashboard</span>
+                        <span class="text-xs">Grade</span>
+                    </button>
+                    <button id="catViewListBtn" class="flex-1 py-3 px-4 rounded-xl border border-white/10 text-textSecondary bg-surfaceHigh hover:bg-white/5 flex flex-col items-center justify-center gap-1 transition-colors shadow-sm">
+                        <span class="material-symbols-outlined mb-1">view_agenda</span>
+                        <span class="text-xs">Lista</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Config. 2: CANAIS E FILMES -->
+            <div class="mb-6">
+                <p class="text-xs uppercase tracking-wider font-bold text-textSecondary mb-3">Estilo das Capas</p>
+                <div class="flex gap-3">
+                    <button id="viewGridBtn" class="flex-1 py-3 px-4 rounded-xl border border-white/10 text-textSecondary bg-surfaceHigh hover:bg-white/5 flex flex-col items-center justify-center gap-1 transition-colors shadow-sm">
+                        <span class="material-symbols-outlined mb-1">grid_view</span>
+                        <span class="text-xs">Grade</span>
+                    </button>
+                    <button id="viewListBtn" class="flex-1 py-3 px-4 rounded-xl border border-white/10 text-textSecondary bg-surfaceHigh hover:bg-white/5 flex flex-col items-center justify-center gap-1 transition-colors shadow-sm">
+                        <span class="material-symbols-outlined mb-1">view_list</span>
+                        <span class="text-xs">Lista</span>
+                    </button>
+                </div>
+            </div>
+
+            <div class="text-center mt-6">
+                <p class="text-[10px] text-textMuted uppercase tracking-widest">BOA.TV v1.3</p>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- ============================================================
          BARRA INFERIOR
          ============================================================ -->
 
-    <nav class="bottom-nav fixed bottom-0 left-0 right-0 z-50 h-20 glass border-t border-white/5 flex items-center justify-around">
+    <nav class="bottom-nav fixed bottom-0 left-0 right-0 z-50 h-20 glass border-t border-white/5 flex items-center justify-between px-2">
 
         <!-- INÍCIO -->
         <button
             id="navHome"
-            class="flex flex-col items-center justify-center gap-1 text-primary min-w-[64px]">
-
+            class="flex flex-col items-center justify-center gap-1 text-primary flex-1">
             <span class="material-symbols-outlined" style="font-variation-settings:'FILL' 1;">
                 home
             </span>
             <span class="text-[9px] uppercase tracking-wider font-bold">
                 Início
             </span>
-            <span class="w-1 h-1 rounded-full bg-primary">
-            </span>
+            <span class="w-1 h-1 rounded-full bg-primary opacity-100"></span>
         </button>
-
 
         <!-- CANAIS -->
         <button
             id="navChannels"
-            class="flex flex-col items-center justify-center gap-1 text-primary min-w-[64px]">
-
+            class="flex flex-col items-center justify-center gap-1 text-primary flex-1">
             <span class="material-symbols-outlined">
                 live_tv
             </span>
             <span class="text-[9px] uppercase tracking-wider font-bold">
                 Canais
             </span>
-            <span id="navChannelsIndicator" class="w-1 h-1 rounded-full bg-primary">
-            </span>
+            <span id="navChannelsIndicator" class="w-1 h-1 rounded-full bg-primary opacity-100 transition-opacity"></span>
         </button>
 
+        <!-- FILMES -->
+        <button
+            id="navMovies"
+            class="flex flex-col items-center justify-center gap-1 text-textSecondary flex-1">
+            <span class="material-symbols-outlined">
+                movie
+            </span>
+            <span class="text-[9px] uppercase tracking-wider font-bold">
+                Filmes
+            </span>
+            <span id="navMoviesIndicator" class="w-1 h-1 rounded-full bg-primary opacity-0 transition-opacity"></span>
+        </button>
 
         <!-- BUSCAR -->
         <button
             id="navSearch"
-            class="flex flex-col items-center justify-center gap-1 text-textSecondary min-w-[64px]">
-
+            class="flex flex-col items-center justify-center gap-1 text-textSecondary flex-1">
             <span class="material-symbols-outlined">
                 search
             </span>
             <span class="text-[9px] uppercase tracking-wider font-bold">
                 Buscar
             </span>
-            <span class="w-1 h-1 rounded-full bg-primary opacity-0">
-            </span>
+            <span class="w-1 h-1 rounded-full bg-primary opacity-0 transition-opacity"></span>
         </button>
-
 
         <!-- CONFIGURAÇÕES -->
         <button
             id="navSettings"
-            class="flex flex-col items-center justify-center gap-1 text-textSecondary min-w-[64px]">
-
+            class="flex flex-col items-center justify-center gap-1 text-textSecondary flex-1">
             <span class="material-symbols-outlined">
                 settings
             </span>
             <span class="text-[9px] uppercase tracking-wider font-bold">
                 Config
             </span>
-            <span class="w-1 h-1 rounded-full bg-primary opacity-0">
-            </span>
+            <span class="w-1 h-1 rounded-full bg-primary opacity-0 transition-opacity"></span>
         </button>
 
     </nav>
@@ -508,40 +603,73 @@
     <script>
 
         let channelData = {};
-        let currentActiveCategory = "ALL";
+        let movieData = {};
+        
         let searchQuery = "";
         let isSearchMode = false;
+        
+        // Controle de Abas Ativas ('channels' ou 'movies')
+        let currentTab = 'channels';
+        
+        // Carrega o modo de visualização salvo ou define os padrões
+        let channelViewMode = localStorage.getItem('boatv_channelViewMode') || 'grid';
+        let categoryViewMode = localStorage.getItem('boatv_categoryViewMode') || 'list';
 
 
         /* ============================================================
-           CARREGAR CANAIS
+           CARREGAR DADOS (CANAIS E FILMES)
            ============================================================ */
 
-        async function loadChannelData() {
+        async function loadAllData() {
+            // Carregar Canais
+            const channelContainer = document.getElementById('accordionContainer');
+            channelContainer.innerHTML = `
+                <div class="text-center py-12 text-primary col-span-full">
+                    <span class="material-symbols-outlined text-3xl animate-spin mb-3">progress_activity</span>
+                    <p class="text-xs font-bold tracking-wider uppercase">Carregando canais...</p>
+                </div>
+            `;
+            
             try {
                 const response = await fetch('https://boatvapp.github.io/canais.json');
-
-                if (!response.ok) {
-                    throw new Error('Erro ao carregar canais.json');
-                }
-
+                if (!response.ok) throw new Error('Erro ao carregar canais.json');
                 channelData = await response.json();
-
-                renderCategories();
-                renderChannels();
-
+                renderAccordion();
             } catch (error) {
                 console.error(error);
-                document.getElementById('channelsGrid').innerHTML = `
+                channelContainer.innerHTML = `
                     <div class="col-span-full text-center py-12 text-red-400">
-                        <span class="material-symbols-outlined text-3xl mb-3">
-                            error
-                        </span>
-                        <p class="text-sm font-semibold">
-                            Erro ao carregar canais
-                        </p>
-                        <p class="text-[10px] text-textMuted mt-2">    
-                            Verifique se o arquivo canais.json está disponível.
+                        <span class="material-symbols-outlined text-3xl mb-3">error</span>
+                        <p class="text-sm font-semibold">Erro ao carregar canais</p>
+                    </div>
+                `;
+            }
+
+            // Carregar Filmes
+            const movieContainer = document.getElementById('movieAccordionContainer');
+            movieContainer.innerHTML = `
+                <div class="text-center py-12 text-primary col-span-full">
+                    <span class="material-symbols-outlined text-3xl animate-spin mb-3">progress_activity</span>
+                    <p class="text-xs font-bold tracking-wider uppercase">Carregando filmes...</p>
+                </div>
+            `;
+
+            try {
+                const responseMovies = await fetch('https://boatvapp.github.io/filmes.json');
+                if (!responseMovies.ok) throw new Error('Erro ao carregar filmes.json');
+                movieData = await responseMovies.json();
+                renderMovieAccordion();
+            } catch (error) {
+                console.error(error);
+                // Se o arquivo ainda não existir, mostra uma mensagem amigável de "Em Breve"
+                movieContainer.innerHTML = `
+                    <div class="w-full bg-surfaceContainer border border-white/5 rounded-2xl p-10 flex flex-col items-center justify-center text-center mt-6 shadow-inner col-span-full">
+                        <div class="w-20 h-20 bg-surfacePanel rounded-full flex items-center justify-center mb-5 border border-white/5">
+                            <span class="material-symbols-outlined text-4xl text-primary/60">movie_filter</span>
+                        </div>
+                        <h3 class="text-lg font-bold text-white mb-2">Catálogo em Breve</h3>
+                        <p class="text-[13px] text-textSecondary max-w-[280px] leading-relaxed">
+                            A lista de filmes está sendo preparada.
                         </p>
                     </div>
                 `;
@@ -550,7 +678,7 @@
     
     
         /* ============================================================
-           LOGO
+           LOGO E UTILITÁRIOS
            ============================================================ */
     
         function getLogoFromLink(link) {
@@ -560,213 +688,346 @@
                 if (img) {
                     return decodeURIComponent(img);
                 }
-                return 'https://via.placeholder.com/200';
+                return 'https://via.placeholder.com/200?text=Logo';
             } catch (error) {
-                console.warn('Não foi possível obter a logo:', error);
-                return 'https://via.placeholder.com/200';
+                return 'https://via.placeholder.com/200?text=Logo';
             }
         }
 
-
-        /* ============================================================
-           ESCAPAR HTML
-           ============================================================ */
+        // Tenta pegar a imagem do filme, se não tiver 'img' tenta extrair do link como os canais
+        function getMovieImage(movie) {
+            if (movie.img && movie.img.trim() !== '') return movie.img;
+            if (movie.logo && movie.logo.trim() !== '') return movie.logo;
+            return getLogoFromLink(movie.link);
+        }
 
         function escapeHTML(value) {
-            return String(value ?? '')
-                .replace(/&/g, '&amp;')
-                .replace(/</g, '&lt;')
-                .replace(/>/g, '&gt;')
-                .replace(/"/g, '&quot;')
-                .replace(/'/g, '&#039;');
+            return String(value ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#039;');
         }
-
-        function escapeAttribute(value) {
-            return escapeHTML(value);
-        }
-
-        function escapeJS(value) {
-            return String(value ?? '')
-                .replace(/\\/g, '\\\\')
-                .replace(/'/g, "\\'")
-                .replace(/"/g, '\\"')
-                .replace(/\r/g, '\\r')
-                .replace(/\n/g, '\\n');
-        }
-
-
-        /* ============================================================
-           CATEGORIAS
-           ============================================================ */
-
-        function renderCategories() {
-            const categories = Object.keys(channelData);
-
-            let html = `
-                <button
-                    onclick="filterCategory('ALL')"
-                    class="category-btn flex-none px-4 py-2.5 rounded-xl text-[10px] font-bold uppercase tracking-wider text-left flex items-center justify-between
-                    ${currentActiveCategory === 'ALL'
-                        ? 'active shadow-lg shadow-primary/10'
-                        : 'bg-surfaceHigh text-textSecondary hover:text-white'
-                    }">
-                    <span>Todos</span>
-                    <span class="material-symbols-outlined text-sm">chevron_right</span>
-                </button>
-            `;
-
-            categories.forEach(category => {
-                const active = currentActiveCategory === category;
-                html += `
-                    <button
-                        onclick="filterCategory('${escapeJS(category)}')"
-                        class="category-btn flex-none px-4 py-2.5 rounded-xl text-[10px] font-bold uppercase tracking-wider text-left flex items-center justify-between
-                        ${active
-                            ? 'active shadow-lg shadow-primary/10'
-                            : 'bg-surfaceHigh text-textSecondary hover:text-white'
-                        }">
-                        <span class="truncate pr-2">${escapeHTML(category)}</span>
-                        <span class="material-symbols-outlined text-sm flex-shrink-0">chevron_right</span>
-                    </button>
-                `;
-            });
-
-            document.getElementById('categoryContainerMain').innerHTML = html;
-        }
+        function escapeAttribute(value) { return escapeHTML(value); }
 
 
         /* ============================================================
            RENDERIZAR CANAIS
            ============================================================ */
 
-        function renderChannels() {
-            const grid = document.getElementById('channelsGrid');
-            let channels = [];
+        function renderAccordion() {
+            const container = document.getElementById('accordionContainer');
+            container.innerHTML = '';
+            let totalEncontrados = 0;
 
-            if (currentActiveCategory === 'ALL' || isSearchMode) {
-                Object.values(channelData).forEach(group => {
-                    channels = channels.concat(group);
-                });
+            if (categoryViewMode === 'grid') {
+                container.className = 'grid grid-cols-2 sm:grid-cols-3 gap-3 w-full relative';
             } else {
-                channels = channelData[currentActiveCategory] || [];
+                container.className = 'w-full space-y-2';
             }
 
-            /* ESTADO INICIAL DA BUSCA */
-            if (isSearchMode && searchQuery.trim() === '') {
-                grid.innerHTML = `
-                    <div class="col-span-full text-center py-12 text-textMuted">
-                        <span class="material-symbols-outlined text-3xl mb-3 text-primary/50">search</span>
-                        <p class="text-xs">Digite o nome do canal para buscar</p>
-                    </div>
-                `;
-                return;
-            }
+            for (const categoria in channelData) {
+                let items = channelData[categoria];
 
-            /* BUSCA */
-            if (searchQuery.trim() !== '') {
-                const query = searchQuery.toLowerCase();
-                channels = channels.filter(channel => {
-                    return (
-                        channel.nome &&
-                        channel.nome.toLowerCase().includes(query)
+                if (searchQuery.trim() !== '' && currentTab === 'channels') {
+                    const query = searchQuery.toLowerCase();
+                    items = items.filter(item => 
+                        (item.nome && item.nome.toLowerCase().includes(query)) ||
+                        (categoria.toLowerCase().includes(query))
                     );
-                });
-            }
+                }
 
-            /* NENHUM RESULTADO */
-            if (channels.length === 0) {
-                grid.innerHTML = `
-                    <div class="col-span-full text-center py-12 text-textMuted">
-                        <span class="material-symbols-outlined text-3xl mb-3">search_off</span>
-                        <p class="text-xs">Nenhum canal encontrado</p>
-                    </div>
-                `;
-                return;
-            }
+                if (items.length === 0) continue;
+                totalEncontrados += items.length;
 
-            let html = '';
-            channels.forEach(channel => {
-                const logo = getLogoFromLink(channel.link);
-                html += `
-                    <div
-                        onclick="playChannel('${escapeJS(channel.link)}', '${escapeJS(channel.nome)}', '${escapeJS(channel.categoria)}')"
-                        class="channel-card cursor-pointer">
+                const btn = document.createElement('button');
+                
+                if (categoryViewMode === 'grid') {
+                    btn.className = 'w-full flex flex-col items-center justify-center bg-surfaceHigh hover:bg-surfaceHighest border border-white/5 py-5 px-3 rounded-xl text-white font-bold transition-all shadow-sm group outline-none';
+                    btn.innerHTML = `
+                        <span class="material-symbols-outlined text-primary text-3xl group-hover:scale-110 transition-transform mb-2">folder_open</span>
+                        <span class="text-center text-[13px] sm:text-sm leading-tight">${escapeHTML(categoria)}</span>
+                        <span class="px-2 py-0.5 rounded-md bg-primary/10 border border-primary/20 text-primary text-[10px] mt-2">${items.length} canais</span>
+                    `;
+                } else {
+                    btn.className = 'w-full flex items-center justify-between bg-surfaceHigh hover:bg-surfaceHighest border border-white/5 px-5 py-4 rounded-xl text-white font-bold text-[13px] sm:text-sm transition-all shadow-sm group mt-3 outline-none';
+                    btn.innerHTML = `
+                        <div class="flex items-center gap-3">
+                            <span class="material-symbols-outlined text-primary group-hover:scale-110 transition-transform">folder_open</span>
+                            <span class="text-left">${escapeHTML(categoria)}</span>
+                            <span class="px-2 py-0.5 rounded-md bg-primary/10 border border-primary/20 text-primary text-[10px] ml-2">${items.length}</span>
+                        </div>
+                        <span class="material-symbols-outlined text-textSecondary arrow transition-transform duration-300">expand_more</span>
+                    `;
+                }
 
-                        <div class="relative aspect-square rounded-xl overflow-hidden bg-surfaceContainer border border-white/5">
-                            <img
-                                src="${escapeAttribute(logo)}"
-                                alt="${escapeAttribute(channel.nome)}"
-                                loading="lazy"
-                                class="w-full h-full object-contain p-4"
-                                onerror="this.src='https://via.placeholder.com/200'">
+                const panel = document.createElement('div');
+                
+                if (categoryViewMode === 'grid') {
+                    panel.className = 'col-span-full hidden bg-surfaceContainer border border-white/5 rounded-xl p-4 shadow-inner animate-fade-in-down mb-2';
+                } else {
+                    panel.className = 'accordion-panel bg-surfaceContainer border-x border-b border-white/5 rounded-b-xl mx-1 pt-6 pb-4 px-4 shadow-inner';
+                }
+                
+                const listContainer = document.createElement('div');
+                
+                if (channelViewMode === 'grid') {
+                    listContainer.className = 'grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3';
+                } else {
+                    listContainer.className = 'flex flex-col gap-2';
+                }
 
+                items.forEach(channel => {
+                    const logo = getLogoFromLink(channel.link);
+                    const card = document.createElement('div');
+                    card.onclick = () => playMedia(channel, categoria, 'channel');
+                    
+                    if (channelViewMode === 'grid') {
+                        // Aspect ratio 1:1 para Canais
+                        card.className = 'channel-card cursor-pointer relative aspect-square rounded-xl overflow-hidden bg-surfacePanel border border-white/5 group';
+                        card.innerHTML = `
+                            <img src="${escapeAttribute(logo)}" alt="${escapeAttribute(channel.nome)}" loading="lazy" class="w-full h-full object-contain p-4 group-hover:scale-105 transition-transform" onerror="this.src='https://via.placeholder.com/200'">
                             <div class="absolute inset-x-0 bottom-0 p-2 bg-gradient-to-t from-black/80 to-transparent">
                                 <p class="text-[10px] font-bold text-white truncate">${escapeHTML(channel.nome)}</p>
                                 <p class="text-[8px] text-white/60 truncate mt-1">${escapeHTML(channel.categoria || '')}</p>
                             </div>
-
-                            <div class="absolute top-2 right-2 w-7 h-7 rounded-full bg-black/50 backdrop-blur-sm flex items-center justify-center">
-                                <span class="material-symbols-outlined text-sm text-primary">play_arrow</span>
+                        `;
+                    } else {
+                        card.className = 'channel-card cursor-pointer flex items-center gap-3 p-2 rounded-xl bg-surfacePanel border border-white/5 group';
+                        card.innerHTML = `
+                            <div class="w-14 h-14 rounded-lg bg-surfaceHigh flex-shrink-0 p-2 flex items-center justify-center border border-white/5">
+                                <img src="${escapeAttribute(logo)}" alt="${escapeAttribute(channel.nome)}" loading="lazy" class="w-full h-full object-contain group-hover:scale-110 transition-transform" onerror="this.src='https://via.placeholder.com/200'">
                             </div>
-                        </div>
+                            <div class="flex-1 min-w-0 pr-2">
+                                <p class="text-[13px] sm:text-sm font-bold text-white truncate group-hover:text-primary transition-colors">${escapeHTML(channel.nome)}</p>
+                            </div>
+                            <div class="w-8 h-8 mr-2 flex-shrink-0 rounded-full bg-primary/10 flex items-center justify-center text-primary opacity-0 group-hover:opacity-100 transition-opacity">
+                                <span class="material-symbols-outlined text-[18px]">play_arrow</span>
+                            </div>
+                        `;
+                    }
+                    listContainer.appendChild(card);
+                });
+
+                panel.appendChild(listContainer);
+
+                btn.addEventListener('click', function() {
+                    if (categoryViewMode === 'grid') {
+                        const isHidden = panel.classList.contains('hidden');
+                        const allPanels = container.querySelectorAll('.col-span-full');
+                        const allBtns = container.querySelectorAll('button');
+                        allPanels.forEach(p => p.classList.add('hidden'));
+                        allBtns.forEach(b => {
+                            b.classList.remove('ring-2', 'ring-primary', 'bg-surfaceHighest');
+                            b.classList.add('bg-surfaceHigh');
+                        });
+
+                        if (isHidden) {
+                            panel.classList.remove('hidden');
+                            btn.classList.add('ring-2', 'ring-primary', 'bg-surfaceHighest');
+                            btn.classList.remove('bg-surfaceHigh');
+                            setTimeout(() => { btn.scrollIntoView({ behavior: 'smooth', block: 'start' }); }, 50);
+                        }
+                    } else {
+                        const isOpen = panel.style.maxHeight;
+                        if (isOpen) {
+                            panel.style.maxHeight = null;
+                            btn.querySelector('.arrow').style.transform = 'rotate(0deg)';
+                            btn.classList.replace('rounded-t-xl', 'rounded-xl');
+                        } else {
+                            panel.style.maxHeight = panel.scrollHeight + "px";
+                            btn.querySelector('.arrow').style.transform = 'rotate(180deg)';
+                            btn.classList.replace('rounded-xl', 'rounded-t-xl');
+                        }
+                    }
+                });
+
+                container.appendChild(btn);
+                container.appendChild(panel);
+
+                if (searchQuery.trim() !== '' && currentTab === 'channels') {
+                    if (categoryViewMode === 'grid') {
+                        panel.classList.remove('hidden');
+                        btn.classList.add('ring-2', 'ring-primary', 'bg-surfaceHighest');
+                    } else {
+                        panel.style.maxHeight = panel.scrollHeight + "px";
+                        btn.querySelector('.arrow').style.transform = 'rotate(180deg)';
+                        btn.classList.replace('rounded-xl', 'rounded-t-xl');
+                    }
+                }
+            }
+
+            if (totalEncontrados === 0 && searchQuery.trim() !== '' && currentTab === 'channels') {
+                container.innerHTML = `
+                    <div class="col-span-full text-center py-12 text-textMuted w-full">
+                        <span class="material-symbols-outlined text-3xl mb-3">search_off</span>
+                        <p class="text-xs">Nenhum canal encontrado para "${escapeHTML(searchQuery)}"</p>
                     </div>
                 `;
-            });
-
-            grid.innerHTML = html;
-        }
-
-
-        /* ============================================================
-           FILTRAR CATEGORIA
-           ============================================================ */
-
-        function filterCategory(category, autoScroll = true) {
-            currentActiveCategory = category;
-
-            renderCategories();
-            renderChannels();
-
-            const categoryContainer = document.getElementById('categoryContainerMain');
-            const channelsWrapper = document.getElementById('channelsGridWrapper');
-            const categoryHeaderBar = document.getElementById('categoryHeaderBar');
-            const activeCategoryTitle = document.getElementById('activeCategoryTitle');
-
-            if (category === 'ALL') {
-                categoryContainer.classList.remove('hidden');
-                channelsWrapper.classList.remove('lg:col-span-4');
-                channelsWrapper.classList.add('lg:col-span-3');
-                if (categoryHeaderBar) {
-                    categoryHeaderBar.classList.remove('flex');
-                    categoryHeaderBar.classList.add('hidden');
-                }
-            } else {
-                categoryContainer.classList.add('hidden');
-                channelsWrapper.classList.remove('lg:col-span-3');
-                channelsWrapper.classList.add('lg:col-span-4');
-                
-                if (categoryHeaderBar && activeCategoryTitle) {
-                    activeCategoryTitle.textContent = category;
-                    categoryHeaderBar.classList.remove('hidden');
-                    categoryHeaderBar.classList.add('flex');
-                }
-            }
-
-            if (autoScroll) {
-                document.getElementById('channelsSection').scrollIntoView({
-                    behavior: 'smooth',
-                    block: 'start'
-                });
             }
         }
 
 
         /* ============================================================
-           REPRODUZIR CANAL E EXIBIR PROGRAMAÇÃO
+           RENDERIZAR FILMES
            ============================================================ */
 
-        function playChannel(link, name, categoria) {
+        function renderMovieAccordion() {
+            const container = document.getElementById('movieAccordionContainer');
+            if(!container) return; // Evita erro se a div sumir
             
+            container.innerHTML = '';
+            let totalEncontrados = 0;
+
+            if (categoryViewMode === 'grid') {
+                container.className = 'grid grid-cols-2 sm:grid-cols-3 gap-3 w-full relative';
+            } else {
+                container.className = 'w-full space-y-2';
+            }
+
+            for (const categoria in movieData) {
+                let items = movieData[categoria];
+
+                if (searchQuery.trim() !== '' && currentTab === 'movies') {
+                    const query = searchQuery.toLowerCase();
+                    items = items.filter(item => 
+                        (item.nome && item.nome.toLowerCase().includes(query)) ||
+                        (categoria.toLowerCase().includes(query))
+                    );
+                }
+
+                if (items.length === 0) continue;
+                totalEncontrados += items.length;
+
+                const btn = document.createElement('button');
+                
+                if (categoryViewMode === 'grid') {
+                    btn.className = 'w-full flex flex-col items-center justify-center bg-surfaceHigh hover:bg-surfaceHighest border border-white/5 py-5 px-3 rounded-xl text-white font-bold transition-all shadow-sm group outline-none';
+                    btn.innerHTML = `
+                        <span class="material-symbols-outlined text-primary text-3xl group-hover:scale-110 transition-transform mb-2">movie</span>
+                        <span class="text-center text-[13px] sm:text-sm leading-tight">${escapeHTML(categoria)}</span>
+                        <span class="px-2 py-0.5 rounded-md bg-primary/10 border border-primary/20 text-primary text-[10px] mt-2">${items.length} filmes</span>
+                    `;
+                } else {
+                    btn.className = 'w-full flex items-center justify-between bg-surfaceHigh hover:bg-surfaceHighest border border-white/5 px-5 py-4 rounded-xl text-white font-bold text-[13px] sm:text-sm transition-all shadow-sm group mt-3 outline-none';
+                    btn.innerHTML = `
+                        <div class="flex items-center gap-3">
+                            <span class="material-symbols-outlined text-primary group-hover:scale-110 transition-transform">movie</span>
+                            <span class="text-left">${escapeHTML(categoria)}</span>
+                            <span class="px-2 py-0.5 rounded-md bg-primary/10 border border-primary/20 text-primary text-[10px] ml-2">${items.length}</span>
+                        </div>
+                        <span class="material-symbols-outlined text-textSecondary arrow transition-transform duration-300">expand_more</span>
+                    `;
+                }
+
+                const panel = document.createElement('div');
+                
+                if (categoryViewMode === 'grid') {
+                    panel.className = 'col-span-full hidden bg-surfaceContainer border border-white/5 rounded-xl p-4 shadow-inner animate-fade-in-down mb-2';
+                } else {
+                    panel.className = 'accordion-panel bg-surfaceContainer border-x border-b border-white/5 rounded-b-xl mx-1 pt-6 pb-4 px-4 shadow-inner';
+                }
+                
+                const listContainer = document.createElement('div');
+                
+                if (channelViewMode === 'grid') {
+                    listContainer.className = 'grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3';
+                } else {
+                    listContainer.className = 'flex flex-col gap-2';
+                }
+
+                items.forEach(movie => {
+                    const poster = getMovieImage(movie);
+                    const card = document.createElement('div');
+                    card.onclick = () => playMedia(movie, categoria, 'movie');
+                    
+                    if (channelViewMode === 'grid') {
+                        // Aspect ratio 2:3 para Pôsteres de Filmes
+                        card.className = 'channel-card cursor-pointer relative aspect-[2/3] rounded-xl overflow-hidden bg-surfacePanel border border-white/5 group';
+                        card.innerHTML = `
+                            <img src="${escapeAttribute(poster)}" alt="${escapeAttribute(movie.nome)}" loading="lazy" class="w-full h-full object-cover group-hover:scale-105 transition-transform" onerror="this.src='https://via.placeholder.com/200x300?text=Filme'">
+                            <div class="absolute inset-x-0 bottom-0 p-3 bg-gradient-to-t from-black via-black/80 to-transparent">
+                                <p class="text-[11px] font-bold text-white leading-tight line-clamp-2">${escapeHTML(movie.nome)}</p>
+                            </div>
+                        `;
+                    } else {
+                        card.className = 'channel-card cursor-pointer flex items-center gap-3 p-2 rounded-xl bg-surfacePanel border border-white/5 group';
+                        card.innerHTML = `
+                            <div class="w-12 h-16 rounded-lg bg-surfaceHigh flex-shrink-0 flex items-center justify-center border border-white/5 overflow-hidden">
+                                <img src="${escapeAttribute(poster)}" alt="${escapeAttribute(movie.nome)}" loading="lazy" class="w-full h-full object-cover group-hover:scale-110 transition-transform" onerror="this.src='https://via.placeholder.com/200x300?text=Filme'">
+                            </div>
+                            <div class="flex-1 min-w-0 pr-2">
+                                <p class="text-[13px] sm:text-sm font-bold text-white truncate group-hover:text-primary transition-colors">${escapeHTML(movie.nome)}</p>
+                                <p class="text-[10px] text-textMuted truncate mt-0.5">${escapeHTML(categoria)}</p>
+                            </div>
+                            <div class="w-8 h-8 mr-2 flex-shrink-0 rounded-full bg-primary/10 flex items-center justify-center text-primary opacity-0 group-hover:opacity-100 transition-opacity">
+                                <span class="material-symbols-outlined text-[18px]">play_arrow</span>
+                            </div>
+                        `;
+                    }
+                    listContainer.appendChild(card);
+                });
+
+                panel.appendChild(listContainer);
+
+                btn.addEventListener('click', function() {
+                    if (categoryViewMode === 'grid') {
+                        const isHidden = panel.classList.contains('hidden');
+                        const allPanels = container.querySelectorAll('.col-span-full');
+                        const allBtns = container.querySelectorAll('button');
+                        allPanels.forEach(p => p.classList.add('hidden'));
+                        allBtns.forEach(b => {
+                            b.classList.remove('ring-2', 'ring-primary', 'bg-surfaceHighest');
+                            b.classList.add('bg-surfaceHigh');
+                        });
+
+                        if (isHidden) {
+                            panel.classList.remove('hidden');
+                            btn.classList.add('ring-2', 'ring-primary', 'bg-surfaceHighest');
+                            btn.classList.remove('bg-surfaceHigh');
+                            setTimeout(() => { btn.scrollIntoView({ behavior: 'smooth', block: 'start' }); }, 50);
+                        }
+                    } else {
+                        const isOpen = panel.style.maxHeight;
+                        if (isOpen) {
+                            panel.style.maxHeight = null;
+                            btn.querySelector('.arrow').style.transform = 'rotate(0deg)';
+                            btn.classList.replace('rounded-t-xl', 'rounded-xl');
+                        } else {
+                            panel.style.maxHeight = panel.scrollHeight + "px";
+                            btn.querySelector('.arrow').style.transform = 'rotate(180deg)';
+                            btn.classList.replace('rounded-xl', 'rounded-t-xl');
+                        }
+                    }
+                });
+
+                container.appendChild(btn);
+                container.appendChild(panel);
+
+                if (searchQuery.trim() !== '' && currentTab === 'movies') {
+                    if (categoryViewMode === 'grid') {
+                        panel.classList.remove('hidden');
+                        btn.classList.add('ring-2', 'ring-primary', 'bg-surfaceHighest');
+                    } else {
+                        panel.style.maxHeight = panel.scrollHeight + "px";
+                        btn.querySelector('.arrow').style.transform = 'rotate(180deg)';
+                        btn.classList.replace('rounded-xl', 'rounded-t-xl');
+                    }
+                }
+            }
+
+            if (totalEncontrados === 0 && searchQuery.trim() !== '' && currentTab === 'movies') {
+                container.innerHTML = `
+                    <div class="col-span-full text-center py-12 text-textMuted w-full">
+                        <span class="material-symbols-outlined text-3xl mb-3">search_off</span>
+                        <p class="text-xs">Nenhum filme encontrado para "${escapeHTML(searchQuery)}"</p>
+                    </div>
+                `;
+            }
+        }
+
+
+        /* ============================================================
+           REPRODUZIR MÍDIA (CANAIS OU FILMES)
+           ============================================================ */
+
+        function playMedia(mediaObj, categoria, type) {
             if (isSearchMode) {
                 closeSearch();
             }
@@ -774,76 +1035,73 @@
             const playerSection = document.getElementById('playerSection');
             const player = document.getElementById('videoPlayer');
             const channelsSection = document.getElementById('channelsSection');
-            const nowPlaying = document.getElementById('nowPlaying');
+            const moviesSection = document.getElementById('moviesSection');
+            
+            const nowPlayingLabel = document.getElementById('nowPlayingLabel');
             const currentTitle = document.getElementById('currentTitle');
             const currentLogo = document.getElementById('currentLogo');
             const currentCategory = document.getElementById('currentCategory');
             const loading = document.getElementById('playerLoading');
             
-            // Programação EPG
+            const scheduleSection = document.getElementById('channelSchedule');
             const scheduleList = document.getElementById('scheduleList');
 
             playerSection.classList.remove('hidden');
             loading.classList.remove('hidden');
             loading.classList.add('flex');
 
-            player.src = link;
-            currentTitle.textContent = name;
-            currentLogo.src = getLogoFromLink(link);
+            player.src = mediaObj.link;
+            currentTitle.textContent = mediaObj.nome;
             currentCategory.textContent = categoria || '';
-
-            // Lógica para encontrar a programação do canal clicado
-            let foundChannel = null;
             
-            // Procura o canal clicado dentro do channelData
-            for (const categoryKey in channelData) {
-                const match = channelData[categoryKey].find(c => c.link === link && c.nome === name);
-                if (match) {
-                    foundChannel = match;
-                    break;
-                }
-            }
-            
-            // Renderiza a programação (se existir e for um array)
-            if (foundChannel && foundChannel.programacao && foundChannel.programacao.length > 0) {
-                let scheduleHTML = '';
+            if (type === 'movie') {
+                nowPlayingLabel.textContent = "Filme";
+                currentLogo.src = getMovieImage(mediaObj);
+                currentLogo.classList.replace('object-contain', 'object-cover');
+                // Esconder EPG de Programação para Filmes
+                scheduleSection.classList.add('hidden');
+            } else {
+                nowPlayingLabel.textContent = "Assistindo agora";
+                currentLogo.src = getLogoFromLink(mediaObj.link);
+                currentLogo.classList.replace('object-cover', 'object-contain');
+                // Mostrar EPG de Programação para Canais
+                scheduleSection.classList.remove('hidden');
                 
-                foundChannel.programacao.forEach(prog => {
-                    // Destaque visual caso o programa seja o 'atual'
-                    const isNow = prog.atual ? 'text-primary font-bold' : 'text-white';
-                    const dot = prog.atual ? '<span class="w-2 h-2 rounded-full bg-tertiary animate-pulse"></span>' : '';
-                    
-                    scheduleHTML += `
-                        <div class="flex items-center gap-3 bg-surfacePanel p-3 rounded-lg border border-white/5">
-                            <div class="text-xs font-mono text-textMuted w-12">${escapeHTML(prog.horario)}</div>
-                            <div class="flex-1 text-sm ${isNow} truncate">${escapeHTML(prog.titulo)}</div>
-                            ${dot}
+                // Lógica para EPG de Canal
+                if (mediaObj.programacao && mediaObj.programacao.length > 0) {
+                    let scheduleHTML = '';
+                    mediaObj.programacao.forEach(prog => {
+                        const isNow = prog.atual ? 'text-primary font-bold' : 'text-white';
+                        const dot = prog.atual ? '<span class="w-2 h-2 rounded-full bg-tertiary animate-pulse"></span>' : '';
+                        scheduleHTML += `
+                            <div class="flex items-center gap-3 bg-surfacePanel p-3 rounded-lg border border-white/5">
+                                <div class="text-xs font-mono text-textMuted w-12">${escapeHTML(prog.horario)}</div>
+                                <div class="flex-1 text-sm ${isNow} truncate">${escapeHTML(prog.titulo)}</div>
+                                ${dot}
+                            </div>
+                        `;
+                    });
+                    scheduleList.innerHTML = scheduleHTML;
+                } else {
+                    scheduleList.innerHTML = `
+                        <div class="text-center py-6 text-textMuted bg-surfacePanel rounded-lg border border-white/5">
+                            <span class="material-symbols-outlined text-2xl mb-2 opacity-50">event_busy</span>
+                            <p class="text-xs">Programação indisponível para este canal.</p>
                         </div>
                     `;
-                });
-                
-                scheduleList.innerHTML = scheduleHTML;
-                
-            } else {
-                // Caso não tenha programação no JSON para esse canal
-                scheduleList.innerHTML = `
-                    <div class="text-center py-6 text-textMuted bg-surfacePanel rounded-lg border border-white/5">
-                        <span class="material-symbols-outlined text-2xl mb-2 opacity-50">event_busy</span>
-                        <p class="text-xs">Programação indisponível para este canal.</p>
-                    </div>
-                `;
+                }
             }
 
-            nowPlaying.classList.remove('hidden');
+            document.getElementById('nowPlaying').classList.remove('hidden');
+            
+            // Oculta abas
             channelsSection.classList.add('hidden');
-
-            updateChannelsButton();
+            moviesSection.classList.add('hidden');
+            
+            updateNavStates();
 
             setTimeout(() => {
-                playerSection.scrollIntoView({
-                    behavior: 'smooth',
-                    block: 'start'
-                });
+                playerSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
             }, 100);
 
             player.onload = function () {
@@ -854,170 +1112,309 @@
 
 
         /* ============================================================
-           MOSTRAR / OCULTAR CANAIS
+           ESTADO VISUAL DA NAVEGAÇÃO INFERIOR
            ============================================================ */
 
-        function toggleChannelsSection() {
+        function updateNavStates() {
             const channelsSection = document.getElementById('channelsSection');
-            if (!channelsSection) return;
+            const moviesSection = document.getElementById('moviesSection');
+            const searchInput = document.getElementById('searchInput');
+            
+            const btnChannels = document.getElementById('navChannels');
+            const indChannels = document.getElementById('navChannelsIndicator');
+            
+            const btnMovies = document.getElementById('navMovies');
+            const indMovies = document.getElementById('navMoviesIndicator');
 
-            channelsSection.classList.toggle('hidden');
-            updateChannelsButton();
+            // Ajusta o Placeholder da Busca
+            if (currentTab === 'channels') {
+                searchInput.placeholder = "Buscar canal...";
+            } else {
+                searchInput.placeholder = "Buscar filme...";
+            }
 
-            if (!channelsSection.classList.contains('hidden')) {
-                setTimeout(() => {
-                    channelsSection.scrollIntoView({
-                        behavior: 'smooth',
-                        block: 'start'
-                    });
-                }, 100);
+            // Verifica se a aba de Canais está ativa na tela
+            if (!channelsSection.classList.contains('hidden') && moviesSection.classList.contains('hidden')) {
+                btnChannels.classList.replace('text-textSecondary', 'text-primary');
+                indChannels.classList.replace('opacity-0', 'opacity-100');
+            } else {
+                btnChannels.classList.replace('text-primary', 'text-textSecondary');
+                indChannels.classList.replace('opacity-100', 'opacity-0');
+            }
+
+            // Verifica se a aba de Filmes está ativa na tela
+            if (!moviesSection.classList.contains('hidden') && channelsSection.classList.contains('hidden')) {
+                btnMovies.classList.replace('text-textSecondary', 'text-primary');
+                indMovies.classList.replace('opacity-0', 'opacity-100');
+            } else {
+                btnMovies.classList.replace('text-primary', 'text-textSecondary');
+                indMovies.classList.replace('opacity-100', 'opacity-0');
             }
         }
 
 
         /* ============================================================
-           ESTADO VISUAL DO BOTÃO CANAIS
-           ============================================================ */
-
-        function updateChannelsButton() {
-            const channelsSection = document.getElementById('channelsSection');
-            const button = document.getElementById('navChannels');
-            const indicator = document.getElementById('navChannelsIndicator');
-
-            if (!channelsSection || !button || !indicator) return;
-
-            const visible = !channelsSection.classList.contains('hidden');
-
-            if (visible) {
-                button.classList.remove('text-textSecondary');
-                button.classList.add('text-primary');
-                indicator.classList.remove('opacity-0');
-                indicator.classList.add('opacity-100');
-            } else {
-                button.classList.remove('text-primary');
-                button.classList.add('text-textSecondary');
-                indicator.classList.remove('opacity-100');
-                indicator.classList.add('opacity-0');
-            }
-        }
-
-
-        /* ============================================================
-           BOTÃO CANAIS
-           ============================================================ */
-
-        document.getElementById('navChannels').addEventListener('click', () => {
-            if (isSearchMode) {
-                closeSearch();
-                document.getElementById('channelsSection').classList.remove('hidden');
-                updateChannelsButton();
-            } else {
-                toggleChannelsSection();
-            }
-        });
-
-
-        /* ============================================================
-           BUSCA LÓGICA (MODOS E TRANSIÇÕES)
+           BUSCA LÓGICA (ABAS INTELIGENTES)
            ============================================================ */
 
         const searchInput = document.getElementById('searchInput');
         const mobileSearch = document.getElementById('mobileSearch');
-        const clearSearch = document.getElementById('clearSearch');
+        
+        const clearSearchChannel = document.getElementById('clearSearchChannel');
+        const clearSearchMovie = document.getElementById('clearSearchMovie');
 
         function toggleSearch() {
-            if (isSearchMode) {
-                closeSearch();
-            } else {
-                openSearch();
-            }
+            if (isSearchMode) { closeSearch(); } else { openSearch(); }
         }
 
         function openSearch() {
             isSearchMode = true;
-            
             mobileSearch.classList.remove('hidden');
             searchInput.focus();
-
-            document.getElementById('normalTitleContainer').classList.add('hidden');
-            document.getElementById('searchTitleContainer').classList.remove('hidden');
-
-            document.getElementById('categoryContainerMain').classList.add('hidden');
-            const categoryHeaderBar = document.getElementById('categoryHeaderBar');
-            if (categoryHeaderBar) {
-                categoryHeaderBar.classList.remove('flex');
-                categoryHeaderBar.classList.add('hidden');
+            
+            if (currentTab === 'channels') {
+                document.getElementById('normalTitleContainer').classList.add('hidden');
+                document.getElementById('searchTitleContainer').classList.remove('hidden');
+                document.getElementById('moviesSection').classList.add('hidden');
+                document.getElementById('channelsSection').classList.remove('hidden');
+                renderAccordion();
+            } else {
+                document.getElementById('normalMovieTitleContainer').classList.add('hidden');
+                document.getElementById('searchMovieTitleContainer').classList.remove('hidden');
+                document.getElementById('channelsSection').classList.add('hidden');
+                document.getElementById('moviesSection').classList.remove('hidden');
+                renderMovieAccordion();
             }
-
-            const channelsWrapper = document.getElementById('channelsGridWrapper');
-            channelsWrapper.classList.remove('lg:col-span-3');
-            channelsWrapper.classList.add('lg:col-span-4');
-
-            const channelsSection = document.getElementById('channelsSection');
-            channelsSection.classList.remove('hidden');
-
-            updateChannelsButton();
-            renderChannels();
+            
+            updateNavStates();
         }
 
         function closeSearch() {
             isSearchMode = false;
-            
             mobileSearch.classList.add('hidden');
-            
             searchInput.value = '';
             searchQuery = '';
-            clearSearch.classList.add('hidden');
-
-            document.getElementById('normalTitleContainer').classList.remove('hidden');
+            
+            // Restaura Titulos e Esconde Botões de Limpar
+            document.querySelectorAll('.clear-search-btn').forEach(btn => btn.classList.add('hidden'));
+            
             document.getElementById('searchTitleContainer').classList.add('hidden');
-
-            filterCategory(currentActiveCategory, false);
+            document.getElementById('normalTitleContainer').classList.remove('hidden');
+            
+            document.getElementById('searchMovieTitleContainer').classList.add('hidden');
+            document.getElementById('normalMovieTitleContainer').classList.remove('hidden');
+            
+            if (currentTab === 'channels') {
+                renderAccordion(); 
+            } else {
+                renderMovieAccordion();
+            }
         }
 
         document.getElementById('navSearch').addEventListener('click', toggleSearch);
 
         searchInput.addEventListener('input', event => {
             searchQuery = event.target.value;
-
+            
+            // Mostra botões de Limpar
             if (searchQuery.trim() !== '') {
-                clearSearch.classList.remove('hidden');
+                if(currentTab === 'channels') clearSearchChannel.classList.remove('hidden');
+                if(currentTab === 'movies') clearSearchMovie.classList.remove('hidden');
             } else {
-                clearSearch.classList.add('hidden');
+                document.querySelectorAll('.clear-search-btn').forEach(btn => btn.classList.add('hidden'));
             }
-
-            const channelsSection = document.getElementById('channelsSection');
-            channelsSection.classList.remove('hidden');
-
-            updateChannelsButton();
-            renderChannels();
+            
+            if (currentTab === 'channels') {
+                document.getElementById('moviesSection').classList.add('hidden');
+                document.getElementById('channelsSection').classList.remove('hidden');
+                renderAccordion();
+            } else {
+                document.getElementById('channelsSection').classList.add('hidden');
+                document.getElementById('moviesSection').classList.remove('hidden');
+                renderMovieAccordion();
+            }
+            updateNavStates();
         });
 
-        clearSearch.addEventListener('click', () => {
+        // Limpar Busca
+        function executeClearSearch() {
             searchInput.value = '';
             searchQuery = '';
-            clearSearch.classList.add('hidden');
-            renderChannels();
+            document.querySelectorAll('.clear-search-btn').forEach(btn => btn.classList.add('hidden'));
+            if(currentTab === 'channels') renderAccordion();
+            if(currentTab === 'movies') renderMovieAccordion();
             searchInput.focus();
-        });
+        }
+        clearSearchChannel.addEventListener('click', executeClearSearch);
+        clearSearchMovie.addEventListener('click', executeClearSearch);
 
 
         /* ============================================================
-           INÍCIO (ATUALIZADO PARA REDIRECIONAR)
+           MUDANÇA DE ABAS / NAVEGAÇÃO SPA
            ============================================================ */
 
+        // INÍCIO (Reseta a plataforma)
         document.getElementById('navHome').addEventListener('click', () => {
-            window.location.href = '/';
+            const player = document.getElementById('videoPlayer');
+            player.src = '';
+            
+            currentTab = 'channels'; // Voltar para Canais por padrão
+
+            document.getElementById('playerSection').classList.add('hidden');
+            document.getElementById('nowPlaying').classList.add('hidden');
+            document.getElementById('channelSchedule').classList.add('hidden');
+
+            document.getElementById('moviesSection').classList.add('hidden');
+            document.getElementById('channelsSection').classList.remove('hidden');
+
+            if (isSearchMode) closeSearch();
+
+            updateNavStates();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+
+        // CANAIS
+        document.getElementById('navChannels').addEventListener('click', () => {
+            currentTab = 'channels';
+            const channelsSection = document.getElementById('channelsSection');
+            const moviesSection = document.getElementById('moviesSection');
+            const playerSection = document.getElementById('playerSection');
+            
+            moviesSection.classList.add('hidden');
+            
+            if (playerSection.classList.contains('hidden') || isSearchMode) {
+                channelsSection.classList.remove('hidden');
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            } else {
+                channelsSection.classList.toggle('hidden');
+                if (!channelsSection.classList.contains('hidden')) {
+                    setTimeout(() => {
+                        channelsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    }, 100);
+                }
+            }
+            
+            // Re-renderiza a busca se estiver aberta
+            if(isSearchMode) {
+                document.getElementById('normalTitleContainer').classList.add('hidden');
+                document.getElementById('searchTitleContainer').classList.remove('hidden');
+                renderAccordion();
+            }
+            
+            updateNavStates();
+        });
+
+        // FILMES
+        document.getElementById('navMovies').addEventListener('click', () => {
+            currentTab = 'movies';
+            const channelsSection = document.getElementById('channelsSection');
+            const moviesSection = document.getElementById('moviesSection');
+            const playerSection = document.getElementById('playerSection');
+            
+            channelsSection.classList.add('hidden');
+            
+            if (playerSection.classList.contains('hidden') || isSearchMode) {
+                moviesSection.classList.remove('hidden');
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            } else {
+                moviesSection.classList.toggle('hidden');
+                if (!moviesSection.classList.contains('hidden')) {
+                    setTimeout(() => {
+                        moviesSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    }, 100);
+                }
+            }
+            
+            // Re-renderiza a busca se estiver aberta
+            if(isSearchMode) {
+                document.getElementById('normalMovieTitleContainer').classList.add('hidden');
+                document.getElementById('searchMovieTitleContainer').classList.remove('hidden');
+                renderMovieAccordion();
+            }
+
+            updateNavStates();
         });
 
 
         /* ============================================================
-           CONFIGURAÇÕES
+           CONFIGURAÇÕES (LÓGICA DO MODAL)
            ============================================================ */
 
-        document.getElementById('navSettings').addEventListener('click', () => {
-            console.log('Configurações');
-        });
+        const settingsModal = document.getElementById('settingsModal');
+        const settingsPanel = document.getElementById('settingsPanel');
+        const settingsBackdrop = document.getElementById('settingsBackdrop');
+        
+        const catViewGridBtn = document.getElementById('catViewGridBtn');
+        const catViewListBtn = document.getElementById('catViewListBtn');
+        
+        const viewGridBtn = document.getElementById('viewGridBtn');
+        const viewListBtn = document.getElementById('viewListBtn');
+
+        function openSettings() {
+            settingsModal.classList.remove('hidden');
+            setTimeout(() => {
+                settingsBackdrop.classList.remove('opacity-0');
+                settingsBackdrop.classList.add('opacity-100');
+                settingsPanel.classList.remove('translate-y-full');
+            }, 10);
+            updateSettingsUI();
+        }
+
+        function closeSettings() {
+            settingsBackdrop.classList.remove('opacity-100');
+            settingsBackdrop.classList.add('opacity-0');
+            settingsPanel.classList.add('translate-y-full');
+            setTimeout(() => { settingsModal.classList.add('hidden'); }, 300);
+        }
+
+        function updateSettingsUI() {
+            const activeClass = 'flex-1 py-3 px-4 rounded-xl border border-primary text-primary bg-primary/10 flex flex-col items-center justify-center gap-1 transition-colors font-bold shadow-sm';
+            const inactiveClass = 'flex-1 py-3 px-4 rounded-xl border border-white/10 text-textSecondary bg-surfaceHigh hover:bg-white/5 flex flex-col items-center justify-center gap-1 transition-colors shadow-sm';
+
+            // Atualiza botões de Categorias
+            if (categoryViewMode === 'grid') {
+                catViewGridBtn.className = activeClass;
+                catViewListBtn.className = inactiveClass;
+            } else {
+                catViewGridBtn.className = inactiveClass;
+                catViewListBtn.className = activeClass;
+            }
+
+            // Atualiza botões de Mídias
+            if (channelViewMode === 'grid') {
+                viewGridBtn.className = activeClass;
+                viewListBtn.className = inactiveClass;
+            } else {
+                viewGridBtn.className = inactiveClass;
+                viewListBtn.className = activeClass;
+            }
+        }
+
+        function setCategoryMode(mode) {
+            categoryViewMode = mode;
+            localStorage.setItem('boatv_categoryViewMode', mode);
+            updateSettingsUI();
+            renderAccordion();
+            renderMovieAccordion();
+        }
+
+        function setChannelMode(mode) {
+            channelViewMode = mode;
+            localStorage.setItem('boatv_channelViewMode', mode);
+            updateSettingsUI();
+            renderAccordion();
+            renderMovieAccordion();
+        }
+
+        document.getElementById('navSettings').addEventListener('click', openSettings);
+        document.getElementById('closeSettings').addEventListener('click', closeSettings);
+        document.getElementById('settingsBackdrop').addEventListener('click', closeSettings);
+        
+        catViewGridBtn.addEventListener('click', () => setCategoryMode('grid'));
+        catViewListBtn.addEventListener('click', () => setCategoryMode('list'));
+
+        viewGridBtn.addEventListener('click', () => setChannelMode('grid'));
+        viewListBtn.addEventListener('click', () => setChannelMode('list'));
 
 
         /* ============================================================
@@ -1025,8 +1422,9 @@
            ============================================================ */
 
         window.addEventListener('DOMContentLoaded', () => {
-            loadChannelData();
-            updateChannelsButton();
+            loadAllData();
+            updateNavStates();
+            updateSettingsUI();
         });
 
     </script>
