@@ -1464,7 +1464,7 @@
 
             items.forEach(item => {
                 const titulo = item.nome || item.title || item.name || item.evento || "Jogo ao Vivo";
-                const imagem = item.img || item.image || item.logo || 'https://via.placeholder.com/300x150?text=Futebol';
+                const imagem = item.capa || item.image || item.logo || 'https://via.placeholder.com/300x150?text=Futebol';
                 const link = item.url || item.link || item.play || item.stream;
                 const campeonato = item.league || item.campeonato || item.liga || 'Evento Ao Vivo';
                 const horario = item.time || item.hora || item.horario || 'Agora';
