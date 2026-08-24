@@ -284,7 +284,7 @@
         id="main-content"
         class="pt-16 min-h-screen">
 
-        <!-- ========================================================
+        <!-- =================================================-------
              LEITOR DE VÍDEO
              ======================================================== -->
 
@@ -396,6 +396,17 @@
                         Filmes em Destaque
                     </h3>
                     <div id="homeFeaturedMoviesGrid" class="flex gap-3 overflow-x-auto snap-x snap-mandatory hide-scrollbar transition-opacity duration-500 opacity-100 pb-2">
+                        <!-- Carregado via JS dinamicamente -->
+                    </div>
+                </div>
+
+                <!-- FUTEBOL AO VIVO EM DESTAQUE (HOME) -->
+                <div id="homeFeaturedFutebolWrapper" class="mb-8 hidden">
+                    <h3 class="text-xs uppercase tracking-[.15em] font-bold text-textSecondary mb-3 flex items-center gap-2">
+                        <span class="material-symbols-outlined text-sm text-primary">sports_soccer</span>
+                        Futebol Ao Vivo
+                    </h3>
+                    <div id="homeFeaturedFutebolGrid" class="flex gap-3 overflow-x-auto snap-x snap-mandatory hide-scrollbar transition-opacity duration-500 opacity-100 pb-2">
                         <!-- Carregado via JS dinamicamente -->
                     </div>
                 </div>
@@ -726,6 +737,7 @@
         // Controlo de Carrosséis
         let featuredMoviesInterval;
         let featuredChannelsInterval;
+        let featuredFutebolInterval;
         
         // Carrega o modo de visualização salvo
         let channelViewMode = localStorage.getItem('boatv_channelViewMode') || 'grid';
@@ -791,22 +803,22 @@
         // LÓGICA DE FUTEBOL INJETADA
         async function loadFutebolData() {
             const container = document.getElementById('futebolContainer');
-            container.innerHTML = `
-                <div class="text-center py-12 text-primary w-full flex flex-col items-center">
-                    <span class="material-symbols-outlined text-3xl animate-spin mb-3">progress_activity</span>
-                    <p class="text-xs font-bold tracking-wider uppercase">Buscando jogos ao vivo...</p>
-                </div>
-            `;
+            if(container) {
+                container.innerHTML = `
+                    <div class="text-center py-12 text-primary w-full flex flex-col items-center">
+                        <span class="material-symbols-outlined text-3xl animate-spin mb-3">progress_activity</span>
+                        <p class="text-xs font-bold tracking-wider uppercase">Buscando jogos ao vivo...</p>
+                    </div>
+                `;
+            }
 
             try {
-                // Tentativa direta
                 let response = await fetch(FUTEBOL_API_URL);
                 let data = await response.json();
                 processFutebolJSON(data);
             } catch (e) {
                 console.warn("Buscando dados de futebol via proxy...", e);
                 try {
-                    // Fallback com proxy (contorna bloqueio de CORS se houver)
                     const proxyUrl = `https://api.allorigins.win/get?url=${encodeURIComponent(FUTEBOL_API_URL)}`;
                     let proxyResponse = await fetch(proxyUrl);
                     let proxyData = await proxyResponse.json();
@@ -814,13 +826,15 @@
                     processFutebolJSON(data);
                 } catch (err) {
                     console.error("Erro total no futebol:", err);
-                    container.innerHTML = `
-                        <div class="w-full bg-surfaceContainer border border-red-500/30 rounded-2xl p-10 flex flex-col items-center justify-center text-center shadow-inner">
-                            <span class="material-symbols-outlined text-4xl text-red-400 mb-3">sync_problem</span>
-                            <h3 class="text-lg font-bold text-white mb-2">Erro de Conexão</h3>
-                            <p class="text-[13px] text-textSecondary">Não foi possível carregar a lista de jogos ao vivo no momento.</p>
-                        </div>
-                    `;
+                    if(container) {
+                        container.innerHTML = `
+                            <div class="w-full bg-surfaceContainer border border-red-500/30 rounded-2xl p-10 flex flex-col items-center justify-center text-center shadow-inner">
+                                <span class="material-symbols-outlined text-4xl text-red-400 mb-3">sync_problem</span>
+                                <h3 class="text-lg font-bold text-white mb-2">Erro de Conexão</h3>
+                                <p class="text-[13px] text-textSecondary">Não foi possível carregar a lista de jogos ao vivo no momento.</p>
+                            </div>
+                        `;
+                    }
                 }
             }
         }
@@ -838,6 +852,7 @@
                 }
             }
             renderFutebol();
+            startFeaturedFutebol();
         }
     
     
@@ -968,7 +983,7 @@
 
             if (allMovies.length === 0) return;
             const shuffled = allMovies.sort(() => 0.5 - Math.random());
-            const selected = shuffled.slice(0, 3); 
+            const selected = shuffled.slice(0, 5); 
             
             const grid = document.getElementById('featuredMoviesGrid');
             const homeGrid = document.getElementById('homeFeaturedMoviesGrid');
@@ -1017,6 +1032,70 @@
                 
                 updateFeaturedMovies(); 
                 featuredMoviesInterval = setInterval(updateFeaturedMovies, 10000);
+            }
+        }
+
+        function updateFeaturedFutebol() {
+            if (!futebolData || futebolData.length === 0) return;
+            const shuffled = [...futebolData].sort(() => 0.5 - Math.random());
+            const selected = shuffled.slice(0, 5);
+            
+            const homeGrid = document.getElementById('homeFeaturedFutebolGrid');
+            if (!homeGrid) return;
+
+            homeGrid.style.opacity = '0';
+
+            setTimeout(() => {
+                homeGrid.innerHTML = '';
+                
+                selected.forEach(item => {
+                    const titulo = item.nome || item.title || item.name || item.evento || "Jogo ao Vivo";
+                    const imagem = item.capa || item.image || item.logo || 'https://via.placeholder.com/300x150?text=Futebol';
+                    const link = item.url || item.link || item.play || item.stream;
+                    const campeonato = item.league || item.campeonato || item.liga || 'Evento Ao Vivo';
+                    const horario = item.time || item.hora || item.horario || 'Agora';
+
+                    const card = document.createElement('div');
+                    card.className = 'channel-card cursor-pointer flex-none w-64 sm:w-72 snap-start relative rounded-xl overflow-hidden bg-surfacePanel border border-white/5 group shadow-lg flex flex-col';
+                    
+                    const mediaObj = {
+                        nome: titulo,
+                        link: link,
+                        img: imagem 
+                    };
+
+                    card.onclick = () => {
+                        if(link) playMedia(mediaObj, campeonato, 'channel');
+                    };
+
+                    card.innerHTML = `
+                        <div class="relative w-full h-36 bg-surfaceHigh">
+                            <img src="${escapeAttribute(imagem)}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" onerror="this.src='https://via.placeholder.com/300x150?text=Futebol'">
+                            <div class="absolute top-2 left-2 bg-red-600 text-white text-[9px] font-bold px-2 py-0.5 rounded shadow animate-pulse uppercase tracking-wider">Ao Vivo</div>
+                        </div>
+                        <div class="p-3 flex flex-col flex-grow bg-surfaceContainer">
+                            <h3 class="text-xs font-bold text-white line-clamp-2 mb-2 group-hover:text-primary transition-colors">${escapeHTML(titulo)}</h3>
+                            <div class="mt-auto flex justify-between items-center text-[10px] text-textMuted border-t border-white/5 pt-2">
+                                <span class="truncate pr-2 font-medium text-primary/70 uppercase">${escapeHTML(campeonato)}</span>
+                                <span class="whitespace-nowrap font-mono bg-surfaceHigh/50 border border-white/10 px-1.5 py-0.5 rounded">${escapeHTML(horario)}</span>
+                            </div>
+                        </div>
+                    `;
+                    homeGrid.appendChild(card);
+                });
+                
+                homeGrid.style.opacity = '1';
+            }, 300);
+        }
+
+        function startFeaturedFutebol() {
+            if (featuredFutebolInterval) clearInterval(featuredFutebolInterval);
+            const homeFeaturedFutebolWrapper = document.getElementById('homeFeaturedFutebolWrapper');
+            
+            if (futebolData && futebolData.length > 0 && searchQuery.trim() === '') {
+                if (homeFeaturedFutebolWrapper) homeFeaturedFutebolWrapper.classList.remove('hidden');
+                updateFeaturedFutebol();
+                featuredFutebolInterval = setInterval(updateFeaturedFutebol, 12000);
             }
         }
 
@@ -1351,32 +1430,27 @@
             }
         }
         
-        // RENDERIZAÇÃO DO GRID DE FUTEBOL INJETADA (COM CORREÇÃO PARA "nome")
         function renderFutebol() {
             const container = document.getElementById('futebolContainer');
             if(!container) return;
             
             container.innerHTML = '';
             
-            // Define o layout baseado nas configurações de visualização de canais
             container.className = channelViewMode === 'grid'
                 ? 'grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mt-6'
                 : 'flex flex-col gap-3 mt-6 w-full';
 
             let items = futebolData;
             
-            // Filtra os itens caso o usuário use a barra de pesquisa
             if (searchQuery.trim() !== '' && currentTab === 'futebol') {
                 const query = searchQuery.toLowerCase();
                 items = items.filter(item => {
-                    // ADICIONADO O item.nome AQUI NA PESQUISA
                     const title = (item.nome || item.title || item.name || item.evento || "").toLowerCase();
                     const league = (item.league || item.campeonato || item.liga || "").toLowerCase();
                     return title.includes(query) || league.includes(query);
                 });
             }
 
-            // Exibe mensagem caso não haja jogos ou caso a pesquisa não retorne nada
             if (items.length === 0) {
                  container.className = 'w-full flex justify-center mt-6';
                  container.innerHTML = `
@@ -1388,9 +1462,7 @@
                 return;
             }
 
-            // Constrói os Cartões de Futebol
             items.forEach(item => {
-                // ADICIONADO O item.nome AQUI NO TÍTULO COMO PRIORIDADE
                 const titulo = item.nome || item.title || item.name || item.evento || "Jogo ao Vivo";
                 const imagem = item.img || item.image || item.logo || 'https://via.placeholder.com/300x150?text=Futebol';
                 const link = item.url || item.link || item.play || item.stream;
@@ -1402,7 +1474,6 @@
                     ? 'channel-card cursor-pointer relative rounded-xl overflow-hidden bg-surfacePanel border border-white/5 group shadow-lg flex flex-col h-full'
                     : 'channel-card cursor-pointer flex items-center gap-4 p-3 rounded-xl bg-surfacePanel border border-white/5 group shadow-sm';
 
-                // Formata os dados para enviar para o Player
                 const mediaObj = {
                     nome: titulo,
                     link: link,
@@ -1488,7 +1559,6 @@
                 nowPlayingLabel.textContent = "Filme";
                 currentLogo.src = getMovieImage(mediaObj);
                 currentLogo.classList.replace('object-contain', 'object-cover');
-                // Esconder EPG de Programação para Filmes
                 scheduleSection.classList.add('hidden');
             } else {
                 nowPlayingLabel.textContent = "Assistindo agora";
@@ -1496,10 +1566,8 @@
                 currentLogo.src = mediaObj.img || getLogoFromLink(mediaObj.link);
                 currentLogo.classList.replace('object-cover', 'object-contain');
                 
-                // Mostrar EPG de Programação para Canais e Futebol
                 scheduleSection.classList.remove('hidden');
                 
-                // Mostrar estado de carregamento do EPG
                 scheduleList.innerHTML = `
                     <div class="text-center py-6 text-textMuted bg-surfacePanel rounded-lg border border-white/5 flex flex-col items-center justify-center">
                         <span class="material-symbols-outlined text-2xl mb-3 animate-spin text-primary">sync</span>
@@ -1508,7 +1576,6 @@
                 `;
 
                 try {
-                    // Efetua um GET para a API fornecida
                     const response = await fetch('https://reidosembeds.online/api/guia');
                     
                     if (!response.ok) {
@@ -1517,7 +1584,6 @@
                     
                     const apiData = await response.json();
                     
-                    // Extrai a 'tag' com a programação
                     let progData = apiData.programacao || apiData.guia || apiData;
 
                     if (progData && typeof progData === 'object' && !Array.isArray(progData)) {
@@ -1552,7 +1618,6 @@
 
             document.getElementById('nowPlaying').classList.remove('hidden');
             
-            // Oculta separadores principais quando estamos no Leitor
             homeSection.classList.add('hidden');
             channelsSection.classList.add('hidden');
             moviesSection.classList.add('hidden');
@@ -1711,7 +1776,7 @@
                 document.getElementById('channelsSection').classList.add('hidden');
                 document.getElementById('moviesSection').classList.add('hidden');
                 document.getElementById('futebolSection').classList.remove('hidden');
-                renderFutebol(); // Chama a nova função
+                renderFutebol();
             }
             
             updateNavStates();
@@ -1771,7 +1836,7 @@
                 document.getElementById('channelsSection').classList.add('hidden');
                 document.getElementById('moviesSection').classList.add('hidden');
                 document.getElementById('futebolSection').classList.remove('hidden');
-                renderFutebol(); // Atualiza em tempo real enquanto pesquisa
+                renderFutebol();
             }
             updateNavStates();
         });
@@ -2003,7 +2068,7 @@
 
         window.addEventListener('DOMContentLoaded', () => {
             loadAllData();
-            loadFutebolData(); // Nova API inicializando junto com a página
+            loadFutebolData();
             updateNavStates();
             updateSettingsUI();
         });
