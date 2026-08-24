@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="pt-BR" class="dark">
+<html lang="pt-PT" class="dark">
 
 <head>
     <meta charset="UTF-8">
@@ -209,7 +209,7 @@
             transition: transform 0.3s ease;
         }
         
-        /* Animação para a exibição de categorias em Grade */
+        /* Animação para a exibição de categorias em Grelha */
         @keyframes fadeInDown {
             from { opacity: 0; transform: translateY(-5px); }
             to { opacity: 1; transform: translateY(0); }
@@ -241,7 +241,7 @@
                     BOA.TV
                 </span>
                 <span class="text-[9px] font-medium tracking-widest text-textSecondary uppercase mt-1 leading-none">
-                    Sua TV Online
+                    A Sua TV Online
                 </span>
             </div>
             
@@ -251,7 +251,7 @@
 
 
     <!-- ============================================================
-         BUSCA
+         PESQUISA
          ============================================================ -->
 
     <div
@@ -268,7 +268,7 @@
             <input
                 id="searchInput"
                 type="text"
-                placeholder="Buscar..."
+                placeholder="Pesquisar canal..."
                 class="w-full bg-surfacePanel border border-white/10 rounded-xl pl-11 pr-4 py-3 text-sm text-white outline-none focus:border-primary transition-all duration-300">
 
         </div>
@@ -285,7 +285,7 @@
         class="pt-16 min-h-screen">
 
         <!-- ========================================================
-             PLAYER
+             LEITOR DE VÍDEO
              ======================================================== -->
 
         <section
@@ -312,7 +312,7 @@
                             progress_activity
                         </span>
                         <p class="text-[10px] uppercase tracking-widest text-primary mt-3">
-                            Carregando transmissão
+                            A carregar emissão
                         </p>
                     </div>
 
@@ -334,7 +334,7 @@
 
                     <div class="flex-1 min-w-0">
                         <p id="nowPlayingLabel" class="text-[9px] uppercase tracking-[.15em] text-textMuted">
-                            Assistindo agora
+                            A ver agora
                         </p>
                         <h2
                             id="currentTitle"
@@ -352,7 +352,7 @@
             </div>
             
             <!-- ====================================================
-                 PROGRAMAÇÃO DO CANAL (EPG)
+                 GRELHA DE PROGRAMAÇÃO (EPG)
                  ==================================================== -->
             <div
                 id="channelSchedule"
@@ -363,7 +363,7 @@
                     Programação
                 </h3>
                 
-                <!-- Lista de Programas renderizada via JS -->
+                <!-- Lista de Programas (EPG) renderizada via JS -->
                 <div id="scheduleList" class="flex flex-col gap-2">
                     <!-- Conteúdo inserido dinamicamente -->
                 </div>
@@ -374,54 +374,10 @@
 
 
         <!-- ========================================================
-             INÍCIO (HOME - CARROSSÉIS)
-             ======================================================== -->
-        <section id="homeSection" class="mt-8 px-4">
-            <div class="max-w-7xl mx-auto">
-                
-                <!-- TÍTULO -->
-                <div class="flex items-end justify-between mb-6">
-                    <div>
-                        <p class="text-[9px] uppercase tracking-[.2em] font-bold text-primary">
-                            Bem-vindo
-                        </p>
-                        <h2 class="text-2xl font-bold text-white mt-1">
-                            Descubra
-                        </h2>
-                    </div>
-                </div>
-
-                <!-- DESTAQUES POR CATEGORIA (CANAIS HORIZONTAIS) -->
-                <div class="featured-channels-wrapper mb-8 hidden">
-                    <h3 class="text-xs uppercase tracking-[.15em] font-bold text-textSecondary mb-3 flex items-center gap-2">
-                        <span class="material-symbols-outlined text-sm text-primary">star</span>
-                        Canais em Destaque
-                    </h3>
-                    <div class="featured-channels-grid flex gap-3 overflow-x-auto snap-x snap-mandatory hide-scrollbar transition-opacity duration-500 opacity-100 pb-2">
-                        <!-- Carregado via JS dinamicamente -->
-                    </div>
-                </div>
-
-                <!-- DESTAQUES / LANÇAMENTOS (FILMES HORIZONTAIS) -->
-                <div class="featured-movies-wrapper mb-8 hidden">
-                    <h3 class="text-xs uppercase tracking-[.15em] font-bold text-textSecondary mb-3 flex items-center gap-2">
-                        <span class="material-symbols-outlined text-sm text-primary">local_fire_department</span>
-                        Filmes em Destaque
-                    </h3>
-                    <div class="featured-movies-grid flex gap-3 overflow-x-auto snap-x snap-mandatory hide-scrollbar transition-opacity duration-500 opacity-100 pb-2">
-                        <!-- Carregado via JS dinamicamente -->
-                    </div>
-                </div>
-
-            </div>
-        </section>
-
-
-        <!-- ========================================================
              LISTA DE CANAIS
              ======================================================== -->
 
-        <section id="channelsSection" class="mt-8 px-4 hidden">
+        <section id="channelsSection" class="mt-8 px-4">
             <div class="max-w-7xl mx-auto">
 
                 <!-- TÍTULO -->
@@ -429,7 +385,7 @@
                     
                     <div id="normalTitleContainer">
                         <p class="text-[9px] uppercase tracking-[.2em] font-bold text-primary">
-                            TV ao vivo
+                            TV em direto
                         </p>
                         <h2 class="text-xl font-bold text-white mt-1">
                             Categorias
@@ -438,7 +394,7 @@
 
                     <div id="searchTitleContainer" class="hidden">
                         <p class="text-[9px] uppercase tracking-[.2em] font-bold text-primary">
-                            Busca
+                            Pesquisa
                         </p>
                         <h2 class="text-xl font-bold text-white mt-1">
                             Canais encontrados
@@ -452,13 +408,13 @@
                     </button>
                 </div>
 
-                <!-- DESTAQUES POR CATEGORIA (CANAIS HORIZONTAIS) DENTRO DA ABA -->
-                <div class="featured-channels-wrapper mb-8 hidden">
+                <!-- DESTAQUES POR CATEGORIA (CANAIS HORIZONTAIS) -->
+                <div id="featuredChannelsWrapper" class="mb-8 hidden">
                     <h3 class="text-xs uppercase tracking-[.15em] font-bold text-textSecondary mb-3 flex items-center gap-2">
                         <span class="material-symbols-outlined text-sm text-primary">star</span>
-                        Canais em Destaque
+                        Em Destaque
                     </h3>
-                    <div class="featured-channels-grid flex gap-3 overflow-x-auto snap-x snap-mandatory hide-scrollbar transition-opacity duration-500 opacity-100 pb-2">
+                    <div id="featuredChannelsGrid" class="flex gap-3 overflow-x-auto snap-x snap-mandatory hide-scrollbar transition-opacity duration-500 opacity-100 pb-2">
                         <!-- Carregado via JS dinamicamente -->
                     </div>
                 </div>
@@ -492,7 +448,7 @@
 
                     <div id="searchMovieTitleContainer" class="hidden">
                         <p class="text-[9px] uppercase tracking-[.2em] font-bold text-primary">
-                            Busca
+                            Pesquisa
                         </p>
                         <h2 class="text-xl font-bold text-white mt-1">
                             Filmes encontrados
@@ -506,13 +462,13 @@
                     </button>
                 </div>
 
-                <!-- DESTAQUES / LANÇAMENTOS (FILMES HORIZONTAIS) DENTRO DA ABA -->
-                <div class="featured-movies-wrapper mb-8 hidden">
+                <!-- DESTAQUES / LANÇAMENTOS (FILMES HORIZONTAIS) -->
+                <div id="featuredMoviesWrapper" class="mb-8 hidden">
                     <h3 class="text-xs uppercase tracking-[.15em] font-bold text-textSecondary mb-3 flex items-center gap-2">
                         <span class="material-symbols-outlined text-sm text-primary">local_fire_department</span>
                         Lançamentos
                     </h3>
-                    <div class="featured-movies-grid flex gap-3 overflow-x-auto snap-x snap-mandatory hide-scrollbar transition-opacity duration-500 opacity-100 pb-2">
+                    <div id="featuredMoviesGrid" class="flex gap-3 overflow-x-auto snap-x snap-mandatory hide-scrollbar transition-opacity duration-500 opacity-100 pb-2">
                         <!-- Carregado via JS dinamicamente -->
                     </div>
                 </div>
@@ -528,36 +484,36 @@
 
 
     <!-- ============================================================
-         MODAL DE CONFIGURAÇÕES
+         MODAL DE DEFINIÇÕES
          ============================================================ -->
 
     <div id="settingsModal" class="fixed inset-0 z-[60] hidden">
-        <!-- Backdrop (Fundo Escuro) -->
+        <!-- Fundo Escuro -->
         <div class="absolute inset-0 bg-black/60 backdrop-blur-sm transition-opacity opacity-0" id="settingsBackdrop"></div>
         
-        <!-- Painel de Configurações -->
+        <!-- Painel de Definições -->
         <div class="absolute bottom-0 left-0 right-0 bg-surfaceContainer border-t border-white/10 rounded-t-2xl p-6 transform translate-y-full transition-transform duration-300 shadow-[0_-10px_40px_rgba(0,0,0,0.5)] max-h-[85vh] overflow-y-auto hide-scrollbar" id="settingsPanel">
             
-            <!-- Linha de arrastar (estética mobile) -->
+            <!-- Linha de arrastar -->
             <div class="w-12 h-1.5 bg-white/10 rounded-full mx-auto mb-5"></div>
 
             <div class="flex justify-between items-center mb-6">
                 <h2 class="text-xl font-bold text-white flex items-center gap-2">
                     <span class="material-symbols-outlined text-primary">tune</span>
-                    Configurações
+                    Definições
                 </h2>
                 <button id="closeSettings" class="w-8 h-8 flex items-center justify-center rounded-full bg-white/5 text-textSecondary hover:text-white hover:bg-white/10 transition-colors">
                     <span class="material-symbols-outlined text-xl">close</span>
                 </button>
             </div>
             
-            <!-- Config. 1: CATEGORIAS -->
+            <!-- Definição 1: CATEGORIAS -->
             <div class="mb-5">
-                <p class="text-xs uppercase tracking-wider font-bold text-textSecondary mb-3">Visualização de Categorias</p>
+                <p class="text-xs uppercase tracking-wider font-bold text-textSecondary mb-3">Vista de Categorias</p>
                 <div class="flex gap-3">
                     <button id="catViewGridBtn" class="flex-1 py-3 px-4 rounded-xl border border-white/10 text-textSecondary bg-surfaceHigh hover:bg-white/5 flex flex-col items-center justify-center gap-1 transition-colors shadow-sm">
                         <span class="material-symbols-outlined mb-1">dashboard</span>
-                        <span class="text-xs">Grade</span>
+                        <span class="text-xs">Grelha</span>
                     </button>
                     <button id="catViewListBtn" class="flex-1 py-3 px-4 rounded-xl border border-white/10 text-textSecondary bg-surfaceHigh hover:bg-white/5 flex flex-col items-center justify-center gap-1 transition-colors shadow-sm">
                         <span class="material-symbols-outlined mb-1">view_agenda</span>
@@ -566,13 +522,13 @@
                 </div>
             </div>
 
-            <!-- Config. 2: CANAIS E FILMES -->
+            <!-- Definição 2: CANAIS E FILMES -->
             <div class="mb-6">
                 <p class="text-xs uppercase tracking-wider font-bold text-textSecondary mb-3">Estilo das Capas</p>
                 <div class="flex gap-3">
                     <button id="viewGridBtn" class="flex-1 py-3 px-4 rounded-xl border border-white/10 text-textSecondary bg-surfaceHigh hover:bg-white/5 flex flex-col items-center justify-center gap-1 transition-colors shadow-sm">
                         <span class="material-symbols-outlined mb-1">grid_view</span>
-                        <span class="text-xs">Grade</span>
+                        <span class="text-xs">Grelha</span>
                     </button>
                     <button id="viewListBtn" class="flex-1 py-3 px-4 rounded-xl border border-white/10 text-textSecondary bg-surfaceHigh hover:bg-white/5 flex flex-col items-center justify-center gap-1 transition-colors shadow-sm">
                         <span class="material-symbols-outlined mb-1">view_list</span>
@@ -582,14 +538,14 @@
             </div>
 
             <div class="text-center mt-6">
-                <p class="text-[10px] text-textMuted uppercase tracking-widest">BOA.TV v1.4</p>
+                <p class="text-[10px] text-textMuted uppercase tracking-widest">BOA.TV v1.5</p>
             </div>
         </div>
     </div>
 
 
     <!-- ============================================================
-         BARRA INFERIOR
+         BARRA DE NAVEGAÇÃO INFERIOR
          ============================================================ -->
 
     <nav class="bottom-nav fixed bottom-0 left-0 right-0 z-50 h-20 glass border-t border-white/5 flex items-center justify-between px-2">
@@ -604,20 +560,20 @@
             <span class="text-[9px] uppercase tracking-wider font-bold">
                 Início
             </span>
-            <span id="navHomeIndicator" class="w-1 h-1 rounded-full bg-primary opacity-100 transition-opacity"></span>
+            <span class="w-1 h-1 rounded-full bg-primary opacity-100"></span>
         </button>
 
         <!-- CANAIS -->
         <button
             id="navChannels"
-            class="flex flex-col items-center justify-center gap-1 text-textSecondary flex-1">
+            class="flex flex-col items-center justify-center gap-1 text-primary flex-1">
             <span class="material-symbols-outlined">
                 live_tv
             </span>
             <span class="text-[9px] uppercase tracking-wider font-bold">
                 Canais
             </span>
-            <span id="navChannelsIndicator" class="w-1 h-1 rounded-full bg-primary opacity-0 transition-opacity"></span>
+            <span id="navChannelsIndicator" class="w-1 h-1 rounded-full bg-primary opacity-100 transition-opacity"></span>
         </button>
 
         <!-- FILMES -->
@@ -633,7 +589,7 @@
             <span id="navMoviesIndicator" class="w-1 h-1 rounded-full bg-primary opacity-0 transition-opacity"></span>
         </button>
 
-        <!-- BUSCAR -->
+        <!-- PESQUISAR -->
         <button
             id="navSearch"
             class="flex flex-col items-center justify-center gap-1 text-textSecondary flex-1">
@@ -641,12 +597,12 @@
                 search
             </span>
             <span class="text-[9px] uppercase tracking-wider font-bold">
-                Buscar
+                Pesquisar
             </span>
             <span class="w-1 h-1 rounded-full bg-primary opacity-0 transition-opacity"></span>
         </button>
 
-        <!-- CONFIGURAÇÕES -->
+        <!-- DEFINIÇÕES -->
         <button
             id="navSettings"
             class="flex flex-col items-center justify-center gap-1 text-textSecondary flex-1">
@@ -654,7 +610,7 @@
                 settings
             </span>
             <span class="text-[9px] uppercase tracking-wider font-bold">
-                Config
+                Definições
             </span>
             <span class="w-1 h-1 rounded-full bg-primary opacity-0 transition-opacity"></span>
         </button>
@@ -674,14 +630,14 @@
         let searchQuery = "";
         let isSearchMode = false;
         
-        // Controle de Abas Ativas ('home', 'channels' ou 'movies')
-        let currentTab = 'home';
+        // Controlo de Separadores Ativos ('channels' ou 'movies')
+        let currentTab = 'channels';
         
-        // Controle do Carrosséis
+        // Controlo de Carrosséis
         let featuredMoviesInterval;
         let featuredChannelsInterval;
         
-        // Carrega o modo de visualização salvo ou define os padrões
+        // Carrega o modo de visualização guardado
         let channelViewMode = localStorage.getItem('boatv_channelViewMode') || 'grid';
         let categoryViewMode = localStorage.getItem('boatv_categoryViewMode') || 'list';
 
@@ -691,12 +647,11 @@
            ============================================================ */
 
         async function loadAllData() {
-            // Carregar Canais
             const channelContainer = document.getElementById('accordionContainer');
             channelContainer.innerHTML = `
                 <div class="text-center py-12 text-primary col-span-full">
                     <span class="material-symbols-outlined text-3xl animate-spin mb-3">progress_activity</span>
-                    <p class="text-xs font-bold tracking-wider uppercase">Carregando canais...</p>
+                    <p class="text-xs font-bold tracking-wider uppercase">A carregar canais...</p>
                 </div>
             `;
             
@@ -717,12 +672,11 @@
                 `;
             }
 
-            // Carregar Filmes
             const movieContainer = document.getElementById('movieAccordionContainer');
             movieContainer.innerHTML = `
                 <div class="text-center py-12 text-primary col-span-full">
                     <span class="material-symbols-outlined text-3xl animate-spin mb-3">progress_activity</span>
-                    <p class="text-xs font-bold tracking-wider uppercase">Carregando filmes...</p>
+                    <p class="text-xs font-bold tracking-wider uppercase">A carregar filmes...</p>
                 </div>
             `;
 
@@ -740,9 +694,9 @@
                         <div class="w-20 h-20 bg-surfacePanel rounded-full flex items-center justify-center mb-5 border border-white/5">
                             <span class="material-symbols-outlined text-4xl text-primary/60">movie_filter</span>
                         </div>
-                        <h3 class="text-lg font-bold text-white mb-2">Catálogo em Breve</h3>
+                        <h3 class="text-lg font-bold text-white mb-2">Catálogo Brevemente</h3>
                         <p class="text-[13px] text-textSecondary max-w-[280px] leading-relaxed">
-                            A lista de filmes está sendo preparada e logo estará disponível.
+                            A lista de filmes está a ser preparada e estará disponível em breve.
                         </p>
                     </div>
                 `;
@@ -751,7 +705,7 @@
     
     
         /* ============================================================
-           LOGO E UTILITÁRIOS
+           UTILITÁRIOS E IMAGENS
            ============================================================ */
     
         function getLogoFromLink(link) {
@@ -780,7 +734,7 @@
 
         
         /* ============================================================
-           GERADOR DE EPG SIMULADO
+           GERADOR DE EPG SIMULADO (CASO O JSON NÃO TENHA PROGRAMAÇÃO)
            ============================================================ */
            
         function gerarProgramacaoSimulada(nomeCanal) {
@@ -794,7 +748,7 @@
             
             return [
                 { horario: format(prev), titulo: 'Programa Anterior', atual: false },
-                { horario: format(now), titulo: nomeCanal ? `Ao Vivo: ${nomeCanal}` : 'Transmissão Ao Vivo', atual: true },
+                { horario: format(now), titulo: nomeCanal ? `Em Direto: ${nomeCanal}` : 'Transmissão em Direto', atual: true },
                 { horario: format(next), titulo: 'Próxima Atração', atual: false },
                 { horario: format(next2), titulo: 'Sessão Especial', atual: false }
             ];
@@ -802,12 +756,11 @@
 
 
         /* ============================================================
-           CARROSSEL DE CANAIS EM DESTAQUE (MULTIPLAS TELAS)
+           CARROSSÉIS DE DESTAQUES (CANAIS E FILMES)
            ============================================================ */
 
         function updateFeaturedChannels() {
             const selectedChannels = [];
-            
             for (const cat in channelData) {
                 const channels = channelData[cat];
                 if (channels.length > 0) {
@@ -818,55 +771,46 @@
 
             if (selectedChannels.length === 0) return;
 
-            const grids = document.querySelectorAll('.featured-channels-grid');
-            if(grids.length === 0) return;
-
-            grids.forEach(grid => { grid.style.opacity = '0'; });
+            const grid = document.getElementById('featuredChannelsGrid');
+            if(!grid) return;
+            grid.style.opacity = '0';
 
             setTimeout(() => {
-                grids.forEach(grid => {
-                    grid.innerHTML = '';
-                    selectedChannels.forEach(channel => {
-                        const logo = getLogoFromLink(channel.link);
-                        const card = document.createElement('div');
-                        
-                        card.className = 'channel-card cursor-pointer flex-none w-32 sm:w-40 snap-start relative aspect-square rounded-xl overflow-hidden bg-surfacePanel border border-white/5 group shadow-lg flex items-center justify-center p-4 sm:p-5';
-                        card.onclick = () => playMedia(channel, channel.categoriaObj, 'channel');
-                        
-                        card.innerHTML = `
-                            <img src="${escapeAttribute(logo)}" alt="${escapeAttribute(channel.nome)}" loading="lazy" class="w-full h-full object-contain group-hover:scale-110 transition-transform duration-700" onerror="this.src='https://via.placeholder.com/200?text=Canal'">
-                            
-                            <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent flex flex-col justify-end p-2 sm:p-3 opacity-100">
-                                <span class="px-1.5 py-0.5 rounded bg-primary/20 text-primary border border-primary/30 text-[8px] font-bold uppercase tracking-widest w-max mb-1 shadow-lg backdrop-blur-sm truncate max-w-full">
-                                    ${escapeHTML(channel.categoriaObj)}
-                                </span>
-                                <p class="text-[10px] sm:text-xs font-bold text-white leading-tight truncate drop-shadow-md">
-                                    ${escapeHTML(channel.nome)}
-                                </p>
-                            </div>
-                        `;
-                        grid.appendChild(card);
-                    });
-                    grid.style.opacity = '1';
+                grid.innerHTML = '';
+                selectedChannels.forEach(channel => {
+                    const logo = getLogoFromLink(channel.link);
+                    const card = document.createElement('div');
+                    
+                    card.className = 'channel-card cursor-pointer flex-none w-32 sm:w-40 snap-start relative aspect-square rounded-xl overflow-hidden bg-surfacePanel border border-white/5 group shadow-lg flex items-center justify-center p-4 sm:p-5';
+                    card.onclick = () => playMedia(channel, channel.categoriaObj, 'channel');
+                    
+                    card.innerHTML = `
+                        <img src="${escapeAttribute(logo)}" alt="${escapeAttribute(channel.nome)}" loading="lazy" class="w-full h-full object-contain group-hover:scale-110 transition-transform duration-700" onerror="this.src='https://via.placeholder.com/200?text=Canal'">
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent flex flex-col justify-end p-2 sm:p-3 opacity-100">
+                            <span class="px-1.5 py-0.5 rounded bg-primary/20 text-primary border border-primary/30 text-[8px] font-bold uppercase tracking-widest w-max mb-1 shadow-lg backdrop-blur-sm truncate max-w-full">
+                                ${escapeHTML(channel.categoriaObj)}
+                            </span>
+                            <p class="text-[10px] sm:text-xs font-bold text-white leading-tight truncate drop-shadow-md">
+                                ${escapeHTML(channel.nome)}
+                            </p>
+                        </div>
+                    `;
+                    grid.appendChild(card);
                 });
+                grid.style.opacity = '1';
             }, 300);
         }
 
         function startFeaturedChannels() {
             if (featuredChannelsInterval) clearInterval(featuredChannelsInterval);
-            
-            const wrappers = document.querySelectorAll('.featured-channels-wrapper');
-            if (wrappers.length > 0 && Object.keys(channelData).length > 0) {
-                wrappers.forEach(w => w.classList.remove('hidden'));
+            const featuredWrapper = document.getElementById('featuredChannelsWrapper');
+            if (featuredWrapper && Object.keys(channelData).length > 0 && searchQuery.trim() === '') {
+                featuredWrapper.classList.remove('hidden');
                 updateFeaturedChannels(); 
                 featuredChannelsInterval = setInterval(updateFeaturedChannels, 10000);
             }
         }
 
-
-        /* ============================================================
-           CARROSSEL DE LANÇAMENTOS / FILMES (MULTIPLAS TELAS)
-           ============================================================ */
 
         function updateFeaturedMovies() {
             const allMovies = [];
@@ -875,53 +819,38 @@
             }
 
             if (allMovies.length === 0) return;
-
             const shuffled = allMovies.sort(() => 0.5 - Math.random());
             const selected = shuffled.slice(0, 3); 
-
-            const grids = document.querySelectorAll('.featured-movies-grid');
-            if(grids.length === 0) return;
-
-            grids.forEach(grid => { grid.style.opacity = '0'; });
+            const grid = document.getElementById('featuredMoviesGrid');
+            if(!grid) return;
+            grid.style.opacity = '0';
 
             setTimeout(() => {
-                grids.forEach(grid => {
-                    grid.innerHTML = '';
-                    selected.forEach(movie => {
-                        const poster = getMovieImage(movie);
-                        const card = document.createElement('div');
-                        
-                        card.className = 'channel-card cursor-pointer flex-none w-56 sm:w-64 snap-start relative aspect-video rounded-xl overflow-hidden bg-surfacePanel border border-white/5 group shadow-lg';
-                        card.onclick = () => playMedia(movie, movie.categoriaObj, 'movie');
-                        
-                        card.innerHTML = `
-                            <img src="${escapeAttribute(poster)}" alt="${escapeAttribute(movie.nome)}" loading="lazy" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" onerror="this.src='https://via.placeholder.com/600x400?text=Lançamento'">
-                            
-                            <div class="absolute inset-0 bg-gradient-to-t from-black/95 via-black/20 to-transparent flex flex-col justify-end p-4">
-                                <span class="px-2 py-1 rounded bg-primary text-background text-[9px] font-bold uppercase tracking-widest w-max mb-2 shadow-lg">
-                                    Destaque
-                                </span>
-                                <p class="text-sm md:text-base font-bold text-white leading-tight line-clamp-2 drop-shadow-md">
-                                    ${escapeHTML(movie.nome)}
-                                </p>
-                                <p class="text-[10px] text-primary/80 mt-1 line-clamp-1 drop-shadow-md font-medium uppercase tracking-wider">
-                                    ${escapeHTML(movie.categoriaObj)}
-                                </p>
-                            </div>
-                        `;
-                        grid.appendChild(card);
-                    });
-                    grid.style.opacity = '1';
+                grid.innerHTML = '';
+                selected.forEach(movie => {
+                    const poster = getMovieImage(movie);
+                    const card = document.createElement('div');
+                    card.className = 'channel-card cursor-pointer flex-none w-56 sm:w-64 snap-start relative aspect-video rounded-xl overflow-hidden bg-surfacePanel border border-white/5 group shadow-lg';
+                    card.onclick = () => playMedia(movie, movie.categoriaObj, 'movie');
+                    card.innerHTML = `
+                        <img src="${escapeAttribute(poster)}" alt="${escapeAttribute(movie.nome)}" loading="lazy" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" onerror="this.src='https://via.placeholder.com/600x400?text=Lançamento'">
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/95 via-black/20 to-transparent flex flex-col justify-end p-4">
+                            <span class="px-2 py-1 rounded bg-primary text-background text-[9px] font-bold uppercase tracking-widest w-max mb-2 shadow-lg">Destaque</span>
+                            <p class="text-sm md:text-base font-bold text-white leading-tight line-clamp-2 drop-shadow-md">${escapeHTML(movie.nome)}</p>
+                            <p class="text-[10px] text-primary/80 mt-1 line-clamp-1 drop-shadow-md font-medium uppercase tracking-wider">${escapeHTML(movie.categoriaObj)}</p>
+                        </div>
+                    `;
+                    grid.appendChild(card);
                 });
+                grid.style.opacity = '1';
             }, 300);
         }
 
         function startFeaturedMovies() {
             if (featuredMoviesInterval) clearInterval(featuredMoviesInterval);
-            
-            const wrappers = document.querySelectorAll('.featured-movies-wrapper');
-            if (wrappers.length > 0 && Object.keys(movieData).length > 0) {
-                wrappers.forEach(w => w.classList.remove('hidden'));
+            const featuredWrapper = document.getElementById('featuredMoviesWrapper');
+            if (featuredWrapper && Object.keys(movieData).length > 0 && searchQuery.trim() === '') {
+                featuredWrapper.classList.remove('hidden');
                 updateFeaturedMovies(); 
                 featuredMoviesInterval = setInterval(updateFeaturedMovies, 10000);
             }
@@ -929,23 +858,19 @@
 
 
         /* ============================================================
-           RENDERIZAR CANAIS
+           RENDERIZAR ACORDEÕES (CANAIS E FILMES)
            ============================================================ */
 
         function renderAccordion() {
             const container = document.getElementById('accordionContainer');
+            const featuredWrapper = document.getElementById('featuredChannelsWrapper');
             container.innerHTML = '';
             let totalEncontrados = 0;
-            
-            const featuredWrappers = document.querySelectorAll('.featured-channels-wrapper');
-            
-            // Oculta todos os carrosséis de canais durante a busca, ou exibe se não houver busca
+
             if (searchQuery.trim() !== '') {
-                featuredWrappers.forEach(w => w.classList.add('hidden'));
+                if (featuredWrapper) featuredWrapper.classList.add('hidden');
             } else {
-                if (Object.keys(channelData).length > 0) {
-                    featuredWrappers.forEach(w => w.classList.remove('hidden'));
-                }
+                if (featuredWrapper && Object.keys(channelData).length > 0) featuredWrapper.classList.remove('hidden');
             }
 
             if (categoryViewMode === 'grid') {
@@ -1095,26 +1020,18 @@
         }
 
 
-        /* ============================================================
-           RENDERIZAR FILMES
-           ============================================================ */
-
         function renderMovieAccordion() {
             const container = document.getElementById('movieAccordionContainer');
+            const featuredWrapper = document.getElementById('featuredMoviesWrapper');
+
             if(!container) return; 
-            
             container.innerHTML = '';
             let totalEncontrados = 0;
 
-            const featuredWrappers = document.querySelectorAll('.featured-movies-wrapper');
-            
-            // Oculta todos os carrosséis de filmes durante a busca, ou exibe se não houver busca
             if (searchQuery.trim() !== '') {
-                featuredWrappers.forEach(w => w.classList.add('hidden'));
+                if (featuredWrapper) featuredWrapper.classList.add('hidden');
             } else {
-                if (Object.keys(movieData).length > 0) {
-                    featuredWrappers.forEach(w => w.classList.remove('hidden'));
-                }
+                if (featuredWrapper && Object.keys(movieData).length > 0) featuredWrapper.classList.remove('hidden');
             }
 
             if (categoryViewMode === 'grid') {
@@ -1265,18 +1182,16 @@
 
 
         /* ============================================================
-           REPRODUZIR MÍDIA E MOSTRAR EPG
+           REPRODUZIR MÍDIA E MOSTRAR EPG DA API
            ============================================================ */
 
-        function playMedia(mediaObj, categoria, type) {
+        async function playMedia(mediaObj, categoria, type) {
             if (isSearchMode) {
                 closeSearch();
             }
 
             const playerSection = document.getElementById('playerSection');
             const player = document.getElementById('videoPlayer');
-            
-            const homeSection = document.getElementById('homeSection');
             const channelsSection = document.getElementById('channelsSection');
             const moviesSection = document.getElementById('moviesSection');
             
@@ -1301,53 +1216,76 @@
                 nowPlayingLabel.textContent = "Filme";
                 currentLogo.src = getMovieImage(mediaObj);
                 currentLogo.classList.replace('object-contain', 'object-cover');
+                // Esconder EPG de Programação para Filmes
                 scheduleSection.classList.add('hidden');
             } else {
-                nowPlayingLabel.textContent = "Assistindo agora";
+                nowPlayingLabel.textContent = "A ver agora";
                 currentLogo.src = getLogoFromLink(mediaObj.link);
                 currentLogo.classList.replace('object-cover', 'object-contain');
+                // Mostrar EPG de Programação para Canais
                 scheduleSection.classList.remove('hidden');
                 
-                let progData = mediaObj.programacao || mediaObj.epg;
+                // Mostrar estado de carregamento do EPG
+                scheduleList.innerHTML = `
+                    <div class="text-center py-6 text-textMuted bg-surfacePanel rounded-lg border border-white/5 flex flex-col items-center justify-center">
+                        <span class="material-symbols-outlined text-2xl mb-3 animate-spin text-primary">sync</span>
+                        <p class="text-xs tracking-wider">A carregar a grelha de programação...</p>
+                    </div>
+                `;
 
-                if (typeof progData === 'string' && progData.trim() !== '') {
-                    scheduleList.innerHTML = `
-                        <div class="flex items-center gap-3 bg-surfacePanel p-3 rounded-lg border border-white/5">
-                            <span class="w-2 h-2 rounded-full bg-tertiary animate-pulse"></span>
-                            <div class="flex-1 text-sm text-primary font-bold">${escapeHTML(progData)}</div>
-                        </div>
-                    `;
-                } 
-                else {
-                    if (!Array.isArray(progData) || progData.length === 0) {
-                        progData = gerarProgramacaoSimulada(mediaObj.nome);
+                try {
+                    // Efetua um GET para a API fornecida
+                    const response = await fetch('https://reidosembeds.online/api/guia');
+                    
+                    if (!response.ok) {
+                        throw new Error('Falha na comunicação com a API');
+                    }
+                    
+                    const apiData = await response.json();
+                    
+                    // Extrai a 'tag' com a programação. A API pode devolver a chave 'programacao', 'guia', 
+                    // ou o próprio objeto.
+                    let progData = apiData.programacao || apiData.guia || apiData;
+
+                    // Se a API devolver os dados divididos por chaves de canais, procuramos pelo nome do canal atual
+                    if (progData && typeof progData === 'object' && !Array.isArray(progData)) {
+                        let canalEncontrado = null;
+                        const searchKey = mediaObj.epg_id || mediaObj.id || mediaObj.nome;
+                        
+                        for (const key in progData) {
+                            if (key.toLowerCase().includes(searchKey.toLowerCase())) {
+                                canalEncontrado = progData[key];
+                                break;
+                            }
+                        }
+                        
+                        // Se encontrou a grelha específica do canal
+                        if (canalEncontrado) {
+                            progData = canalEncontrado;
+                        }
                     }
 
-                    if (Array.isArray(progData) && progData.length > 0) {
-                        let scheduleHTML = '';
-                        progData.forEach(prog => {
-                            const isNow = prog.atual ? 'text-primary font-bold' : 'text-white';
-                            const dot = prog.atual ? '<span class="w-2 h-2 rounded-full bg-tertiary animate-pulse"></span>' : '';
-                            const title = prog.titulo || prog.title || prog.nome || 'Atração';
-                            const time = prog.horario || prog.time || '--:--';
-                            
-                            scheduleHTML += `
-                                <div class="flex items-center gap-3 bg-surfacePanel p-3 rounded-lg border border-white/5">
-                                    <div class="text-xs font-mono text-textMuted w-12">${escapeHTML(time)}</div>
-                                    <div class="flex-1 text-sm ${isNow} truncate">${escapeHTML(title)}</div>
-                                    ${dot}
-                                </div>
-                            `;
-                        });
-                        scheduleList.innerHTML = scheduleHTML;
+                    // Renderiza o que foi extraído da API
+                    renderScheduleList(progData, mediaObj);
+
+                } catch (error) {
+                    console.warn("Aviso: Falha ao procurar o EPG na API externa. A usar o Fallback.", error);
+                    
+                    // FALLBACK DE SEGURANÇA:
+                    // Se a API falhar (ex: bloqueio de CORS, offline), tenta usar a programação do JSON
+                    // ou gera a programação simulada
+                    let fallbackData = mediaObj.programacao || mediaObj.epg;
+                    if (!fallbackData || (Array.isArray(fallbackData) && fallbackData.length === 0)) {
+                        fallbackData = gerarProgramacaoSimulada(mediaObj.nome);
                     }
+                    
+                    renderScheduleList(fallbackData, mediaObj);
                 }
             }
 
             document.getElementById('nowPlaying').classList.remove('hidden');
             
-            // Oculta abas do menu
-            homeSection.classList.add('hidden');
+            // Oculta separadores
             channelsSection.classList.add('hidden');
             moviesSection.classList.add('hidden');
             
@@ -1362,6 +1300,49 @@
                 loading.classList.remove('flex');
             };
         }
+        
+        // Função auxiliar responsável por desenhar a grelha (EPG) na interface
+        function renderScheduleList(progData, mediaObj) {
+            const scheduleList = document.getElementById('scheduleList');
+            
+            // 1. Se a programação for apenas um texto direto
+            if (typeof progData === 'string' && progData.trim() !== '') {
+                scheduleList.innerHTML = `
+                    <div class="flex items-center gap-3 bg-surfacePanel p-3 rounded-lg border border-white/5">
+                        <span class="w-2 h-2 rounded-full bg-tertiary animate-pulse"></span>
+                        <div class="flex-1 text-sm text-primary font-bold">${escapeHTML(progData)}</div>
+                    </div>
+                `;
+            } 
+            // 2. Se a programação for uma lista estruturada de horários e títulos
+            else if (Array.isArray(progData) && progData.length > 0) {
+                let scheduleHTML = '';
+                progData.forEach(prog => {
+                    const isNow = prog.atual ? 'text-primary font-bold' : 'text-white';
+                    const dot = prog.atual ? '<span class="w-2 h-2 rounded-full bg-tertiary animate-pulse"></span>' : '';
+                    const title = prog.titulo || prog.title || prog.nome || 'Atração';
+                    const time = prog.horario || prog.time || '--:--';
+                    
+                    scheduleHTML += `
+                        <div class="flex items-center gap-3 bg-surfacePanel p-3 rounded-lg border border-white/5">
+                            <div class="text-xs font-mono text-textMuted w-12">${escapeHTML(time)}</div>
+                            <div class="flex-1 text-sm ${isNow} truncate">${escapeHTML(title)}</div>
+                            ${dot}
+                        </div>
+                    `;
+                });
+                scheduleList.innerHTML = scheduleHTML;
+            } 
+            // 3. Sem informação disponível
+            else {
+                scheduleList.innerHTML = `
+                    <div class="text-center py-6 text-textMuted bg-surfacePanel rounded-lg border border-white/5">
+                        <span class="material-symbols-outlined text-2xl mb-2 opacity-50">event_busy</span>
+                        <p class="text-xs">Programação indisponível para este canal.</p>
+                    </div>
+                `;
+            }
+        }
 
 
         /* ============================================================
@@ -1369,10 +1350,9 @@
            ============================================================ */
 
         function updateNavStates() {
+            const channelsSection = document.getElementById('channelsSection');
+            const moviesSection = document.getElementById('moviesSection');
             const searchInput = document.getElementById('searchInput');
-            
-            const btnHome = document.getElementById('navHome');
-            const indHome = document.getElementById('navHomeIndicator');
             
             const btnChannels = document.getElementById('navChannels');
             const indChannels = document.getElementById('navChannelsIndicator');
@@ -1380,40 +1360,36 @@
             const btnMovies = document.getElementById('navMovies');
             const indMovies = document.getElementById('navMoviesIndicator');
 
-            // Ajusta o Placeholder da Busca
             if (currentTab === 'channels') {
-                searchInput.placeholder = "Buscar canal...";
-            } else if (currentTab === 'movies') {
-                searchInput.placeholder = "Buscar filme...";
+                searchInput.placeholder = "Pesquisar canal...";
             } else {
-                searchInput.placeholder = "Buscar...";
+                searchInput.placeholder = "Pesquisar filme...";
             }
 
-            // Reseta todos os botões e indicadores
-            [btnHome, btnChannels, btnMovies].forEach(btn => btn.classList.replace('text-primary', 'text-textSecondary'));
-            [indHome, indChannels, indMovies].forEach(ind => ind.classList.replace('opacity-100', 'opacity-0'));
-
-            // Aplica estado ativo apenas na aba atual
-            if (currentTab === 'home') {
-                btnHome.classList.replace('text-textSecondary', 'text-primary');
-                indHome.classList.replace('opacity-0', 'opacity-100');
-            } else if (currentTab === 'channels') {
+            if (!channelsSection.classList.contains('hidden') && moviesSection.classList.contains('hidden')) {
                 btnChannels.classList.replace('text-textSecondary', 'text-primary');
                 indChannels.classList.replace('opacity-0', 'opacity-100');
-            } else if (currentTab === 'movies') {
+            } else {
+                btnChannels.classList.replace('text-primary', 'text-textSecondary');
+                indChannels.classList.replace('opacity-100', 'opacity-0');
+            }
+
+            if (!moviesSection.classList.contains('hidden') && channelsSection.classList.contains('hidden')) {
                 btnMovies.classList.replace('text-textSecondary', 'text-primary');
                 indMovies.classList.replace('opacity-0', 'opacity-100');
+            } else {
+                btnMovies.classList.replace('text-primary', 'text-textSecondary');
+                indMovies.classList.replace('opacity-100', 'opacity-0');
             }
         }
 
 
         /* ============================================================
-           BUSCA LÓGICA (ABAS INTELIGENTES)
+           LÓGICA DE PESQUISA (SEPARADORES INTELIGENTES)
            ============================================================ */
 
         const searchInput = document.getElementById('searchInput');
         const mobileSearch = document.getElementById('mobileSearch');
-        
         const clearSearchChannel = document.getElementById('clearSearchChannel');
         const clearSearchMovie = document.getElementById('clearSearchMovie');
 
@@ -1425,13 +1401,6 @@
             isSearchMode = true;
             mobileSearch.classList.remove('hidden');
             searchInput.focus();
-            
-            // Se estiver na Home, redireciona a pesquisa para a aba de Canais por padrão
-            if (currentTab === 'home') {
-                currentTab = 'channels';
-            }
-            
-            document.getElementById('homeSection').classList.add('hidden');
             
             if (currentTab === 'channels') {
                 document.getElementById('normalTitleContainer').classList.add('hidden');
@@ -1456,7 +1425,6 @@
             searchInput.value = '';
             searchQuery = '';
             
-            // Restaura Titulos e Esconde Botões de Limpar
             document.querySelectorAll('.clear-search-btn').forEach(btn => btn.classList.add('hidden'));
             
             document.getElementById('searchTitleContainer').classList.add('hidden');
@@ -1467,7 +1435,7 @@
             
             if (currentTab === 'channels') {
                 renderAccordion(); 
-            } else if (currentTab === 'movies') {
+            } else {
                 renderMovieAccordion();
             }
         }
@@ -1477,7 +1445,6 @@
         searchInput.addEventListener('input', event => {
             searchQuery = event.target.value;
             
-            // Mostra botões de Limpar
             if (searchQuery.trim() !== '') {
                 if(currentTab === 'channels') clearSearchChannel.classList.remove('hidden');
                 if(currentTab === 'movies') clearSearchMovie.classList.remove('hidden');
@@ -1497,7 +1464,6 @@
             updateNavStates();
         });
 
-        // Limpar Busca
         function executeClearSearch() {
             searchInput.value = '';
             searchQuery = '';
@@ -1511,22 +1477,21 @@
 
 
         /* ============================================================
-           MUDANÇA DE ABAS / NAVEGAÇÃO SPA
+           MUDANÇA DE SEPARADORES / NAVEGAÇÃO SPA
            ============================================================ */
 
-        // INÍCIO (Home - Destaques)
         document.getElementById('navHome').addEventListener('click', () => {
-            currentTab = 'home';
             const player = document.getElementById('videoPlayer');
             player.src = '';
             
+            currentTab = 'channels'; 
+
             document.getElementById('playerSection').classList.add('hidden');
             document.getElementById('nowPlaying').classList.add('hidden');
             document.getElementById('channelSchedule').classList.add('hidden');
 
             document.getElementById('moviesSection').classList.add('hidden');
-            document.getElementById('channelsSection').classList.add('hidden');
-            document.getElementById('homeSection').classList.remove('hidden');
+            document.getElementById('channelsSection').classList.remove('hidden');
 
             if (isSearchMode) closeSearch();
 
@@ -1534,15 +1499,12 @@
             window.scrollTo({ top: 0, behavior: 'smooth' });
         });
 
-        // CANAIS (Lista Completa + Carrossel de Canais)
         document.getElementById('navChannels').addEventListener('click', () => {
             currentTab = 'channels';
-            const homeSection = document.getElementById('homeSection');
             const channelsSection = document.getElementById('channelsSection');
             const moviesSection = document.getElementById('moviesSection');
             const playerSection = document.getElementById('playerSection');
             
-            homeSection.classList.add('hidden');
             moviesSection.classList.add('hidden');
             
             if (playerSection.classList.contains('hidden') || isSearchMode) {
@@ -1566,15 +1528,12 @@
             updateNavStates();
         });
 
-        // FILMES (Lista Completa + Carrossel de Filmes)
         document.getElementById('navMovies').addEventListener('click', () => {
             currentTab = 'movies';
-            const homeSection = document.getElementById('homeSection');
             const channelsSection = document.getElementById('channelsSection');
             const moviesSection = document.getElementById('moviesSection');
             const playerSection = document.getElementById('playerSection');
             
-            homeSection.classList.add('hidden');
             channelsSection.classList.add('hidden');
             
             if (playerSection.classList.contains('hidden') || isSearchMode) {
@@ -1600,7 +1559,7 @@
 
 
         /* ============================================================
-           CONFIGURAÇÕES (LÓGICA DO MODAL)
+           DEFINIÇÕES (LÓGICA DO MODAL)
            ============================================================ */
 
         const settingsModal = document.getElementById('settingsModal');
@@ -1634,7 +1593,6 @@
             const activeClass = 'flex-1 py-3 px-4 rounded-xl border border-primary text-primary bg-primary/10 flex flex-col items-center justify-center gap-1 transition-colors font-bold shadow-sm';
             const inactiveClass = 'flex-1 py-3 px-4 rounded-xl border border-white/10 text-textSecondary bg-surfaceHigh hover:bg-white/5 flex flex-col items-center justify-center gap-1 transition-colors shadow-sm';
 
-            // Atualiza botões de Categorias
             if (categoryViewMode === 'grid') {
                 catViewGridBtn.className = activeClass;
                 catViewListBtn.className = inactiveClass;
@@ -1643,7 +1601,6 @@
                 catViewListBtn.className = activeClass;
             }
 
-            // Atualiza botões de Mídias
             if (channelViewMode === 'grid') {
                 viewGridBtn.className = activeClass;
                 viewListBtn.className = inactiveClass;
@@ -1695,3 +1652,5 @@
 </body>
 
 </html>
+
+
