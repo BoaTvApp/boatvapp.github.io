@@ -1,0 +1,2119 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="h-full">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>BoaTV - Sempre conectado.</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link id="custom-font-link" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700;800&family=Outfit:wght@400;500;600;700;800&family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style id="dynamic-theme-styles">
+:root {
+  --app-font-family: 'Plus Jakarta Sans', sans-serif;
+  --app-font-scale: 100%;
+  --app-card-radius: 1rem;
+  --app-bg-main: #020617;
+  --app-bg-surface: #0f172a;
+  --app-bg-header: rgba(15, 23, 42, 0.9);
+  --app-primary: #6366f1;
+  --app-primary-hover: #4f46e5;
+  --app-primary-glow: rgba(99, 102, 241, 0.25);
+  --app-blur-intensity: 12px;
+}
+
+body {
+  font-family: var(--app-font-family);
+  font-size: var(--app-font-scale);
+  background-color: var(--app-bg-main);
+}
+
+.custom-surface {
+  background-color: var(--app-bg-surface);
+}
+
+.custom-header {
+  background-color: var(--app-bg-header);
+  backdrop-filter: blur(var(--app-blur-intensity));
+}
+
+.custom-card-radius {
+  border-radius: var(--app-card-radius);
+}
+
+/* Custom scrollbar styling for navigation menu */
+#categories-menu::-webkit-scrollbar,
+#sidebar-nav::-webkit-scrollbar,
+#series-modal-episodes::-webkit-scrollbar,
+#series-seasons-tabs::-webkit-scrollbar,
+.custom-scrollbar::-webkit-scrollbar {
+  width: 5px;
+  height: 5px;
+}
+#categories-menu::-webkit-scrollbar-track,
+#sidebar-nav::-webkit-scrollbar-track,
+#series-modal-episodes::-webkit-scrollbar-track,
+#series-seasons-tabs::-webkit-scrollbar-track,
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+#categories-menu::-webkit-scrollbar-thumb,
+#sidebar-nav::-webkit-scrollbar-thumb,
+#series-modal-episodes::-webkit-scrollbar-thumb,
+#series-seasons-tabs::-webkit-scrollbar-thumb,
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 10px;
+}
+#categories-menu::-webkit-scrollbar-thumb:hover,
+#sidebar-nav::-webkit-scrollbar-thumb:hover,
+#series-modal-episodes::-webkit-scrollbar-thumb:hover,
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+/* Collapsed Sidebar Styles */
+#sidebar-nav.sidebar-collapsed {
+  width: 5.5rem !important;
+}
+#sidebar-nav.sidebar-collapsed .nav-text-label {
+  display: none !important;
+}
+#sidebar-nav.sidebar-collapsed .nav-tab-btn {
+  padding-left: 0.25rem;
+  padding-right: 0.25rem;
+  justify-content: center;
+}
+#sidebar-nav.sidebar-collapsed .nav-cat-btn {
+  justify-content: center;
+  padding-left: 0.5rem;
+  padding-right: 0.5rem;
+}
+
+/* Ambient Glow Effect */
+.ambient-glow {
+  position: relative;
+}
+.ambient-glow::before {
+  content: '';
+  position: absolute;
+  top: -50px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 60%;
+  height: 180px;
+  background: var(--app-primary);
+  opacity: 0.12;
+  filter: blur(80px);
+  pointer-events: none;
+  border-radius: 50%;
+}
+
+/* Keybind recording effect */
+.keybind-recording {
+  animation: pulse-border 1.2s infinite alternate;
+}
+@keyframes pulse-border {
+  0% { border-color: rgba(99, 102, 241, 0.4); box-shadow: 0 0 0 0 rgba(99, 102, 241, 0.4); }
+  100% { border-color: rgba(99, 102, 241, 1); box-shadow: 0 0 10px 2px rgba(99, 102, 241, 0.5); }
+}
+
+/* Mobile safe bottom spacing */
+@media (max-width: 767px) {
+  .mobile-bottom-pad {
+    padding-bottom: 5.5rem !important;
+  }
+}
+</style>
+</head>
+<body class="text-slate-100 h-full flex flex-col selection:bg-indigo-500 selection:text-white antialiased overflow-x-hidden transition-colors duration-300">
+
+<!-- Header -->
+<header class="custom-header border-b border-slate-800/80 px-3 sm:px-6 py-2.5 sm:py-3.5 flex items-center justify-between shadow-lg shadow-black/20 z-40 sticky top-0 w-full max-w-full">
+  <!-- Logo & Auth Info -->
+  <div class="flex items-center space-x-2 sm:space-x-3.5 cursor-pointer group min-w-0" onclick="switchContentType('home')">
+    <div class="w-8 h-8 sm:w-10 sm:h-10 rounded-xl sm:rounded-2xl bg-gradient-to-tr from-indigo-600 via-indigo-500 to-violet-500 flex items-center justify-center text-base sm:text-xl shadow-lg shadow-indigo-500/30 group-hover:scale-105 transition-transform duration-300 shrink-0">
+      📡
+    </div>
+    <div class="min-w-0">
+      <h1 class="text-xs sm:text-lg font-bold tracking-tight text-white flex items-center gap-1.5 sm:gap-2 truncate">
+        <span class="truncate">BoaTV</span>
+        <span class="text-[9px] sm:text-xs px-1.5 sm:px-2 py-0.5 rounded-md bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 font-semibold tracking-wider uppercase shrink-0">Sempre conectado</span>
+      </h1>
+      <p id="auth-status-text" class="text-[10px] sm:text-xs text-slate-400 truncate max-w-[110px] sm:max-w-[220px]">Conectando ao servidor...</p>
+    </div>
+  </div>
+
+  <!-- Action Buttons -->
+  <div class="flex items-center space-x-1.5 sm:space-x-2 shrink-0">
+    <button onclick="openFavoritesModal()" title="Favoritos (Atalhos suportados)" class="px-2.5 sm:px-3 py-1.5 sm:py-2 bg-slate-800/80 hover:bg-slate-700/80 text-slate-200 rounded-xl text-xs font-semibold transition-all duration-200 flex items-center space-x-1.5 border border-slate-700/60 hover:border-slate-600 shadow-sm active:scale-95">
+      <span class="text-amber-400">⭐</span>
+      <span class="hidden md:inline">Favoritos</span>
+      <span id="fav-count" class="bg-slate-900/80 text-amber-300 px-1.5 py-0.5 rounded-md text-[10px] font-bold border border-amber-500/20">0</span>
+    </button>
+
+    <!-- Menu de Personalização -->
+    <button onclick="openCustomizationModal()" title="Personalizar Interface" class="px-2.5 sm:px-3 py-1.5 sm:py-2 bg-indigo-600/20 hover:bg-indigo-600/30 text-indigo-200 rounded-xl text-xs font-semibold transition-all duration-200 flex items-center space-x-1.5 border border-indigo-500/30 hover:border-indigo-500/60 shadow-sm active:scale-95">
+      <span>🎨</span>
+      <span class="hidden md:inline">Personalização</span>
+    </button>
+
+    <!-- Menu de Configurações -->
+    <button onclick="openSettingsModal()" title="Configurações e Atalhos" class="px-2.5 sm:px-3 py-1.5 sm:py-2 bg-slate-800/80 hover:bg-slate-700/80 text-slate-200 rounded-xl text-xs font-semibold transition-all duration-200 flex items-center space-x-1.5 border border-slate-700/60 hover:border-slate-600 shadow-sm active:scale-95 relative">
+      <span class="text-slate-400">⚙️</span>
+      <span class="hidden md:inline">Configurações</span>
+      <span title="Suporte a Atalhos de Teclado" class="w-2 h-2 rounded-full bg-indigo-400 absolute -top-0.5 -right-0.5 animate-ping"></span>
+    </button>
+
+    <div id="status-badge" class="text-[10px] sm:text-xs px-2 sm:px-3 py-1 sm:py-1.5 bg-slate-800/80 text-indigo-300 rounded-full font-semibold border border-indigo-500/30 flex items-center space-x-1 sm:space-x-1.5">
+      <span id="status-dot" class="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-indigo-400 animate-pulse"></span>
+      <span id="status-badge-text">Carregando...</span>
+    </div>
+  </div>
+</header>
+
+<main class="flex-1 flex flex-col md:flex-row overflow-hidden relative ambient-glow">
+  <!-- Sidebar Navigation -->
+  <nav id="sidebar-nav" onmouseenter="handleSidebarMouseEnter()" onmouseleave="handleSidebarMouseLeave()" class="hidden md:flex w-80 bg-slate-900/95 backdrop-blur-md border-r border-slate-800/80 p-4 flex-col space-y-4 overflow-y-auto shrink-0 transition-all duration-300 ease-in-out z-30 shadow-2xl">
+    <!-- Header do Menu com Botão de Recolher/Expandir -->
+    <div class="flex items-center justify-between px-1">
+      <span class="nav-text-label text-[11px] font-bold uppercase tracking-wider text-slate-400 flex items-center gap-1.5">
+        <svg class="w-3.5 h-3.5 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h7"/></svg>
+        Navegação
+      </span>
+      <button onclick="toggleSidebar()" id="sidebar-toggle-btn" class="p-1.5 text-slate-400 hover:text-white hover:bg-slate-800 rounded-xl border border-transparent hover:border-slate-700 transition-all" title="Recolher / Expandir Menu">
+        <svg id="toggle-icon-svg" class="w-4 h-4 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 19l-7-7 7-7m8 14l-7-7 7-7"/></svg>
+      </button>
+    </div>
+
+    <!-- Switcher Tipo de Conteúdo -->
+    <div class="bg-slate-950/80 p-1 rounded-2xl border border-slate-800/80 shadow-inner grid grid-cols-4 gap-1">
+      <button onclick="switchContentType('home')" id="tab-home" title="Início / Destaques" class="nav-tab-btn py-2 px-1.5 text-xs font-bold rounded-xl transition-all duration-200 bg-gradient-to-r from-indigo-600 to-violet-600 text-white shadow-md shadow-indigo-600/30 flex items-center justify-center space-x-1">
+        <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
+        <span class="nav-text-label">Início</span>
+      </button>
+      <button onclick="switchContentType('live')" id="tab-live" title="Canais Ao Vivo" class="nav-tab-btn py-2 px-1.5 text-xs font-bold rounded-xl transition-all duration-200 text-slate-400 hover:text-slate-200 hover:bg-slate-800/60 flex items-center justify-center space-x-1">
+        <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
+        <span class="nav-text-label">Canais</span>
+      </button>
+      <button onclick="switchContentType('vod')" id="tab-vod" title="Filmes" class="nav-tab-btn py-2 px-1.5 text-xs font-bold rounded-xl transition-all duration-200 text-slate-400 hover:text-slate-200 hover:bg-slate-800/60 flex items-center justify-center space-x-1">
+        <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 4v16M17 4v16M3 8h4m10 0h4M3 12h18M3 16h4m10 0h4M4 20h16a1 1 0 001-1V5a1 1 0 00-1-1H4a1 1 0 00-1 1v14a1 1 0 001 1z"/></svg>
+        <span class="nav-text-label">Filmes</span>
+      </button>
+      <button onclick="switchContentType('series')" id="tab-series" title="Séries" class="nav-tab-btn py-2 px-1.5 text-xs font-bold rounded-xl transition-all duration-200 text-slate-400 hover:text-slate-200 hover:bg-slate-800/60 flex items-center justify-center space-x-1">
+        <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/></svg>
+        <span class="nav-text-label">Séries</span>
+      </button>
+    </div>
+
+    <!-- Lista de Categorias Desktop -->
+    <div class="flex-1 flex flex-col min-h-0 pt-2">
+      <div class="flex items-center justify-between mb-2 px-2">
+        <h2 id="sidebar-section-title" class="nav-text-label text-[11px] font-bold text-slate-400 uppercase tracking-wider flex items-center gap-1.5">
+          <svg class="w-3.5 h-3.5 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"/></svg>
+          Categorias
+        </h2>
+      </div>
+      <div id="categories-menu" class="space-y-1 overflow-y-auto pr-1 flex-1">
+        <!-- Injected dynamically -->
+      </div>
+    </div>
+  </nav>
+
+  <!-- Main Content Area -->
+  <section id="main-content-section" class="flex-1 p-4 sm:p-6 overflow-hidden flex flex-col mobile-bottom-pad">
+    <!-- Loading overlay -->
+    <div id="loading-overlay" class="flex-1 flex flex-col items-center justify-center p-6 sm:p-12">
+      <div class="animate-spin rounded-full h-10 w-10 sm:h-12 sm:w-12 border-b-2 border-indigo-500 mb-4"></div>
+      <p class="text-slate-300 font-medium text-sm sm:text-base text-center">Conectando ao servidor e baixando lista...</p>
+      <p class="text-xs text-slate-500 mt-1 text-center">Aguarde alguns instantes enquanto os dados são processados.</p>
+    </div>
+
+    <div id="browse-view" class="flex-1 flex flex-col overflow-y-auto hidden">
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between mb-4 sm:mb-6 gap-3 sm:gap-4">
+        <div>
+          <h2 id="current-category-title" class="text-xl sm:text-2xl font-bold text-white">Bem-vindo ao BoaTV</h2>
+          <p id="current-category-desc" class="text-xs sm:text-sm text-slate-400">Explore os conteúdos em destaque.</p>
+        </div>
+        <div class="flex items-center space-x-2 sm:space-x-3">
+          <div class="relative w-full sm:w-64">
+            <input type="text" id="search-input" oninput="handleSearch(this.value)" placeholder="Pesquisar... (Atalhos suportados)" class="w-full px-3 sm:px-4 py-2 bg-slate-900 border border-slate-800 rounded-xl text-xs sm:text-sm text-white focus:outline-none focus:border-indigo-500 transition-all focus:ring-1 focus:ring-indigo-500 pr-8">
+            <span class="absolute right-2.5 top-2.5 text-[10px] text-slate-500 font-mono hidden sm:inline border border-slate-700/60 px-1 rounded">/</span>
+          </div>
+          <div class="text-xs sm:text-sm text-slate-400 whitespace-nowrap bg-slate-900 border border-slate-800 px-3 py-2 rounded-xl">
+            Total: <span id="item-count" class="font-bold text-indigo-400">0</span>
+          </div>
+        </div>
+      </div>
+
+      <div id="items-container" class="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-4 pb-4">
+        <!-- Injected dynamically -->
+      </div>
+    </div>
+
+    <!-- Player View -->
+    <div id="player-view" class="hidden flex-1 flex flex-col justify-between overflow-hidden">
+      <div class="flex items-center justify-between py-1">
+        <button onclick="backToList()" class="px-3.5 py-2 bg-slate-800/80 hover:bg-slate-700/80 text-slate-300 rounded-xl text-xs font-semibold transition-all flex items-center space-x-2 border border-slate-700/60">
+          <span>←</span>
+          <span>Voltar</span>
+          <span class="text-[10px] text-slate-400 font-mono ml-1 hidden sm:inline">(Esc)</span>
+        </button>
+        <div class="flex items-center space-x-2">
+          <button id="favorite-btn" onclick="toggleFavoriteCurrent()" class="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-amber-400 rounded-xl text-xs font-medium transition-all flex items-center space-x-1.5 border border-slate-700">
+            <span id="favorite-icon">⭐</span>
+            <span id="favorite-text">Favoritar</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Video / Player Container -->
+      <div id="player-box-container" class="relative w-full flex-1 max-h-[calc(100vh-160px)] min-h-[220px] bg-black custom-card-radius overflow-hidden shadow-2xl border border-slate-800 flex flex-col items-center justify-center my-2 group">
+        <!-- HTML5 Video Element -->
+        <video id="html5-video-player" onclick="togglePlayPauseVideo()" class="w-full h-full object-contain hidden cursor-pointer" autoplay></video>
+
+        <!-- Stream Screen Simulator -->
+        <div id="player-stream-screen" class="absolute inset-0 flex flex-col items-center justify-center bg-gradient-to-br from-slate-950 via-slate-900 to-indigo-950">
+          <div class="absolute inset-0 opacity-25 flex items-center justify-center space-x-1 px-8 pointer-events-none" id="audio-visualizer">
+            <div class="w-2 bg-indigo-500 rounded-full animate-pulse h-16"></div>
+            <div class="w-2 bg-indigo-400 rounded-full animate-pulse h-24 delay-75"></div>
+            <div class="w-2 bg-indigo-600 rounded-full animate-pulse h-12 delay-150"></div>
+            <div class="w-2 bg-indigo-300 rounded-full animate-pulse h-28 delay-200"></div>
+            <div class="w-2 bg-indigo-500 rounded-full animate-pulse h-20 delay-100"></div>
+            <div class="w-2 bg-indigo-400 rounded-full animate-pulse h-32 delay-300"></div>
+          </div>
+
+          <div class="text-center p-4 z-10 relative pb-16">
+            <div id="player-logo" class="w-16 h-16 sm:w-20 sm:h-20 mx-auto mb-3 custom-card-radius bg-slate-800/80 border border-slate-700 flex items-center justify-center text-3xl shadow-inner overflow-hidden">
+              📡
+            </div>
+            <h3 id="player-item-name" class="text-lg sm:text-2xl font-black text-white tracking-wide">Nome do Canal / Filme</h3>
+            <p id="player-item-desc" class="text-xs text-slate-300 mt-1 max-w-md mx-auto bg-black/40 backdrop-blur-md px-3 py-1.5 rounded-xl border border-white/10 truncate">Preparando transmissão...</p>
+
+            <div class="mt-4 flex items-center justify-center space-x-3">
+              <button onclick="launchRealPlayer()" id="play-native-btn" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl text-xs font-bold transition-all shadow-lg flex items-center space-x-2">
+                <span>▶️</span>
+                <span>Iniciar Transmissão</span>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Live / Channel Name Badge -->
+        <div class="absolute top-4 left-4 bg-black/70 backdrop-blur-md px-3 py-1.5 rounded-full border border-white/10 flex items-center space-x-2 shadow-lg z-20 max-w-[80%] pointer-events-none">
+          <span class="w-2.5 h-2.5 bg-red-500 rounded-full animate-ping shrink-0"></span>
+          <span id="player-type-badge" class="text-xs font-bold text-white tracking-wider uppercase truncate max-w-[200px] sm:max-w-[320px]">Carregando...</span>
+        </div>
+
+        <!-- RESOLUÇÃO Button for Live Channels -->
+        <div id="player-resolution-container" class="absolute top-4 right-4 z-30 hidden">
+          <div class="relative">
+            <button onclick="toggleResolutionMenu()" id="resolution-menu-btn" class="px-3 py-1.5 bg-slate-800/90 hover:bg-slate-700 text-indigo-300 rounded-full text-xs font-bold border border-indigo-500/40 shadow-lg flex items-center space-x-1.5 backdrop-blur-md transition-all">
+              <span>⚙️</span>
+              <span>RESOLUÇÃO</span>
+              <span id="current-active-res" class="text-[10px] bg-indigo-500/20 px-1.5 py-0.5 rounded text-indigo-200">FHD</span>
+            </button>
+            <div id="resolution-dropdown" class="absolute right-0 mt-2 w-44 bg-slate-900/95 backdrop-blur-md border border-slate-800 rounded-2xl shadow-2xl p-1.5 hidden z-40 space-y-1">
+              <!-- Injected dynamically -->
+            </div>
+          </div>
+        </div>
+
+        <!-- Floating Player Control Bar -->
+        <div class="absolute bottom-0 left-0 right-0 p-3 bg-gradient-to-t from-black/95 via-black/80 to-transparent flex items-center justify-between z-30 opacity-100 transition-opacity duration-300">
+          <div class="flex items-center space-x-1.5 sm:space-x-2">
+            <button onclick="togglePlayPauseVideo()" id="play-pause-btn" title="Reproduzir / Pausar (Espaço)" class="px-3 py-1.5 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl text-xs font-bold transition-all border border-indigo-400/30 flex items-center space-x-1 active:scale-95 shadow-md">
+              <span id="play-pause-icon">⏸️</span>
+              <span class="hidden sm:inline" id="play-pause-text">Pausar</span>
+            </button>
+            <button onclick="playPreviousItem()" title="Anterior (Seta Esquerda)" class="px-3 py-1.5 bg-slate-800/90 hover:bg-indigo-600 text-white rounded-xl text-xs font-bold transition-all border border-slate-700/80 flex items-center space-x-1 active:scale-95">
+              <span>⏮️</span>
+              <span class="hidden sm:inline">Anterior</span>
+            </button>
+            <button onclick="playNextItem()" title="Próximo (Seta Direita)" class="px-3 py-1.5 bg-slate-800/90 hover:bg-indigo-600 text-white rounded-xl text-xs font-bold transition-all border border-slate-700/80 flex items-center space-x-1 active:scale-95">
+              <span class="hidden sm:inline">Próximo</span>
+              <span>⏭️</span>
+            </button>
+          </div>
+
+          <div class="flex items-center space-x-1.5 sm:space-x-2">
+            <button id="overlay-fav-btn" onclick="toggleFavoriteCurrent()" title="Adicionar aos Favoritos (M)" class="px-3 py-1.5 bg-slate-800/90 hover:bg-amber-600/30 text-amber-400 rounded-xl text-xs font-bold transition-all border border-slate-700/80 flex items-center space-x-1 active:scale-95">
+              <span id="overlay-fav-icon">⭐</span>
+              <span class="hidden sm:inline" id="overlay-fav-text">Favorito</span>
+            </button>
+            <button onclick="toggleFullscreen()" title="Modo Tela Cheia (F)" class="px-3 py-1.5 bg-slate-800/90 hover:bg-indigo-600 text-white rounded-xl text-xs font-bold transition-all border border-slate-700/80 flex items-center space-x-1 active:scale-95 shadow-md">
+              <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4"/></svg>
+              <span class="hidden sm:inline">Tela Cheia</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Quick Navigation Bar -->
+      <div class="bg-slate-900/80 backdrop-blur-md border border-slate-800/80 rounded-2xl p-3 shrink-0">
+        <h4 class="text-[11px] font-semibold text-slate-400 uppercase tracking-wider mb-2">Outros itens desta categoria</h4>
+        <div id="quick-items-list" class="flex space-x-3 overflow-x-auto pb-1 custom-scrollbar">
+          <!-- Injected dynamically -->
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<!-- Mobile Fixed Bottom Navigation Bar -->
+<div id="mobile-bottom-nav" class="md:hidden fixed bottom-0 left-0 right-0 bg-slate-900/95 backdrop-blur-xl border-t border-slate-800/80 px-2 py-2 z-40 shadow-2xl shadow-black">
+  <div class="grid grid-cols-4 gap-1 items-center max-w-lg mx-auto">
+    <button onclick="handleMobileTabClick('home')" id="mobile-tab-home" class="flex flex-col items-center justify-center py-1.5 px-1 rounded-xl text-indigo-400 font-bold bg-indigo-500/10 transition-all">
+      <svg class="w-5 h-5 mb-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
+      <span class="text-[10px]">Início</span>
+    </button>
+    <button onclick="handleMobileTabClick('live')" id="mobile-tab-live" class="flex flex-col items-center justify-center py-1.5 px-1 rounded-xl text-slate-400 font-medium hover:text-white transition-all">
+      <svg class="w-5 h-5 mb-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
+      <span class="text-[10px]">Canais</span>
+    </button>
+    <button onclick="handleMobileTabClick('vod')" id="mobile-tab-vod" class="flex flex-col items-center justify-center py-1.5 px-1 rounded-xl text-slate-400 font-medium hover:text-white transition-all">
+      <svg class="w-5 h-5 mb-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 4v16M17 4v16M3 8h4m10 0h4M3 12h18M3 16h4m10 0h4M4 20h16a1 1 0 001-1V5a1 1 0 00-1-1H4a1 1 0 00-1 1v14a1 1 0 001 1z"/></svg>
+      <span class="text-[10px]">Filmes</span>
+    </button>
+    <button onclick="handleMobileTabClick('series')" id="mobile-tab-series" class="flex flex-col items-center justify-center py-1.5 px-1 rounded-xl text-slate-400 font-medium hover:text-white transition-all">
+      <svg class="w-5 h-5 mb-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/></svg>
+      <span class="text-[10px]">Séries</span>
+    </button>
+  </div>
+</div>
+
+<!-- Mobile Bottom Sheet / Categories Drawer -->
+<div id="mobile-categories-drawer" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 hidden flex flex-col justify-end transition-opacity duration-300 md:hidden">
+  <div class="bg-slate-900 border-t border-slate-800 rounded-t-3xl p-5 flex flex-col max-h-[75vh] shadow-2xl">
+    <div class="flex items-center justify-between pb-3 border-b border-slate-800 mb-3">
+      <div class="flex items-center gap-2">
+        <svg class="w-5 h-5 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"/></svg>
+        <h3 id="mobile-drawer-title" class="font-bold text-base text-white">Menu de Navegação</h3>
+      </div>
+      <button onclick="toggleMobileCategoriesDrawer(false)" class="p-1 text-slate-400 hover:text-white text-lg">✕</button>
+    </div>
+    <div id="mobile-categories-menu" class="space-y-1.5 overflow-y-auto flex-1 pr-1 custom-scrollbar">
+      <!-- Injected dynamically -->
+    </div>
+  </div>
+</div>
+
+<!-- Modal de Séries (Temporadas & Episódios) -->
+<div id="series-modal" class="fixed inset-0 bg-black/80 backdrop-blur-md z-50 hidden flex items-center justify-center p-3 sm:p-6 transition-opacity duration-300">
+  <div class="bg-slate-900 border border-slate-800 rounded-2xl w-full max-w-4xl overflow-hidden shadow-2xl flex flex-col max-h-[92vh] relative">
+    <div class="relative bg-slate-950 border-b border-slate-800 p-4 sm:p-6 flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between shrink-0">
+      <button onclick="closeSeriesModal()" class="absolute top-3 right-3 sm:top-4 sm:right-4 w-8 h-8 rounded-full bg-slate-800/80 hover:bg-slate-700 text-slate-300 flex items-center justify-center text-sm z-10 transition-colors border border-slate-700">✕</button>
+
+      <div class="flex items-start sm:items-center gap-3 sm:gap-5 w-full pr-8">
+        <div id="series-modal-cover" class="w-16 h-24 sm:w-24 sm:h-36 rounded-xl bg-slate-800 border border-slate-700 overflow-hidden shrink-0 shadow-lg">
+          <img id="series-modal-img" src="" class="w-full h-full object-cover" alt="Capa">
+        </div>
+        <div class="flex-1 min-w-0">
+          <div class="flex flex-wrap items-center gap-2 mb-1">
+            <span id="series-modal-rating" class="text-[10px] sm:text-xs font-bold px-2 py-0.5 rounded-md bg-amber-500/20 text-amber-300 border border-amber-500/30">★ 0.0</span>
+            <span id="series-modal-genre" class="text-[10px] sm:text-xs font-semibold px-2 py-0.5 rounded-md bg-slate-800 text-slate-300 border border-slate-700 truncate">Série</span>
+            <span id="series-modal-year" class="text-[10px] sm:text-xs font-semibold text-slate-400"></span>
+          </div>
+          <h2 id="series-modal-title" class="text-base sm:text-2xl font-black text-white leading-tight truncate">Nome da Série</h2>
+          <p id="series-modal-plot" class="text-xs sm:text-sm text-slate-300 mt-1.5 line-clamp-2 sm:line-clamp-3">Carregando detalhes da série...</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="flex-1 flex flex-col overflow-hidden bg-slate-950/60 p-4 sm:p-6 space-y-4">
+      <div id="series-modal-loading" class="flex-1 flex flex-col items-center justify-center py-12">
+        <div class="animate-spin rounded-full h-8 w-8 sm:h-10 sm:w-10 border-b-2 border-indigo-500 mb-3"></div>
+        <p class="text-xs sm:text-sm text-slate-300 font-medium">Buscando temporadas e episódios...</p>
+      </div>
+
+      <div id="series-modal-error" class="hidden flex-1 flex flex-col items-center justify-center py-8 text-center">
+        <p class="text-2xl mb-1">⚠️</p>
+        <p class="text-sm font-bold text-white">Não foi possível obter a lista de episódios</p>
+        <p class="text-xs text-slate-400 mt-1 max-w-sm">Verifique o sinal do seu provedor IPTV ou tente novamente.</p>
+      </div>
+
+      <div id="series-modal-content" class="hidden flex-1 flex flex-col min-h-0 space-y-3 sm:space-y-4">
+        <div>
+          <h4 class="text-[11px] font-bold text-indigo-400 uppercase tracking-wider mb-2">Temporadas</h4>
+          <div id="series-seasons-tabs" class="flex space-x-2 overflow-x-auto pb-1 custom-scrollbar">
+            <!-- Injected dynamically -->
+          </div>
+        </div>
+
+        <div class="flex items-center justify-between pt-2 border-t border-slate-800/80">
+          <span id="series-episodes-count" class="text-xs font-bold text-slate-300">Episódios</span>
+          <span class="text-[11px] text-slate-500">Selecione para assistir</span>
+        </div>
+
+        <div id="series-modal-episodes" class="flex-1 overflow-y-auto space-y-2 pr-1 custom-scrollbar">
+          <!-- Injected dynamically -->
+        </div>
+      </div>
+    </div>
+
+    <div class="p-3 sm:p-4 border-t border-slate-800 bg-slate-900/90 flex items-center justify-between shrink-0">
+      <span class="text-[10px] sm:text-xs text-slate-500">Player Inteligente BoaTV</span>
+      <button onclick="closeSeriesModal()" class="px-4 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-200 rounded-xl text-xs font-semibold transition-all">Fechar</button>
+    </div>
+  </div>
+</div>
+
+<!-- Favorites Modal -->
+<div id="favorites-modal" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+  <div class="bg-slate-900 border border-slate-800 rounded-2xl w-full max-w-lg overflow-hidden shadow-2xl flex flex-col max-h-[80vh]">
+    <div class="p-4 border-b border-slate-800 flex items-center justify-between">
+      <h3 class="font-bold text-lg text-white flex items-center space-x-2">
+        <span>⭐</span>
+        <span>Favoritos Salvos</span>
+      </h3>
+      <button onclick="closeFavoritesModal()" class="text-slate-400 hover:text-white text-sm">✕</button>
+    </div>
+    <div id="favorites-list-container" class="p-4 overflow-y-auto space-y-2 flex-1 custom-scrollbar">
+      <!-- Injected dynamically -->
+    </div>
+    <div class="p-4 border-t border-slate-800 text-right">
+      <button onclick="closeFavoritesModal()" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl text-xs font-medium transition-all">Fechar</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal de Personalização -->
+<div id="customization-modal" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+  <div class="bg-slate-900 border border-slate-800 rounded-2xl w-full max-w-xl overflow-hidden shadow-2xl flex flex-col max-h-[90vh]">
+    <div class="p-4 border-b border-slate-800 flex items-center justify-between shrink-0">
+      <h3 class="font-bold text-lg text-white flex items-center space-x-2">
+        <span>🎨</span>
+        <span>Personalização do Portal</span>
+      </h3>
+      <button onclick="closeCustomizationModal()" class="text-slate-400 hover:text-white text-sm">✕</button>
+    </div>
+
+    <div class="p-5 space-y-6 overflow-y-auto flex-1 text-slate-200 custom-scrollbar">
+      <!-- Tema de Cores -->
+      <div>
+        <label class="block text-xs font-bold text-indigo-400 uppercase tracking-wider mb-2.5">Tema Visual e Cores</label>
+        <div class="grid grid-cols-2 sm:grid-cols-3 gap-2.5">
+          <button onclick="setThemePreset('indigo')" id="preset-indigo" class="p-3 rounded-xl border border-slate-800 bg-slate-950 flex flex-col items-center gap-1.5 hover:border-indigo-500 transition-all text-center group">
+            <div class="w-full h-8 rounded-lg bg-gradient-to-r from-indigo-600 to-violet-600 flex items-center justify-center text-xs font-bold text-white shadow">Indigo</div>
+            <span class="text-[11px] font-medium text-slate-300">Padrão Indigo</span>
+          </button>
+          <button onclick="setThemePreset('cyberpunk')" id="preset-cyberpunk" class="p-3 rounded-xl border border-slate-800 bg-slate-950 flex flex-col items-center gap-1.5 hover:border-pink-500 transition-all text-center group">
+            <div class="w-full h-8 rounded-lg bg-gradient-to-r from-fuchsia-600 to-pink-600 flex items-center justify-center text-xs font-bold text-white shadow">Cyber</div>
+            <span class="text-[11px] font-medium text-slate-300">Cyber Neon</span>
+          </button>
+          <button onclick="setThemePreset('emerald')" id="preset-emerald" class="p-3 rounded-xl border border-slate-800 bg-slate-950 flex flex-col items-center gap-1.5 hover:border-emerald-500 transition-all text-center group">
+            <div class="w-full h-8 rounded-lg bg-gradient-to-r from-emerald-600 to-teal-600 flex items-center justify-center text-xs font-bold text-white shadow">Emerald</div>
+            <span class="text-[11px] font-medium text-slate-300">Verde Esmeralda</span>
+          </button>
+          <button onclick="setThemePreset('crimson')" id="preset-crimson" class="p-3 rounded-xl border border-slate-800 bg-slate-950 flex flex-col items-center gap-1.5 hover:border-rose-500 transition-all text-center group">
+            <div class="w-full h-8 rounded-lg bg-gradient-to-r from-rose-600 to-red-600 flex items-center justify-center text-xs font-bold text-white shadow">Vulcão</div>
+            <span class="text-[11px] font-medium text-slate-300">Carmim / Vermelho</span>
+          </button>
+          <button onclick="setThemePreset('sunset')" id="preset-sunset" class="p-3 rounded-xl border border-slate-800 bg-slate-950 flex flex-col items-center gap-1.5 hover:border-amber-500 transition-all text-center group">
+            <div class="w-full h-8 rounded-lg bg-gradient-to-r from-amber-600 to-orange-600 flex items-center justify-center text-xs font-bold text-white shadow">Sunset</div>
+            <span class="text-[11px] font-medium text-slate-300">Pôr do Sol</span>
+          </button>
+          <button onclick="setThemePreset('oled')" id="preset-oled" class="p-3 rounded-xl border border-slate-800 bg-black flex flex-col items-center gap-1.5 hover:border-slate-500 transition-all text-center group">
+            <div class="w-full h-8 rounded-lg bg-slate-900 border border-slate-700 flex items-center justify-center text-xs font-bold text-sky-400 shadow">OLED</div>
+            <span class="text-[11px] font-medium text-slate-300">OLED Black</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Densidade da Grade -->
+      <div>
+        <label class="block text-xs font-bold text-indigo-400 uppercase tracking-wider mb-2">Tamanho e Densidade dos Cards</label>
+        <div class="grid grid-cols-3 gap-2">
+          <button onclick="setGridDensity('compact')" id="grid-compact" class="py-2 px-3 bg-slate-950 border border-slate-800 rounded-xl text-xs font-semibold hover:border-indigo-500 transition-all text-center">
+            Compacto
+          </button>
+          <button onclick="setGridDensity('normal')" id="grid-normal" class="py-2 px-3 bg-slate-950 border border-slate-800 rounded-xl text-xs font-semibold hover:border-indigo-500 transition-all text-center">
+            Padrão
+          </button>
+          <button onclick="setGridDensity('large')" id="grid-large" class="py-2 px-3 bg-slate-950 border border-slate-800 rounded-xl text-xs font-semibold hover:border-indigo-500 transition-all text-center">
+            Grande
+          </button>
+        </div>
+      </div>
+
+      <!-- Curvatura das Bordas -->
+      <div>
+        <label class="block text-xs font-bold text-indigo-400 uppercase tracking-wider mb-2">Arredondamento dos Cards</label>
+        <div class="grid grid-cols-4 gap-2">
+          <button onclick="setCardRadius('0px')" id="radius-sharp" class="py-2 bg-slate-950 border border-slate-800 rounded-none text-xs font-semibold hover:border-indigo-500 text-center">Reto</button>
+          <button onclick="setCardRadius('8px')" id="radius-soft" class="py-2 bg-slate-950 border border-slate-800 rounded-md text-xs font-semibold hover:border-indigo-500 text-center">Suave</button>
+          <button onclick="setCardRadius('16px')" id="radius-round" class="py-2 bg-slate-950 border border-slate-800 rounded-2xl text-xs font-semibold hover:border-indigo-500 text-center">Redondo</button>
+          <button onclick="setCardRadius('24px')" id="radius-full" class="py-2 bg-slate-950 border border-slate-800 rounded-3xl text-xs font-semibold hover:border-indigo-500 text-center">Extra</button>
+        </div>
+      </div>
+
+      <!-- Fontes e Tipografia -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        <div>
+          <label class="block text-xs font-bold text-indigo-400 uppercase tracking-wider mb-2">Fonte da Interface</label>
+          <select id="font-family-select" onchange="setFontFamily(this.value)" class="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-xl text-xs font-medium text-white focus:outline-none focus:border-indigo-500">
+            <option value="'Plus Jakarta Sans', sans-serif">Plus Jakarta Sans</option>
+            <option value="'Inter', sans-serif">Inter</option>
+            <option value="'Outfit', sans-serif">Outfit</option>
+            <option value="'Poppins', sans-serif">Poppins</option>
+          </select>
+        </div>
+        <div>
+          <label class="block text-xs font-bold text-indigo-400 uppercase tracking-wider mb-2">Escala do Texto</label>
+          <select id="font-scale-select" onchange="setFontScale(this.value)" class="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-xl text-xs font-medium text-white focus:outline-none focus:border-indigo-500">
+            <option value="90%">Pequeno (90%)</option>
+            <option value="100%">Normal (100%)</option>
+            <option value="110%">Grande (110%)</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Intensidade do Desfoque Glassmorphism -->
+      <div>
+        <label class="block text-xs font-bold text-indigo-400 uppercase tracking-wider mb-2">Intensidade do Efeito de Vidro (Glass Blur)</label>
+        <div class="grid grid-cols-3 gap-2">
+          <button onclick="setBlurIntensity('0px')" id="blur-off" class="py-2 bg-slate-950 border border-slate-800 rounded-xl text-xs font-semibold hover:border-indigo-500 text-center">Desativado</button>
+          <button onclick="setBlurIntensity('12px')" id="blur-normal" class="py-2 bg-slate-950 border border-slate-800 rounded-xl text-xs font-semibold hover:border-indigo-500 text-center">Normal</button>
+          <button onclick="setBlurIntensity('24px')" id="blur-high" class="py-2 bg-slate-950 border border-slate-800 rounded-xl text-xs font-semibold hover:border-indigo-500 text-center">Intenso</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="p-4 border-t border-slate-800 flex items-center justify-between bg-slate-950/50 shrink-0">
+      <button onclick="resetCustomization()" class="px-3.5 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-xl text-xs font-medium transition-all">Restaurar Padrão</button>
+      <button onclick="closeCustomizationModal()" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl text-xs font-bold transition-all shadow-md">Concluído</button>
+    </div>
+  </div>
+</div>
+
+<!-- Settings Modal -->
+<div id="settings-modal" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+  <div class="bg-slate-900 border border-slate-800 rounded-2xl w-full max-w-2xl overflow-hidden shadow-2xl flex flex-col max-h-[90vh]">
+    <div class="p-4 border-b border-slate-800 shrink-0">
+      <div class="flex items-center justify-between mb-3">
+        <h3 class="font-bold text-lg text-white flex items-center space-x-2">
+          <span>⚙️</span>
+          <span>Configurações do Sistema</span>
+        </h3>
+        <button onclick="closeSettingsModal()" class="text-slate-400 hover:text-white text-sm">✕</button>
+      </div>
+
+      <div class="bg-slate-950 p-1 rounded-xl border border-slate-800 grid grid-cols-2 gap-1">
+        <button onclick="switchSettingsTab('connection')" id="settings-tab-connection" class="py-1.5 px-3 text-xs font-bold rounded-lg transition-all bg-indigo-600 text-white flex items-center justify-center gap-1.5 shadow">
+          <span>📡</span>
+          <span>Servidor & Player</span>
+        </button>
+        <button onclick="switchSettingsTab('hotkeys')" id="settings-tab-hotkeys" class="py-1.5 px-3 text-xs font-bold rounded-lg transition-all text-slate-400 hover:text-white flex items-center justify-center gap-1.5">
+          <span>⌨️</span>
+          <span>Atalhos do Teclado</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Tab 1: Servidor & Motor de Vídeo -->
+    <div id="settings-content-connection" class="p-5 space-y-4 overflow-y-auto flex-1 custom-scrollbar">
+      <div>
+        <label class="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-1.5">URL do Servidor Xtream</label>
+        <input type="text" id="setting-url" class="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-xl text-sm text-white focus:outline-none focus:border-indigo-500" placeholder="http://expacii.top">
+      </div>
+      <div class="grid grid-cols-2 gap-3">
+        <div>
+          <label class="text-xs font-semibold text-slate-300 uppercase tracking-wider mb-1.5">Usuário</label>
+          <input type="text" id="setting-username" class="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-xl text-sm text-white focus:outline-none focus:border-indigo-500" placeholder="001812146">
+        </div>
+        <div>
+          <label class="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-1.5">Senha</label>
+          <input type="password" id="setting-password" class="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-xl text-sm text-white focus:outline-none focus:border-indigo-500" placeholder="662101633">
+        </div>
+      </div>
+
+      <div>
+        <label class="block text-xs font-semibold text-indigo-400 uppercase tracking-wider mb-1.5">Motor de Reprodução de Vídeo (Player Engine)</label>
+        <select id="setting-player-engine" class="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-xl text-sm text-white focus:outline-none focus:border-indigo-500">
+          <option value="native">HTML5 Nativo (.ts / .mp4)</option>
+          <option value="hls">HLS.js / Stream Adaptativo (.m3u8)</option>
+          <option value="simulator">Simulador com Espectro Gráfico</option>
+          <option value="external">Link Externo / VLC Player (Deep Link)</option>
+        </select>
+        <p class="text-[11px] text-slate-400 mt-1">Escolha como o aplicativo deve decodificar e renderizar as transmissões do servidor IPTV.</p>
+      </div>
+
+      <div id="settings-test-result" class="text-xs p-2.5 rounded-xl hidden"></div>
+    </div>
+
+    <!-- Tab 2: Mapeamento de Teclas de Atalho -->
+    <div id="settings-content-hotkeys" class="p-5 space-y-4 overflow-y-auto flex-1 custom-scrollbar hidden">
+      <div class="flex items-center justify-between bg-slate-950 p-3 rounded-xl border border-slate-800">
+        <div>
+          <h4 class="text-xs font-bold text-white">Ativar Atalhos de Teclado</h4>
+          <p class="text-[11px] text-slate-400">Permite controlar o player e navegação usando o teclado.</p>
+        </div>
+        <label class="relative inline-flex items-center cursor-pointer">
+          <input type="checkbox" id="hotkeys-enabled-toggle" onchange="toggleHotkeysEnable(this.checked)" class="sr-only peer" checked>
+          <div class="w-11 h-6 bg-slate-800 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-indigo-600"></div>
+        </label>
+      </div>
+
+      <div class="space-y-2.5">
+        <div class="flex items-center justify-between text-[11px] font-bold text-slate-400 uppercase tracking-wider px-1">
+          <span>Ação / Função</span>
+          <span>Tecla Mapeada</span>
+        </div>
+
+        <div id="hotkey-mapping-list" class="space-y-2">
+          <!-- Injected dynamically via JS -->
+        </div>
+      </div>
+
+      <div class="p-3 bg-indigo-500/10 border border-indigo-500/20 rounded-xl text-[11px] text-indigo-300 flex items-start gap-2">
+        <span class="text-sm">💡</span>
+        <span>Para alterar um atalho, clique em <strong>"Reconfigurar"</strong> e pressione a tecla desejada no teclado. Atalhos não funcionam enquanto você digita no campo de busca.</span>
+      </div>
+    </div>
+
+    <div class="p-4 border-t border-slate-800 flex items-center justify-between bg-slate-950/50 shrink-0">
+      <div class="flex items-center space-x-2">
+        <button id="test-conn-btn" onclick="testConnectionSettings()" class="px-3 py-2 bg-slate-800 hover:bg-slate-700 text-slate-200 rounded-xl text-xs font-medium transition-all">Testar Conexão</button>
+        <button id="reset-hotkeys-btn" onclick="resetHotkeysToDefault()" class="hidden px-3 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-xl text-xs font-medium transition-all">Restaurar Padrão Atalhos</button>
+      </div>
+      <div class="flex items-center space-x-2">
+        <button onclick="closeSettingsModal()" class="px-3 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-xl text-xs font-medium transition-all">Cancelar</button>
+        <button onclick="saveSettings()" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl text-xs font-medium transition-all">Salvar Configurações</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Toast Notifications Box -->
+<div id="toast-container" class="fixed bottom-5 right-5 z-50 flex flex-col gap-2 pointer-events-none"></div>
+
+<!-- External HLS library -->
+<script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+
+<script>
+// Load saved config or defaults
+let XTREAM_CONFIG = JSON.parse(localStorage.getItem('xtream_config_v3') || JSON.stringify({
+  url: "http://expacii.top",
+  username: "001812146",
+  password: "662101633",
+  playerEngine: "native"
+}));
+
+// Default Keyboard Shortcut Mappings
+const DEFAULT_HOTKEYS = {
+  enabled: true,
+  playPause: 'Space',
+  nextItem: 'ArrowRight',
+  prevItem: 'ArrowLeft',
+  fullscreen: 'KeyF',
+  favorite: 'KeyM',
+  back: 'Escape',
+  toggleSidebar: 'KeyB',
+  focusSearch: 'Slash'
+};
+
+let HOTKEY_CONFIG = JSON.parse(localStorage.getItem('xtream_hotkeys_v1') || JSON.stringify(DEFAULT_HOTKEYS));
+
+const HOTKEY_LABELS = {
+  playPause: { name: "Reproduzir / Pausar", desc: "Pausa ou resume a exibição do vídeo atual" },
+  nextItem: { name: "Próximo Canal / Item", desc: "Avança para o próximo canal ou filme da lista" },
+  prevItem: { name: "Canal / Item Anterior", desc: "Volta para o canal ou filme anterior" },
+  fullscreen: { name: "Alternar Tela Cheia", desc: "Entra ou sai do modo de tela cheia do player" },
+  favorite: { name: "Adicionar aos Favoritos", desc: "Marca ou desmarca o item atual como favorito" },
+  back: { name: "Voltar para a Lista", desc: "Fecha o player ou modais e retorna à navegação" },
+  toggleSidebar: { name: "Recolher / Expandir Menu", desc: "Alterna a visibilidade do menu lateral" },
+  focusSearch: { name: "Focar Barra de Pesquisa", desc: "Abre e foca o campo de busca de canais" }
+};
+
+let currentlyRecordingAction = null;
+
+const THEME_PRESETS = {
+  indigo: { bgMain: '#020617', bgSurface: '#0f172a', bgHeader: 'rgba(15, 23, 42, 0.9)', primary: '#6366f1', primaryHover: '#4f46e5', primaryGlow: 'rgba(99, 102, 241, 0.25)' },
+  cyberpunk: { bgMain: '#090014', bgSurface: '#18092b', bgHeader: 'rgba(24, 9, 43, 0.9)', primary: '#d946ef', primaryHover: '#c026d3', primaryGlow: 'rgba(217, 70, 239, 0.3)' },
+  emerald: { bgMain: '#021a14', bgSurface: '#06372b', bgHeader: 'rgba(6, 44, 34, 0.9)', primary: '#10b981', primaryHover: '#059669', primaryGlow: 'rgba(16, 185, 129, 0.3)' },
+  crimson: { bgMain: '#1a0505', bgSurface: '#2d0d0d', bgHeader: 'rgba(43, 10, 10, 0.9)', primary: '#f43f5e', primaryHover: '#e11d48', primaryGlow: 'rgba(244, 63, 94, 0.3)' },
+  sunset: { bgMain: '#120904', bgSurface: '#26120a', bgHeader: 'rgba(38, 18, 10, 0.9)', primary: '#f59e0b', primaryHover: '#d97706', primaryGlow: 'rgba(245, 158, 11, 0.3)' },
+  oled: { bgMain: '#000000', bgSurface: '#0d0d0d', bgHeader: 'rgba(10, 10, 10, 0.95)', primary: '#38bdf8', primaryHover: '#0284c7', primaryGlow: 'rgba(56, 189, 248, 0.3)' }
+};
+
+let CUSTOMIZATION_CONFIG = JSON.parse(localStorage.getItem('xtream_customization_v1') || JSON.stringify({
+  preset: 'indigo',
+  gridDensity: 'normal',
+  cardRadius: '16px',
+  fontFamily: "'Plus Jakarta Sans', sans-serif",
+  fontScale: '100%',
+  blurIntensity: '12px'
+}));
+
+// Global Application State variables
+let currentContentType = 'home';
+let categories = { live: [], vod: [], series: [] };
+let items = { live: [], vod: [], series: [] };
+let currentSelectedCategory = null;
+let currentPlayingItem = null;
+let searchQuery = '';
+let favorites = JSON.parse(localStorage.getItem('xtream_favorites_v1') || '[]');
+let hlsPlayerInstance = null;
+let isSidebarCollapsed = false;
+
+// Series Modal State
+let currentSeriesData = null;
+let activeSeasonKey = null;
+
+// Demo/Fallback catalog to ensure playability if server is unreachable
+const MOCK_DEMO_CATALOG = {
+  liveCategories: [
+    { category_id: "demo_live_1", category_name: "Canais Variados (Ao Vivo)" },
+    { category_id: "demo_live_2", category_name: "Esportes e Notícias" }
+  ],
+  vodCategories: [
+    { category_id: "demo_vod_1", category_name: "Filmes de Ação & Ficção" },
+    { category_id: "demo_vod_2", category_name: "Animações e Documentários" }
+  ],
+  seriesCategories: [
+    { category_id: "demo_series_1", category_name: "Séries Populares" }
+  ],
+  liveStreams: [
+    { stream_id: 101, name: "Globo SP FHD", stream_icon: "https://placehold.co/200x200/1e293b/6366f1?text=Globo+FHD", category_id: "demo_live_1", stream_type: "live", direct_source: "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8" },
+    { stream_id: 102, name: "Globo SP HD", stream_icon: "https://placehold.co/200x200/1e293b/6366f1?text=Globo+HD", category_id: "demo_live_1", stream_type: "live", direct_source: "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8" },
+    { stream_id: 103, name: "SBT FHD", stream_icon: "https://placehold.co/200x200/1e293b/38bdf8?text=SBT+FHD", category_id: "demo_live_1", stream_type: "live", direct_source: "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8" },
+    { stream_id: 104, name: "ESPN Esportes FHD", stream_icon: "https://placehold.co/200x200/1e293b/f43f5e?text=ESPN+FHD", category_id: "demo_live_2", stream_type: "live", direct_source: "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8" },
+    { stream_id: 105, name: "ESPN Esportes HD", stream_icon: "https://placehold.co/200x200/1e293b/f43f5e?text=ESPN+HD", category_id: "demo_live_2", stream_type: "live", direct_source: "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8" }
+  ],
+  vodStreams: [
+    { stream_id: 201, name: "Big Buck Bunny (4K)", stream_icon: "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c5/Big_buck_bunny_poster_big.jpg/220px-Big_buck_bunny_poster_big.jpg", category_id: "demo_vod_2", container_extension: "mp4", rating: "8.5", direct_source: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4" },
+    { stream_id: 202, name: "Sintel Sci-Fi Movie", stream_icon: "https://upload.wikimedia.org/wikipedia/commons/thumb/Sintel_poster.jpg/220px-Sintel_poster.jpg", category_id: "demo_vod_1", container_extension: "mp4", rating: "8.8", direct_source: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/Sintel.mp4" },
+    { stream_id: 203, name: "Tears of Steel 1080p", stream_icon: "https://placehold.co/300x450/0f172a/10b981?text=Tears+of+Steel", category_id: "demo_vod_1", container_extension: "mp4", rating: "8.1", direct_source: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/TearsOfSteel.mp4" }
+  ],
+  seriesStreams: [
+    { series_id: 301, name: "Cosmos & Universo", cover: "https://placehold.co/300x450/090014/d946ef?text=Cosmos", category_id: "demo_series_1", rating: "9.2", plot: "Uma jornada emocionante através da exploração espacial e das maravilhas da física quântica." }
+  ]
+};
+
+function showToast(message, type = 'info') {
+  const container = document.getElementById('toast-container');
+  if (!container) return;
+  const toast = document.createElement('div');
+  const bgClass = type === 'error' ? 'bg-rose-600' : type === 'success' ? 'bg-emerald-600' : 'bg-indigo-600';
+  toast.className = `${bgClass} text-white text-xs font-semibold px-4 py-2.5 rounded-xl shadow-xl transition-all duration-300 opacity-0 translate-y-2 flex items-center gap-2 pointer-events-auto`;
+  toast.innerHTML = `<span>${type === 'error' ? '⚠️' : type === 'success' ? '✅' : 'ℹ️'}</span><span>${message}</span>`;
+  container.appendChild(toast);
+  setTimeout(() => { toast.classList.remove('opacity-0', 'translate-y-2'); }, 10);
+  setTimeout(() => {
+    toast.classList.add('opacity-0', 'translate-y-2');
+    setTimeout(() => { toast.remove(); }, 300);
+  }, 3500);
+}
+
+// Format keyboard Code to user-friendly label
+function formatKeyDisplay(code) {
+  if (!code) return "Nenhuma";
+  if (code === "Space") return "Espaço";
+  if (code === "ArrowRight") return "Seta Direita";
+  if (code === "ArrowLeft") return "Seta Esquerda";
+  if (code === "ArrowUp") return "Seta Cima";
+  if (code === "ArrowDown") return "Seta Baixo";
+  if (code === "Escape") return "Esc";
+  if (code === "Slash") return "/";
+  if (code.startsWith("Key")) return code.replace("Key", "").toUpperCase();
+  if (code.startsWith("Digit")) return code.replace("Digit", "");
+  return code;
+}
+
+function switchSettingsTab(tabName) {
+  const connTab = document.getElementById('settings-tab-connection');
+  const hotkeyTab = document.getElementById('settings-tab-hotkeys');
+  const connContent = document.getElementById('settings-content-connection');
+  const hotkeyContent = document.getElementById('settings-content-hotkeys');
+  const testBtn = document.getElementById('test-conn-btn');
+  const resetHotkeysBtn = document.getElementById('reset-hotkeys-btn');
+
+  if (tabName === 'hotkeys') {
+    hotkeyTab.className = "py-1.5 px-3 text-xs font-bold rounded-lg transition-all bg-indigo-600 text-white flex items-center justify-center gap-1.5 shadow";
+    connTab.className = "py-1.5 px-3 text-xs font-bold rounded-lg transition-all text-slate-400 hover:text-white flex items-center justify-center gap-1.5";
+    hotkeyContent.classList.remove('hidden');
+    connContent.classList.add('hidden');
+    testBtn.classList.add('hidden');
+    resetHotkeysBtn.classList.remove('hidden');
+    renderHotkeyMappingList();
+  } else {
+    connTab.className = "py-1.5 px-3 text-xs font-bold rounded-lg transition-all bg-indigo-600 text-white flex items-center justify-center gap-1.5 shadow";
+    hotkeyTab.className = "py-1.5 px-3 text-xs font-bold rounded-lg transition-all text-slate-400 hover:text-white flex items-center justify-center gap-1.5";
+    connContent.classList.remove('hidden');
+    hotkeyContent.classList.add('hidden');
+    testBtn.classList.remove('hidden');
+    resetHotkeysBtn.classList.add('hidden');
+  }
+}
+
+function renderHotkeyMappingList() {
+  const listContainer = document.getElementById('hotkey-mapping-list');
+  if (!listContainer) return;
+
+  const enabledToggle = document.getElementById('hotkeys-enabled-toggle');
+  if (enabledToggle) enabledToggle.checked = HOTKEY_CONFIG.enabled !== false;
+
+  listContainer.innerHTML = '';
+
+  Object.keys(HOTKEY_LABELS).forEach(actionKey => {
+    const info = HOTKEY_LABELS[actionKey];
+    const currentCode = HOTKEY_CONFIG[actionKey];
+    const isRecording = currentlyRecordingAction === actionKey;
+
+    const row = document.createElement('div');
+    row.className = "bg-slate-950 p-3 rounded-xl border border-slate-800/80 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2.5";
+
+    row.innerHTML = `
+      <div class="min-w-0 flex-1">
+        <div class="flex items-center gap-2">
+          <span class="text-xs font-bold text-white">${info.name}</span>
+        </div>
+        <p class="text-[11px] text-slate-400 truncate">${info.desc}</p>
+      </div>
+      <div class="flex items-center space-x-2 shrink-0 w-full sm:w-auto justify-between sm:justify-end">
+        <kbd class="px-2.5 py-1 bg-slate-900 border border-slate-700/80 rounded-lg text-xs font-mono font-bold text-indigo-300 min-w-[70px] text-center shadow-inner ${isRecording ? 'keybind-recording text-amber-400 border-indigo-500' : ''}">
+          ${isRecording ? 'Pressione...' : formatKeyDisplay(currentCode)}
+        </kbd>
+        <button onclick="startRecordingHotkey('${actionKey}')" class="px-3 py-1 bg-slate-800 hover:bg-indigo-600 text-slate-200 hover:text-white rounded-lg text-xs font-semibold transition-all border border-slate-700 hover:border-indigo-400">
+          ${isRecording ? 'Cancelar' : 'Reconfigurar'}
+        </button>
+      </div>
+    `;
+    listContainer.appendChild(row);
+  });
+}
+
+function startRecordingHotkey(actionKey) {
+  if (currentlyRecordingAction === actionKey) {
+    currentlyRecordingAction = null;
+  } else {
+    currentlyRecordingAction = actionKey;
+  }
+  renderHotkeyMappingList();
+}
+
+function toggleHotkeysEnable(enabled) {
+  HOTKEY_CONFIG.enabled = enabled;
+  localStorage.setItem('xtream_hotkeys_v1', JSON.stringify(HOTKEY_CONFIG));
+}
+
+function resetHotkeysToDefault() {
+  HOTKEY_CONFIG = JSON.parse(JSON.stringify(DEFAULT_HOTKEYS));
+  localStorage.setItem('xtream_hotkeys_v1', JSON.stringify(HOTKEY_CONFIG));
+  currentlyRecordingAction = null;
+  renderHotkeyMappingList();
+  showToast("Atalhos restaurados para o padrão.");
+}
+
+// Global Keydown Listener for Hotkeys & Recording
+window.addEventListener('keydown', function(e) {
+  if (currentlyRecordingAction) {
+    e.preventDefault();
+    e.stopPropagation();
+    HOTKEY_CONFIG[currentlyRecordingAction] = e.code;
+    localStorage.setItem('xtream_hotkeys_v1', JSON.stringify(HOTKEY_CONFIG));
+    currentlyRecordingAction = null;
+    renderHotkeyMappingList();
+    showToast("Atalho atualizado com sucesso!", "success");
+    return;
+  }
+
+  if (!HOTKEY_CONFIG.enabled) return;
+
+  const activeEl = document.activeElement;
+  const isTyping = activeEl && (activeEl.tagName === 'INPUT' || activeEl.tagName === 'TEXTAREA' || activeEl.isContentEditable);
+
+  if (isTyping && e.code !== 'Escape') {
+    return;
+  }
+
+  if (e.code === HOTKEY_CONFIG.focusSearch) {
+    e.preventDefault();
+    const searchInput = document.getElementById('search-input');
+    if (searchInput) {
+      searchInput.focus();
+      searchInput.select();
+    }
+  } else if (e.code === HOTKEY_CONFIG.playPause) {
+    const playerView = document.getElementById('player-view');
+    if (playerView && !playerView.classList.contains('hidden')) {
+      e.preventDefault();
+      togglePlayPauseVideo();
+    }
+  } else if (e.code === HOTKEY_CONFIG.nextItem) {
+    const playerView = document.getElementById('player-view');
+    if (playerView && !playerView.classList.contains('hidden')) {
+      e.preventDefault();
+      playNextItem();
+    }
+  } else if (e.code === HOTKEY_CONFIG.prevItem) {
+    const playerView = document.getElementById('player-view');
+    if (playerView && !playerView.classList.contains('hidden')) {
+      e.preventDefault();
+      playPreviousItem();
+    }
+  } else if (e.code === HOTKEY_CONFIG.fullscreen) {
+    const playerView = document.getElementById('player-view');
+    if (playerView && !playerView.classList.contains('hidden')) {
+      e.preventDefault();
+      toggleFullscreen();
+    }
+  } else if (e.code === HOTKEY_CONFIG.favorite) {
+    const playerView = document.getElementById('player-view');
+    if (playerView && !playerView.classList.contains('hidden')) {
+      e.preventDefault();
+      toggleFavoriteCurrent();
+    }
+  } else if (e.code === HOTKEY_CONFIG.back) {
+    const playerView = document.getElementById('player-view');
+    const seriesModal = document.getElementById('series-modal');
+    const favoritesModal = document.getElementById('favorites-modal');
+    const customModal = document.getElementById('customization-modal');
+    const settingsModal = document.getElementById('settings-modal');
+
+    if (settingsModal && !settingsModal.classList.contains('hidden')) {
+      closeSettingsModal();
+    } else if (customModal && !customModal.classList.contains('hidden')) {
+      closeCustomizationModal();
+    } else if (favoritesModal && !favoritesModal.classList.contains('hidden')) {
+      closeFavoritesModal();
+    } else if (seriesModal && !seriesModal.classList.contains('hidden')) {
+      closeSeriesModal();
+    } else if (playerView && !playerView.classList.contains('hidden')) {
+      backToList();
+    }
+  } else if (e.code === HOTKEY_CONFIG.toggleSidebar) {
+    e.preventDefault();
+    toggleSidebar();
+  }
+});
+
+function applyCustomization() {
+  const preset = THEME_PRESETS[CUSTOMIZATION_CONFIG.preset] || THEME_PRESETS.indigo;
+
+  const root = document.documentElement;
+  root.style.setProperty('--app-bg-main', preset.bgMain);
+  root.style.setProperty('--app-bg-surface', preset.bgSurface);
+  root.style.setProperty('--app-bg-header', preset.bgHeader);
+  root.style.setProperty('--app-primary', preset.primary);
+  root.style.setProperty('--app-primary-hover', preset.primaryHover);
+  root.style.setProperty('--app-primary-glow', preset.primaryGlow);
+  root.style.setProperty('--app-card-radius', CUSTOMIZATION_CONFIG.cardRadius);
+  root.style.setProperty('--app-font-family', CUSTOMIZATION_CONFIG.fontFamily);
+  root.style.setProperty('--app-font-scale', CUSTOMIZATION_CONFIG.fontScale);
+  root.style.setProperty('--app-blur-intensity', CUSTOMIZATION_CONFIG.blurIntensity);
+
+  const itemsContainer = document.getElementById('items-container');
+  if (itemsContainer && currentContentType !== 'home') {
+    if (CUSTOMIZATION_CONFIG.gridDensity === 'compact') {
+      itemsContainer.className = 'grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-2 sm:gap-3 pb-4';
+    } else if (CUSTOMIZATION_CONFIG.gridDensity === 'large') {
+      itemsContainer.className = 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 pb-4';
+    } else {
+      itemsContainer.className = 'grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-4 pb-4';
+    }
+  }
+
+  localStorage.setItem('xtream_customization_v1', JSON.stringify(CUSTOMIZATION_CONFIG));
+  updateCustomizationModalUI();
+}
+
+function setThemePreset(name) {
+  if (THEME_PRESETS[name]) {
+    CUSTOMIZATION_CONFIG.preset = name;
+    applyCustomization();
+  }
+}
+
+function setGridDensity(density) {
+  CUSTOMIZATION_CONFIG.gridDensity = density;
+  applyCustomization();
+  if (currentContentType !== 'home') renderItemsList();
+}
+
+function setCardRadius(radius) {
+  CUSTOMIZATION_CONFIG.cardRadius = radius;
+  applyCustomization();
+}
+
+function setFontFamily(font) {
+  CUSTOMIZATION_CONFIG.fontFamily = font;
+  applyCustomization();
+}
+
+function setFontScale(scale) {
+  CUSTOMIZATION_CONFIG.fontScale = scale;
+  applyCustomization();
+}
+
+function setBlurIntensity(blur) {
+  CUSTOMIZATION_CONFIG.blurIntensity = blur;
+  applyCustomization();
+}
+
+function resetCustomization() {
+  CUSTOMIZATION_CONFIG = {
+    preset: 'indigo',
+    gridDensity: 'normal',
+    cardRadius: '16px',
+    fontFamily: "'Plus Jakarta Sans', sans-serif",
+    fontScale: '100%',
+    blurIntensity: '12px'
+  };
+  applyCustomization();
+  if (currentContentType !== 'home') renderItemsList();
+  showToast("Interface restaurada para o tema padrão.");
+}
+
+function openCustomizationModal() {
+  updateCustomizationModalUI();
+  document.getElementById('customization-modal').classList.remove('hidden');
+}
+
+function closeCustomizationModal() {
+  document.getElementById('customization-modal').classList.add('hidden');
+}
+
+function updateCustomizationModalUI() {
+  Object.keys(THEME_PRESETS).forEach(key => {
+    const btn = document.getElementById(`preset-${key}`);
+    if (btn) {
+      if (CUSTOMIZATION_CONFIG.preset === key) {
+        btn.classList.add('ring-2', 'ring-indigo-500', 'border-indigo-500');
+      } else {
+        btn.classList.remove('ring-2', 'ring-indigo-500', 'border-indigo-500');
+      }
+    }
+  });
+
+  ['compact', 'normal', 'large'].forEach(d => {
+    const btn = document.getElementById(`grid-${d}`);
+    if (btn) {
+      if (CUSTOMIZATION_CONFIG.gridDensity === d) {
+        btn.className = 'py-2 px-3 bg-indigo-600 text-white rounded-xl text-xs font-bold border border-indigo-500 text-center shadow';
+      } else {
+        btn.className = 'py-2 px-3 bg-slate-950 text-slate-300 border border-slate-800 rounded-xl text-xs font-semibold hover:border-indigo-500 transition-all text-center';
+      }
+    }
+  });
+
+  const fontSel = document.getElementById('font-family-select');
+  if (fontSel) fontSel.value = CUSTOMIZATION_CONFIG.fontFamily;
+
+  const scaleSel = document.getElementById('font-scale-select');
+  if (scaleSel) scaleSel.value = CUSTOMIZATION_CONFIG.fontScale;
+}
+
+function collapseSidebar() {
+  isSidebarCollapsed = true;
+  const sidebar = document.getElementById('sidebar-nav');
+  const toggleIcon = document.getElementById('toggle-icon-svg');
+  if (sidebar) {
+    sidebar.classList.add('sidebar-collapsed');
+    sidebar.classList.remove('md:w-80');
+  }
+  if (toggleIcon) {
+    toggleIcon.classList.add('rotate-180');
+  }
+}
+
+function expandSidebar() {
+  isSidebarCollapsed = false;
+  const sidebar = document.getElementById('sidebar-nav');
+  const toggleIcon = document.getElementById('toggle-icon-svg');
+  if (sidebar) {
+    sidebar.classList.remove('sidebar-collapsed');
+    sidebar.classList.add('md:w-80');
+  }
+  if (toggleIcon) {
+    toggleIcon.classList.remove('rotate-180');
+  }
+}
+
+function toggleSidebar() {
+  if (isSidebarCollapsed) expandSidebar();
+  else collapseSidebar();
+}
+
+function handleSidebarMouseEnter() {
+  if (isSidebarCollapsed) {
+    const sidebar = document.getElementById('sidebar-nav');
+    if (sidebar) {
+      sidebar.classList.remove('sidebar-collapsed');
+      sidebar.classList.add('md:w-80');
+    }
+  }
+}
+
+function handleSidebarMouseLeave() {
+  if (isSidebarCollapsed) {
+    const sidebar = document.getElementById('sidebar-nav');
+    if (sidebar) {
+      sidebar.classList.add('sidebar-collapsed');
+      sidebar.classList.remove('md:w-80');
+    }
+  }
+}
+
+function updateStatusBadge(text, isError = false) {
+  const badgeText = document.getElementById('status-badge-text');
+  const badge = document.getElementById('status-badge');
+  const dot = document.getElementById('status-dot');
+
+  if (badgeText) badgeText.textContent = text;
+
+  if (badge) {
+    if (isError) {
+      badge.className = 'text-[10px] sm:text-xs px-2 sm:px-3 py-1 sm:py-1.5 bg-rose-500/20 text-rose-300 rounded-full font-semibold border border-rose-500/30 flex items-center space-x-1 sm:space-x-1.5';
+      if (dot) dot.className = 'w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-rose-400';
+    } else if (text === 'Online' || text === 'Modo Demo') {
+      badge.className = 'text-[10px] sm:text-xs px-2 sm:px-3 py-1 sm:py-1.5 bg-emerald-500/20 text-emerald-300 rounded-full font-semibold border border-emerald-500/30 flex items-center space-x-1 sm:space-x-1.5';
+      if (dot) dot.className = 'w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-emerald-400';
+    } else {
+      badge.className = 'text-[10px] sm:text-xs px-2 sm:px-3 py-1 sm:py-1.5 bg-indigo-600/30 text-indigo-300 rounded-full font-semibold border border-indigo-500/30 flex items-center space-x-1 sm:space-x-1.5';
+      if (dot) dot.className = 'w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-indigo-400 animate-pulse';
+    }
+  }
+}
+
+async function initXtreamPortal() {
+  const statusText = document.getElementById('auth-status-text');
+  if (statusText) statusText.textContent = `Conectando: ${XTREAM_CONFIG.username}`;
+
+  try {
+    const liveCats = await fetchAPI('get_live_categories');
+    if (!liveCats) throw new Error("Falha de conexão com servidor IPTV");
+
+    categories.live = Array.isArray(liveCats) ? liveCats : [];
+    categories.vod = (await fetchAPI('get_vod_categories')) || [];
+    categories.series = (await fetchAPI('get_series_categories')) || [];
+
+    items.live = (await fetchAPI('get_live_streams')) || [];
+    items.vod = (await fetchAPI('get_vod_streams')) || [];
+    items.series = (await fetchAPI('get_series')) || [];
+
+    document.getElementById('loading-overlay').classList.add('hidden');
+    document.getElementById('browse-view').classList.remove('hidden');
+    if (statusText) statusText.textContent = `Conectado: ${XTREAM_CONFIG.username}`;
+    updateStatusBadge('Online');
+
+    switchContentType('home');
+    updateFavoriteCountBadge();
+  } catch (err) {
+    console.warn("Erro ao carregar dados do Xtream Codes. Ativando Modo Demonstrativo.", err);
+    loadDemoCatalog();
+  }
+}
+
+function loadDemoCatalog() {
+  const statusText = document.getElementById('auth-status-text');
+  if (statusText) statusText.textContent = `Modo Demonstrativo (Offline)`;
+  updateStatusBadge('Modo Demo');
+
+  categories.live = MOCK_DEMO_CATALOG.liveCategories;
+  categories.vod = MOCK_DEMO_CATALOG.vodCategories;
+  categories.series = MOCK_DEMO_CATALOG.seriesCategories;
+
+  items.live = MOCK_DEMO_CATALOG.liveStreams;
+  items.vod = MOCK_DEMO_CATALOG.vodStreams;
+  items.series = MOCK_DEMO_CATALOG.seriesStreams;
+
+  document.getElementById('loading-overlay').classList.add('hidden');
+  document.getElementById('browse-view').classList.remove('hidden');
+
+  switchContentType('home');
+  updateFavoriteCountBadge();
+  showToast("Servidor inacessível. O Modo Demonstrativo foi ativado.", "info");
+}
+
+async function fetchAPI(action, extraParams = '') {
+  const endpoint = `${XTREAM_CONFIG.url}/player_api.php?username=${XTREAM_CONFIG.username}&password=${XTREAM_CONFIG.password}&action=${action}${extraParams}`;
+  try {
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 6000);
+    const response = await fetch(endpoint, { signal: controller.signal });
+    clearTimeout(timeoutId);
+    if (!response.ok) return null;
+    return await response.json();
+  } catch (e) {
+    return null;
+  }
+}
+
+function parseChannelResolution(name) {
+  if (!name) return { baseName: '', resolution: 'FHD' };
+  const upper = name.toUpperCase();
+  if (upper.includes('FHD') || upper.includes('1080')) {
+    return { baseName: name.replace(/FHD|1080P/gi, '').trim(), resolution: 'FHD' };
+  } else if (upper.includes('HD') || upper.includes('720')) {
+    return { baseName: name.replace(/HD|720P/gi, '').trim(), resolution: 'HD' };
+  } else if (upper.includes('SD') || upper.includes('480')) {
+    return { baseName: name.replace(/SD|480P/gi, '').trim(), resolution: 'SD' };
+  }
+  return { baseName: name.trim(), resolution: 'FHD' };
+}
+
+function handleMobileTabClick(type) {
+  if (currentContentType !== type) {
+    switchContentType(type);
+  }
+  if (type !== 'home') {
+    toggleMobileCategoriesDrawer(true);
+  }
+}
+
+function switchContentType(type) {
+  currentContentType = type;
+  searchQuery = '';
+  document.getElementById('search-input').value = '';
+
+  ['home', 'live', 'vod', 'series'].forEach(t => {
+    const btn = document.getElementById(`tab-${t}`);
+    if (btn) {
+      if (t === type) {
+        btn.className = 'nav-tab-btn py-2 px-1.5 text-xs font-bold rounded-xl transition-all duration-200 bg-gradient-to-r from-indigo-600 to-violet-600 text-white shadow-md shadow-indigo-600/30 flex items-center justify-center space-x-1';
+      } else {
+        btn.className = 'nav-tab-btn py-2 px-1.5 text-xs font-bold rounded-xl transition-all duration-200 text-slate-400 hover:text-slate-200 hover:bg-slate-800/60 flex items-center justify-center space-x-1';
+      }
+    }
+
+    const mobileBtn = document.getElementById(`mobile-tab-${t}`);
+    if (mobileBtn) {
+      if (t === type) {
+        mobileBtn.className = 'flex flex-col items-center justify-center py-1.5 px-1 rounded-xl text-indigo-400 font-bold bg-indigo-500/10 transition-all';
+      } else {
+        mobileBtn.className = 'flex flex-col items-center justify-center py-1.5 px-1 rounded-xl text-slate-400 font-medium hover:text-white transition-all';
+      }
+    }
+  });
+
+  renderCategoriesMenu();
+
+  if (type === 'home') {
+    renderHomeDashboard();
+  } else {
+    const catList = categories[currentContentType];
+    if (catList && catList.length > 0) {
+      selectCategory(catList[0].category_id);
+    } else {
+      selectCategory('all');
+    }
+  }
+}
+
+function renderCategoriesMenu() {
+  const menuContainer = document.getElementById('categories-menu');
+  const mobileMenuContainer = document.getElementById('mobile-categories-menu');
+  const sectionTitle = document.getElementById('sidebar-section-title');
+  const mobileDrawerTitle = document.getElementById('mobile-drawer-title');
+
+  if (menuContainer) menuContainer.innerHTML = '';
+  if (mobileMenuContainer) mobileMenuContainer.innerHTML = '';
+
+  if (currentContentType === 'home') {
+    if (sectionTitle) sectionTitle.innerHTML = `<svg class="w-3.5 h-3.5 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg> Atalhos do Início`;
+    if (mobileDrawerTitle) mobileDrawerTitle.textContent = "Atalhos Rápidos";
+
+    if (menuContainer) {
+      const shortcuts = [
+        { name: "Canais Ao Vivo", icon: "📺", type: "live" },
+        { name: "Filmes Recentes", icon: "🎬", type: "vod" },
+        { name: "Séries Populares", icon: "🍿", type: "series" }
+      ];
+      shortcuts.forEach(sc => {
+        const btn = document.createElement('button');
+        btn.className = "nav-cat-btn w-full flex items-center space-x-3 px-3 py-2.5 rounded-xl text-xs font-medium text-slate-300 hover:bg-slate-800/80 hover:text-white transition-all text-left";
+        btn.innerHTML = `<span class="text-base">${sc.icon}</span><span class="nav-text-label flex-1 truncate">${sc.name}</span>`;
+        btn.onclick = () => switchContentType(sc.type);
+        menuContainer.appendChild(btn);
+      });
+    }
+    return;
+  }
+
+  if (sectionTitle) sectionTitle.innerHTML = `<svg class="w-3.5 h-3.5 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"/></svg> Categorias`;
+  if (mobileDrawerTitle) mobileDrawerTitle.textContent = "Selecionar Categoria";
+
+  const catList = categories[currentContentType] || [];
+  const isAllSelected = currentSelectedCategory === 'all';
+
+  if (menuContainer) {
+    const allBtn = document.createElement('button');
+    allBtn.title = 'Todas as Categorias';
+    allBtn.className = `nav-cat-btn w-full flex items-center space-x-3 px-3 py-2.5 rounded-xl text-xs font-medium transition-all duration-200 text-left group ${ isAllSelected ? 'bg-gradient-to-r from-indigo-600 to-violet-600 text-white shadow-md shadow-indigo-600/25 font-semibold ring-1 ring-indigo-400/30' : 'text-slate-300 hover:bg-slate-800/80 hover:text-white border border-transparent hover:border-slate-800' }`;
+    allBtn.innerHTML = `
+      <div class="w-7 h-7 rounded-lg flex items-center justify-center ${isAllSelected ? 'bg-white/20 text-white' : 'bg-slate-800 text-indigo-400 group-hover:bg-slate-700 group-hover:text-indigo-300'} transition-colors shrink-0">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/></svg>
+      </div>
+      <span class="nav-text-label flex-1 truncate">Todas as Categorias</span>
+      ${isAllSelected ? '<span class="nav-text-label w-1.5 h-1.5 rounded-full bg-white animate-pulse"></span>' : ''}
+    `;
+    allBtn.onclick = () => selectCategory('all');
+    menuContainer.appendChild(allBtn);
+  }
+
+  if (mobileMenuContainer) {
+    const mobAllBtn = document.createElement('button');
+    mobAllBtn.className = `w-full flex items-center justify-between p-3 rounded-xl text-sm font-semibold transition-all ${ isAllSelected ? 'bg-indigo-600 text-white shadow-lg' : 'bg-slate-800/80 text-slate-200 hover:bg-slate-800' }`;
+    mobAllBtn.innerHTML = `<span class="truncate">Todas as Categorias</span> ${isAllSelected ? '<span>✓</span>' : ''}`;
+    mobAllBtn.onclick = () => {
+      selectCategory('all');
+      toggleMobileCategoriesDrawer(false);
+    };
+    mobileMenuContainer.appendChild(mobAllBtn);
+  }
+
+  catList.forEach(cat => {
+    const isSelected = String(cat.category_id) === String(currentSelectedCategory);
+
+    if (menuContainer) {
+      const btn = document.createElement('button');
+      btn.title = cat.category_name;
+      btn.className = `nav-cat-btn w-full flex items-center space-x-3 px-3 py-2.5 rounded-xl text-xs font-medium transition-all duration-200 text-left group ${ isSelected ? 'bg-gradient-to-r from-indigo-600 to-violet-600 text-white shadow-md shadow-indigo-600/25 font-semibold ring-1 ring-indigo-400/30' : 'text-slate-300 hover:bg-slate-800/80 hover:text-white border border-transparent hover:border-slate-800' }`;
+      btn.innerHTML = `
+        <div class="w-7 h-7 rounded-lg flex items-center justify-center ${isSelected ? 'bg-white/20 text-white' : 'bg-slate-800 text-slate-400 group-hover:bg-slate-700 group-hover:text-slate-200'} transition-colors shrink-0">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"/></svg>
+        </div>
+        <span class="nav-text-label flex-1 truncate">${cat.category_name}</span>
+        ${isSelected ? '<span class="nav-text-label w-1.5 h-1.5 rounded-full bg-white"></span>' : ''}
+      `;
+      btn.onclick = () => selectCategory(cat.category_id);
+      menuContainer.appendChild(btn);
+    }
+
+    if (mobileMenuContainer) {
+      const mobBtn = document.createElement('button');
+      mobBtn.className = `w-full flex items-center justify-between p-3 rounded-xl text-sm font-medium transition-all ${ isSelected ? 'bg-indigo-600 text-white shadow-lg font-bold' : 'bg-slate-800/80 text-slate-200 hover:bg-slate-800' }`;
+      mobBtn.innerHTML = `<span class="truncate">${cat.category_name}</span> ${isSelected ? '<span>✓</span>' : ''}`;
+      mobBtn.onclick = () => {
+        selectCategory(cat.category_id);
+        toggleMobileCategoriesDrawer(false);
+      };
+      mobileMenuContainer.appendChild(mobBtn);
+    }
+  });
+}
+
+function toggleMobileCategoriesDrawer(forceState) {
+  const drawer = document.getElementById('mobile-categories-drawer');
+  if (!drawer) return;
+  if (typeof forceState === 'boolean') {
+    if (forceState) drawer.classList.remove('hidden');
+    else drawer.classList.add('hidden');
+  } else {
+    drawer.classList.toggle('hidden');
+  }
+}
+
+function selectCategory(categoryId) {
+  currentSelectedCategory = categoryId;
+  renderCategoriesMenu();
+  renderItemsList();
+  backToList();
+}
+
+function handleSearch(query) {
+  searchQuery = query.toLowerCase();
+  if (currentContentType === 'home') {
+    switchContentType('live');
+  }
+  renderItemsList();
+}
+
+function renderHomeDashboard() {
+  const container = document.getElementById('items-container');
+  const titleEl = document.getElementById('current-category-title');
+  const descEl = document.getElementById('current-category-desc');
+  const countEl = document.getElementById('item-count');
+
+  titleEl.textContent = "Painel Inicial • BoaTV";
+  descEl.textContent = "Seus canais, filmes e séries favoritos reunidos em um só lugar.";
+
+  const liveList = (items.live || []).slice(0, 4);
+  const vodList = (items.vod || []).slice(0, 4);
+  const seriesList = (items.series || []).slice(0, 4);
+
+  const totalCount = (items.live || []).length + (items.vod || []).length + (items.series || []).length;
+  countEl.textContent = totalCount;
+
+  container.className = "flex flex-col space-y-6 pb-6";
+  container.innerHTML = '';
+
+  // Helper section renderer
+  function createSectionHTML(title, subtitle, list, isSeries = false, contentTypeTag = 'live') {
+    if (!list || list.length === 0) return '';
+    const sectionDiv = document.createElement('div');
+    sectionDiv.className = "space-y-3";
+    
+    let headerHTML = `
+      <div class="flex items-center justify-between">
+        <div>
+          <h3 class="text-base sm:text-lg font-bold text-white">${title}</h3>
+          <p class="text-xs text-slate-400">${subtitle}</p>
+        </div>
+        <button onclick="switchContentType('${contentTypeTag}')" class="text-xs font-semibold text-indigo-400 hover:text-indigo-300 transition-colors flex items-center gap-1">
+          Ver todos →
+        </button>
+      </div>
+    `;
+
+    const gridDiv = document.createElement('div');
+    gridDiv.className = "grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4";
+
+    list.forEach(item => {
+      const card = document.createElement('div');
+      card.className = "group relative bg-slate-900 border border-slate-800 hover:border-indigo-500/50 custom-card-radius overflow-hidden shadow-lg transition-all duration-300 hover:-translate-y-1 hover:shadow-indigo-500/10 cursor-pointer flex flex-col";
+
+      const itemTitle = item._displayTitle || item.name || item.title || 'Sem Título';
+      const icon = item.stream_icon || item.cover || `https://placehold.co/300x400/0f172a/6366f1?text=${encodeURIComponent(itemTitle.substring(0, 10))}`;
+      const rating = item.rating || item.stream_type || 'TV';
+
+      card.innerHTML = `
+        <div class="relative w-full aspect-[16/10] sm:aspect-[16/9] bg-slate-950 overflow-hidden">
+          <img src="${icon}" onerror="this.src='https://placehold.co/300x200/0f172a/6366f1?text=BoaTV'" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" alt="${itemTitle}">
+          <div class="absolute inset-0 bg-gradient-to-t from-slate-950 via-transparent to-transparent opacity-80"></div>
+          <div class="absolute top-2 right-2 px-2 py-0.5 rounded-md bg-black/60 backdrop-blur-md text-[10px] font-bold text-amber-300 border border-white/10">
+            ★ ${rating}
+          </div>
+        </div>
+        <div class="p-3 flex-1 flex flex-col justify-between">
+          <h4 class="font-bold text-xs sm:text-sm text-white group-hover:text-indigo-300 transition-colors line-clamp-1">${itemTitle}</h4>
+          <p class="text-[10px] text-slate-400 mt-1 flex items-center justify-between">
+            <span>Assistir</span>
+            <span class="text-indigo-400 font-bold group-hover:translate-x-0.5 transition-transform">▶</span>
+          </p>
+        </div>
+      `;
+
+      card.onclick = () => {
+        if (isSeries) {
+          openSeriesModal(item);
+        } else {
+          currentContentType = contentTypeTag;
+          openPlayer(item);
+        }
+      };
+
+      gridDiv.appendChild(card);
+    });
+
+    sectionDiv.innerHTML = headerHTML;
+    sectionDiv.appendChild(gridDiv);
+    return sectionDiv;
+  }
+
+  if (liveList.length > 0) {
+    container.appendChild(createSectionHTML("📺 Canais Ao Vivo em Destaque", "Transmissões de TV ao vivo com alta qualidade", liveList, false, 'live'));
+  }
+  if (vodList.length > 0) {
+    container.appendChild(createSectionHTML("🎬 Filmes Populares (VOD)", "Os melhores lançamentos do cinema para você assistir", vodList, false, 'vod'));
+  }
+  if (seriesList.length > 0) {
+    container.appendChild(createSectionHTML("🍿 Séries em Alta", "Temporadas completas para maratonar", seriesList, true, 'series'));
+  }
+}
+
+function renderItemsList() {
+  if (currentContentType === 'home') {
+    renderHomeDashboard();
+    return;
+  }
+
+  const container = document.getElementById('items-container');
+  const titleEl = document.getElementById('current-category-title');
+  const descEl = document.getElementById('current-category-desc');
+  const countEl = document.getElementById('item-count');
+
+  container.className = CUSTOMIZATION_CONFIG.gridDensity === 'compact' 
+    ? 'grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-2 sm:gap-3 pb-4'
+    : CUSTOMIZATION_CONFIG.gridDensity === 'large'
+    ? 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 pb-4'
+    : 'grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-4 pb-4';
+
+  let typeName = currentContentType === 'live' ? 'Canais' : currentContentType === 'vod' ? 'Filmes' : 'Séries';
+  let catName = 'Todas as Categorias';
+
+  if (currentSelectedCategory !== 'all') {
+    const catObj = (categories[currentContentType] || []).find(c => String(c.category_id) === String(currentSelectedCategory));
+    if (catObj) catName = catObj.category_name;
+  }
+
+  titleEl.textContent = catName;
+  descEl.textContent = `Explorando ${typeName} da categoria selecionada.`;
+
+  let rawItems = items[currentContentType] || [];
+
+  if (currentSelectedCategory !== 'all') {
+    rawItems = rawItems.filter(i => String(i.category_id) === String(currentSelectedCategory));
+  }
+
+  if (searchQuery) {
+    rawItems = rawItems.filter(i => {
+      const name = (i.name || i.title || '').toLowerCase();
+      return name.includes(searchQuery);
+    });
+  }
+
+  let finalDisplayItems = [];
+
+  // For Live Channels: Group variants (FHD, HD, SD) and prioritize FHD display
+  if (currentContentType === 'live') {
+    const channelMap = new Map();
+
+    rawItems.forEach(item => {
+      const rawName = item.name || item.title || 'Canal Sem Nome';
+      const parsed = parseChannelResolution(rawName);
+      const key = parsed.baseName.toLowerCase();
+
+      if (!channelMap.has(key)) {
+        channelMap.set(key, {
+          baseName: parsed.baseName,
+          variants: {}
+        });
+      }
+
+      const group = channelMap.get(key);
+      group.variants[parsed.resolution] = item;
+    });
+
+    channelMap.forEach(group => {
+      const chosenItem = group.variants['FHD'] || group.variants['HD'] || group.variants['SD'] || Object.values(group.variants)[0];
+      chosenItem._variantsMap = group.variants;
+      chosenItem._displayTitle = group.baseName;
+      finalDisplayItems.push(chosenItem);
+    });
+  } else {
+    finalDisplayItems = rawItems;
+  }
+
+  countEl.textContent = finalDisplayItems.length;
+  container.innerHTML = '';
+
+  if (finalDisplayItems.length === 0) {
+    container.innerHTML = `
+      <div class="col-span-full flex flex-col items-center justify-center p-12 text-center text-slate-400">
+        <span class="text-4xl mb-2">🔍</span>
+        <p class="font-bold text-white">Nenhum item encontrado</p>
+        <p class="text-xs mt-1">Tente pesquisar com outro termo ou selecione uma categoria diferente.</p>
+      </div>
+    `;
+    return;
+  }
+
+  finalDisplayItems.forEach(item => {
+    const card = document.createElement('div');
+    card.className = "group relative bg-slate-900 border border-slate-800 hover:border-indigo-500/50 custom-card-radius overflow-hidden shadow-lg transition-all duration-300 hover:-translate-y-1 hover:shadow-indigo-500/10 cursor-pointer flex flex-col";
+
+    const title = item._displayTitle || item.name || item.title || 'Sem Título';
+    const icon = item.stream_icon || item.cover || `https://placehold.co/300x400/0f172a/6366f1?text=${encodeURIComponent(title.substring(0, 10))}`;
+    const rating = item.rating || item.stream_type || 'TV';
+
+    card.innerHTML = `
+      <div class="relative w-full aspect-[16/10] sm:aspect-[16/9] bg-slate-950 overflow-hidden">
+        <img src="${icon}" onerror="this.src='https://placehold.co/300x200/0f172a/6366f1?text=BoaTV'" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" alt="${title}">
+        <div class="absolute inset-0 bg-gradient-to-t from-slate-950 via-transparent to-transparent opacity-80"></div>
+        <div class="absolute top-2 right-2 px-2 py-0.5 rounded-md bg-black/60 backdrop-blur-md text-[10px] font-bold text-amber-300 border border-white/10">
+          ★ ${rating}
+        </div>
+        ${currentContentType === 'live' ? '<span class="absolute top-2 left-2 px-1.5 py-0.5 rounded text-[9px] font-extrabold bg-indigo-600 text-white shadow">FHD</span>' : ''}
+      </div>
+      <div class="p-3 flex-1 flex flex-col justify-between">
+        <h3 class="font-bold text-xs sm:text-sm text-white group-hover:text-indigo-300 transition-colors line-clamp-1">${title}</h3>
+        <p class="text-[10px] text-slate-400 mt-1 flex items-center justify-between">
+          <span>Assista agora</span>
+          <span class="text-indigo-400 font-bold group-hover:translate-x-0.5 transition-transform">▶</span>
+        </p>
+      </div>
+    `;
+
+    card.onclick = () => {
+      if (currentContentType === 'series') {
+        openSeriesModal(item);
+      } else {
+        openPlayer(item);
+      }
+    };
+
+    container.appendChild(card);
+  });
+}
+
+function openPlayer(item) {
+  currentPlayingItem = item;
+
+  document.getElementById('browse-view').classList.add('hidden');
+  document.getElementById('player-view').classList.remove('hidden');
+
+  const title = item._displayTitle || item.name || item.title || 'Transmissão Ao Vivo';
+  document.getElementById('player-item-name').textContent = title;
+  document.getElementById('player-item-desc').textContent = `Reproduzindo via motor: ${XTREAM_CONFIG.playerEngine.toUpperCase()}`;
+  document.getElementById('player-type-badge').textContent = title;
+
+  const resContainer = document.getElementById('player-resolution-container');
+  if (currentContentType === 'live' && item._variantsMap) {
+    resContainer.classList.remove('hidden');
+    renderResolutionDropdown(item._variantsMap);
+  } else {
+    resContainer.classList.add('hidden');
+  }
+
+  updateFavoriteBtnState();
+  renderQuickNavList();
+  launchRealPlayer();
+}
+
+function renderResolutionDropdown(variantsMap) {
+  const dropdown = document.getElementById('resolution-dropdown');
+  if (!dropdown) return;
+
+  dropdown.innerHTML = '';
+  ['FHD', 'HD', 'SD'].forEach(res => {
+    if (variantsMap[res]) {
+      const btn = document.createElement('button');
+      btn.className = "w-full text-left px-3 py-1.5 text-xs rounded-xl font-semibold text-slate-200 hover:bg-indigo-600 hover:text-white transition-all flex items-center justify-between";
+      btn.innerHTML = `<span>Resolução ${res}</span><span class="text-[10px] opacity-70">Disponível</span>`;
+      btn.onclick = () => {
+        const targetStream = variantsMap[res];
+        currentPlayingItem = targetStream;
+        document.getElementById('current-active-res').textContent = res;
+        toggleResolutionMenu();
+        launchRealPlayer();
+        showToast(`Resolução alterada para ${res}`, "success");
+      };
+      dropdown.appendChild(btn);
+    }
+  });
+}
+
+function toggleResolutionMenu() {
+  const dropdown = document.getElementById('resolution-dropdown');
+  if (dropdown) dropdown.classList.toggle('hidden');
+}
+
+function launchRealPlayer() {
+  const videoEl = document.getElementById('html5-video-player');
+  const streamScreen = document.getElementById('player-stream-screen');
+
+  if (hlsPlayerInstance) {
+    hlsPlayerInstance.destroy();
+    hlsPlayerInstance = null;
+  }
+
+  videoEl.pause();
+  videoEl.removeAttribute('src');
+  videoEl.load();
+
+  let directUrl = currentPlayingItem.direct_source;
+  if (!directUrl) {
+    if (currentContentType === 'live') {
+      directUrl = `${XTREAM_CONFIG.url}/live/${XTREAM_CONFIG.username}/${XTREAM_CONFIG.password}/${currentPlayingItem.stream_id}.ts`;
+    } else {
+      const ext = currentPlayingItem.container_extension || 'mp4';
+      directUrl = `${XTREAM_CONFIG.url}/movie/${XTREAM_CONFIG.username}/${XTREAM_CONFIG.password}/${currentPlayingItem.stream_id}.${ext}`;
+    }
+  }
+
+  const engine = XTREAM_CONFIG.playerEngine;
+
+  if (engine === 'external') {
+    streamScreen.classList.remove('hidden');
+    videoEl.classList.add('hidden');
+    window.open(directUrl, '_blank');
+    showToast("Link externo aberto em nova aba.");
+    return;
+  }
+
+  if (engine === 'simulator') {
+    streamScreen.classList.remove('hidden');
+    videoEl.classList.add('hidden');
+    showToast("Simulador de reprodução ativo.");
+    return;
+  }
+
+  if (directUrl.includes('.m3u8') || engine === 'hls') {
+    if (Hls.isSupported() && !directUrl.includes('.ts')) {
+      streamScreen.classList.add('hidden');
+      videoEl.classList.remove('hidden');
+
+      hlsPlayerInstance = new Hls();
+      hlsPlayerInstance.loadSource(directUrl);
+      hlsPlayerInstance.attachMedia(videoEl);
+      hlsPlayerInstance.on(Hls.Events.MANIFEST_PARSED, function() {
+        videoEl.play().catch(e => console.warn("Autoplay bloqueado pelo navegador", e));
+      });
+      showToast("Stream HLS Adaptativo iniciado com sucesso!", "success");
+      return;
+    }
+  }
+
+  // Native HTML5 fallback (.ts / .mp4)
+  streamScreen.classList.add('hidden');
+  videoEl.classList.remove('hidden');
+  videoEl.src = directUrl;
+  videoEl.play().then(() => {
+    showToast("Reprodução iniciada com sucesso!", "success");
+  }).catch(err => {
+    console.warn("Falha na reprodução nativa:", err);
+    streamScreen.classList.remove('hidden');
+    videoEl.classList.add('hidden');
+    showToast("Erro ao reproduzir fluxo diretamente. Tente o modo simulador ou link externo.", "error");
+  });
+}
+
+function togglePlayPauseVideo() {
+  const videoEl = document.getElementById('html5-video-player');
+  const icon = document.getElementById('play-pause-icon');
+  const text = document.getElementById('play-pause-text');
+
+  if (videoEl && !videoEl.classList.contains('hidden')) {
+    if (videoEl.paused) {
+      videoEl.play();
+      if (icon) icon.textContent = '⏸️';
+      if (text) text.textContent = 'Pausar';
+    } else {
+      videoEl.pause();
+      if (icon) icon.textContent = '▶️';
+      if (text) text.textContent = 'Reproduzir';
+    }
+  }
+}
+
+function toggleFullscreen() {
+  const container = document.getElementById('player-box-container');
+  if (!container) return;
+
+  if (!document.fullscreenElement) {
+    container.requestFullscreen().catch(err => {
+      console.warn("Erro ao tentar tela cheia:", err);
+    });
+  } else {
+    document.exitFullscreen();
+  }
+}
+
+function playNextItem() {
+  navigateList(1);
+}
+
+function playPreviousItem() {
+  navigateList(-1);
+}
+
+function navigateList(direction) {
+  let rawItems = items[currentContentType] || [];
+  if (currentSelectedCategory !== 'all') {
+    rawItems = rawItems.filter(i => String(i.category_id) === String(currentSelectedCategory));
+  }
+  if (rawItems.length === 0) return;
+
+  const currentId = currentPlayingItem.stream_id || currentPlayingItem.series_id;
+  const currentIndex = rawItems.findIndex(i => String(i.stream_id || i.series_id) === String(currentId));
+
+  let nextIndex = currentIndex + direction;
+  if (nextIndex >= rawItems.length) nextIndex = 0;
+  if (nextIndex < 0) nextIndex = rawItems.length - 1;
+
+  openPlayer(rawItems[nextIndex]);
+}
+
+function renderQuickNavList() {
+  const quickList = document.getElementById('quick-items-list');
+  if (!quickList) return;
+
+  quickList.innerHTML = '';
+  let rawItems = items[currentContentType] || [];
+  if (currentSelectedCategory !== 'all') {
+    rawItems = rawItems.filter(i => String(i.category_id) === String(currentSelectedCategory));
+  }
+
+  const sampleItems = rawItems.slice(0, 12);
+  sampleItems.forEach(item => {
+    const isCurrent = String(item.stream_id) === String(currentPlayingItem.stream_id);
+    const title = item._displayTitle || item.name || item.title || 'Item';
+    const icon = item.stream_icon || item.cover || 'https://placehold.co/100x100/0f172a/6366f1?text=TV';
+
+    const thumb = document.createElement('div');
+    thumb.className = `w-28 shrink-0 bg-slate-950 border ${isCurrent ? 'border-indigo-500 ring-2 ring-indigo-500/30' : 'border-slate-800'} rounded-xl overflow-hidden cursor-pointer hover:border-indigo-400 transition-all group flex flex-col`;
+    thumb.innerHTML = `
+      <div class="w-full aspect-video bg-slate-900 overflow-hidden">
+        <img src="${icon}" onerror="this.src='https://placehold.co/100x100/0f172a/6366f1?text=BoaTV'" class="w-full h-full object-cover group-hover:scale-105 transition-transform" alt="${title}">
+      </div>
+      <div class="p-1.5 text-center">
+        <p class="text-[10px] font-bold text-white truncate">${title}</p>
+      </div>
+    `;
+    thumb.onclick = () => openPlayer(item);
+    quickList.appendChild(thumb);
+  });
+}
+
+function backToList() {
+  if (hlsPlayerInstance) {
+    hlsPlayerInstance.destroy();
+    hlsPlayerInstance = null;
+  }
+  const videoEl = document.getElementById('html5-video-player');
+  if (videoEl) {
+    videoEl.pause();
+    videoEl.removeAttribute('src');
+    videoEl.load();
+  }
+
+  document.getElementById('player-view').classList.add('hidden');
+  document.getElementById('browse-view').classList.remove('hidden');
+}
+
+// Series Modal Functions
+async function openSeriesModal(seriesItem) {
+  currentSeriesData = seriesItem;
+  document.getElementById('series-modal').classList.remove('hidden');
+
+  document.getElementById('series-modal-title').textContent = seriesItem.name || 'Série';
+  document.getElementById('series-modal-plot').textContent = seriesItem.plot || 'Carregando sinopse e detalhes da série...';
+  document.getElementById('series-modal-genre').textContent = seriesItem.genre || 'Série';
+  document.getElementById('series-modal-year').textContent = seriesItem.releaseDate || seriesItem.year || '';
+  document.getElementById('series-modal-rating').textContent = `★ ${seriesItem.rating || '0.0'}`;
+  document.getElementById('series-modal-img').src = seriesItem.cover || seriesItem.stream_icon || 'https://placehold.co/300x450/0f172a/6366f1?text=Série';
+
+  document.getElementById('series-modal-loading').classList.remove('hidden');
+  document.getElementById('series-modal-error').classList.add('hidden');
+  document.getElementById('series-modal-content').classList.add('hidden');
+
+  const seriesInfo = await fetchAPI('get_series_info', `&series_id=${seriesItem.series_id}`);
+  document.getElementById('series-modal-loading').classList.add('hidden');
+
+  if (!seriesInfo || !seriesInfo.episodes) {
+    document.getElementById('series-modal-error').classList.remove('hidden');
+    return;
+  }
+
+  document.getElementById('series-modal-content').classList.remove('hidden');
+  renderSeasonsTabs(seriesInfo.episodes);
+}
+
+function renderSeasonsTabs(episodesMap) {
+  const seasonsTabsContainer = document.getElementById('series-seasons-tabs');
+  seasonsTabsContainer.innerHTML = '';
+
+  const seasonKeys = Object.keys(episodesMap);
+  if (seasonKeys.length === 0) return;
+
+  activeSeasonKey = seasonKeys[0];
+
+  seasonKeys.forEach((seasonNum, index) => {
+    const btn = document.createElement('button');
+    const isSelected = seasonNum === activeSeasonKey;
+    btn.className = `px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all whitespace-nowrap ${isSelected ? 'bg-indigo-600 text-white shadow-md' : 'bg-slate-900 text-slate-300 hover:bg-slate-800 border border-slate-800'}`;
+    btn.textContent = `Temporada ${seasonNum}`;
+    btn.onclick = () => {
+      activeSeasonKey = seasonNum;
+      renderSeasonsTabs(episodesMap);
+      renderEpisodesList(episodesMap[seasonNum]);
+    };
+    seasonsTabsContainer.appendChild(btn);
+  });
+
+  renderEpisodesList(episodesMap[activeSeasonKey]);
+}
+
+function renderEpisodesList(episodesList) {
+  const episodesContainer = document.getElementById('series-modal-episodes');
+  const countLabel = document.getElementById('series-episodes-count');
+  episodesContainer.innerHTML = '';
+
+  countLabel.textContent = `${episodesList.length} Episódios Disponíveis`;
+
+  episodesList.forEach((ep, index) => {
+    const row = document.createElement('div');
+    row.className = "bg-slate-900 hover:bg-slate-800/90 border border-slate-800 rounded-xl p-3 flex items-center justify-between transition-all cursor-pointer group";
+
+    row.innerHTML = `
+      <div class="flex items-center space-x-3 min-w-0 pr-4">
+        <div class="w-8 h-8 rounded-lg bg-indigo-600/20 text-indigo-300 font-bold text-xs flex items-center justify-center shrink-0 border border-indigo-500/30">
+          ${ep.episode_num || (index + 1)}
+        </div>
+        <div class="min-w-0">
+          <h5 class="text-xs font-bold text-white group-hover:text-indigo-300 transition-colors truncate">${ep.title || `Episódio ${index + 1}`}</h5>
+          <p class="text-[10px] text-slate-400 truncate">Duração: ${ep.info?.duration || '45 min'}</p>
+        </div>
+      </div>
+      <button class="px-3 py-1.5 bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg text-xs font-bold transition-all shadow shrink-0 flex items-center space-x-1">
+        <span>▶</span>
+        <span>Assistir</span>
+      </button>
+    `;
+
+    row.onclick = () => {
+      closeSeriesModal();
+      openPlayer({
+        name: `${currentSeriesData.name} - T${activeSeasonKey}E${ep.episode_num || (index + 1)}: ${ep.title || ''}`,
+        stream_id: ep.id,
+        stream_icon: ep.info?.movie_image || currentSeriesData.cover,
+        container_extension: ep.container_extension || 'mp4',
+        direct_source: ep.direct_source || null
+      });
+    };
+
+    episodesContainer.appendChild(row);
+  });
+}
+
+function closeSeriesModal() {
+  document.getElementById('series-modal').classList.add('hidden');
+}
+
+// Favorites Management
+function toggleFavoriteCurrent() {
+  if (!currentPlayingItem) return;
+  const id = currentPlayingItem.stream_id || currentPlayingItem.series_id;
+  const index = favorites.findIndex(f => String(f.stream_id || f.series_id) === String(id));
+
+  if (index >= 0) {
+    favorites.splice(index, 1);
+    showToast("Removido dos favoritos.");
+  } else {
+    favorites.push(currentPlayingItem);
+    showToast("Adicionado aos favoritos com sucesso!", "success");
+  }
+
+  localStorage.setItem('xtream_favorites_v1', JSON.stringify(favorites));
+  updateFavoriteBtnState();
+  updateFavoriteCountBadge();
+}
+
+function updateFavoriteBtnState() {
+  if (!currentPlayingItem) return;
+  const id = currentPlayingItem.stream_id || currentPlayingItem.series_id;
+  const isFav = favorites.some(f => String(f.stream_id || f.series_id) === String(id));
+
+  const textEl = document.getElementById('favorite-text');
+  const iconEl = document.getElementById('favorite-icon');
+  const overlayText = document.getElementById('overlay-fav-text');
+  const overlayIcon = document.getElementById('overlay-fav-icon');
+
+  if (isFav) {
+    if (textEl) textEl.textContent = 'Favoritado';
+    if (iconEl) iconEl.textContent = '⭐';
+    if (overlayText) overlayText.textContent = 'Favoritado';
+    if (overlayIcon) overlayIcon.textContent = '⭐';
+  } else {
+    if (textEl) textEl.textContent = 'Favoritar';
+    if (iconEl) iconEl.textContent = '☆';
+    if (overlayText) overlayText.textContent = 'Favorito';
+    if (overlayIcon) overlayIcon.textContent = '☆';
+  }
+}
+
+function updateFavoriteCountBadge() {
+  const badge = document.getElementById('fav-count');
+  if (badge) badge.textContent = favorites.length;
+}
+
+function openFavoritesModal() {
+  const container = document.getElementById('favorites-list-container');
+  container.innerHTML = '';
+
+  if (favorites.length === 0) {
+    container.innerHTML = `
+      <div class="text-center py-8 text-slate-400">
+        <p class="text-3xl mb-2">⭐</p>
+        <p class="font-bold text-white">Nenhum favorito salvo</p>
+        <p class="text-xs mt-1">Marque canais ou filmes como favoritos para acessá-los rapidamente.</p>
+      </div>
+    `;
+  } else {
+    favorites.forEach(fav => {
+      const title = fav._displayTitle || fav.name || fav.title || 'Favorito';
+      const icon = fav.stream_icon || fav.cover || 'https://placehold.co/100x100/0f172a/6366f1?text=TV';
+
+      const row = document.createElement('div');
+      row.className = "bg-slate-950 border border-slate-800 rounded-xl p-2.5 flex items-center justify-between hover:border-indigo-500 transition-all";
+      row.innerHTML = `
+        <div class="flex items-center space-x-3 min-w-0 pr-3 cursor-pointer flex-1" onclick="closeFavoritesModal(); openPlayer(${JSON.stringify(fav).replace(/"/g, '&quot;')})">
+          <img src="${icon}" onerror="this.src='https://placehold.co/100x100/0f172a/6366f1?text=BoaTV'" class="w-10 h-10 rounded-lg object-cover shrink-0" alt="">
+          <div class="min-w-0">
+            <h5 class="text-xs font-bold text-white truncate">${title}</h5>
+            <p class="text-[10px] text-slate-400">Clique para assistir</p>
+          </div>
+        </div>
+        <button onclick="removeFavoriteId('${fav.stream_id || fav.series_id}')" class="p-2 text-rose-400 hover:bg-rose-500/20 rounded-lg text-xs transition-colors" title="Remover">🗑️</button>
+      `;
+      container.appendChild(row);
+    });
+  }
+
+  document.getElementById('favorites-modal').classList.remove('hidden');
+}
+
+function removeFavoriteId(id) {
+  favorites = favorites.filter(f => String(f.stream_id || f.series_id) !== String(id));
+  localStorage.setItem('xtream_favorites_v1', JSON.stringify(favorites));
+  updateFavoriteCountBadge();
+  openFavoritesModal();
+  showToast("Removido dos favoritos.");
+}
+
+function closeFavoritesModal() {
+  document.getElementById('favorites-modal').classList.add('hidden');
+}
+
+// Settings Modal Functions
+function openSettingsModal() {
+  document.getElementById('setting-url').value = XTREAM_CONFIG.url;
+  document.getElementById('setting-username').value = XTREAM_CONFIG.username;
+  document.getElementById('setting-password').value = XTREAM_CONFIG.password;
+  document.getElementById('setting-player-engine').value = XTREAM_CONFIG.playerEngine;
+  document.getElementById('settings-test-result').classList.add('hidden');
+  document.getElementById('settings-modal').classList.remove('hidden');
+}
+
+function closeSettingsModal() {
+  document.getElementById('settings-modal').classList.add('hidden');
+}
+
+async function testConnectionSettings() {
+  const url = document.getElementById('setting-url').value.trim();
+  const user = document.getElementById('setting-username').value.trim();
+  const pass = document.getElementById('setting-password').value.trim();
+  const resBox = document.getElementById('settings-test-result');
+
+  resBox.className = 'text-xs p-2.5 rounded-xl bg-slate-900 text-indigo-300 border border-indigo-500/30';
+  resBox.textContent = 'Testando conexão com o servidor...';
+  resBox.classList.remove('hidden');
+
+  try {
+    const endpoint = `${url}/player_api.php?username=${user}&password=${pass}`;
+    const res = await fetch(endpoint);
+    const data = await res.json();
+
+    if (data && data.user_info) {
+      resBox.className = 'text-xs p-2.5 rounded-xl bg-emerald-500/20 text-emerald-300 border border-emerald-500/30';
+      resBox.textContent = `Conexão bem-sucedida! Conta: ${data.user_info.username} (Status: ${data.user_info.status})`;
+    } else {
+      throw new Error("Resposta inválida do servidor");
+    }
+  } catch (e) {
+    resBox.className = 'text-xs p-2.5 rounded-xl bg-rose-500/20 text-rose-300 border border-rose-500/30';
+    resBox.textContent = 'Falha ao conectar. Verifique URL, usuário e senha.';
+  }
+}
+
+function saveSettings() {
+  XTREAM_CONFIG.url = document.getElementById('setting-url').value.trim();
+  XTREAM_CONFIG.username = document.getElementById('setting-username').value.trim();
+  XTREAM_CONFIG.password = document.getElementById('setting-password').value.trim();
+  XTREAM_CONFIG.playerEngine = document.getElementById('setting-player-engine').value;
+
+  localStorage.setItem('xtream_config_v3', JSON.stringify(XTREAM_CONFIG));
+  closeSettingsModal();
+  showToast("Configurações salvas com sucesso!", "success");
+  initXtreamPortal();
+}
+
+// Initial application boot on window load
+window.onload = function() {
+  applyCustomization();
+  initXtreamPortal();
+};
+</script>
+</body>
+</html>
